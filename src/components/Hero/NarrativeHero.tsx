@@ -1,13 +1,20 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useScrollProgress } from '../../hooks/useScrollProgress';
 import { heroScatter } from '../../data/heroScatter';
 import { heroIntro } from '../../data/siteContent';
 import { HeroScatterItem } from './HeroScatterItem';
+import { HeroMorphIntro } from './HeroMorphIntro';
 import { BlurRevealText } from '../shared/BlurRevealText';
 import './narrativeHero.css';
 
+const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
+
 export function NarrativeHero() {
   const { ref, progress } = useScrollProgress<HTMLDivElement>();
+  const [showMorphIntro, setShowMorphIntro] = useState(
+    () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
+  );
 
   // Photos hold sharp through the first ~40% of the field scrolling past,
   // then progressively blur/desaturate as the reader scrolls toward the nodes.
@@ -25,6 +32,15 @@ export function NarrativeHero() {
         {heroScatter.map((item, index) => (
           <HeroScatterItem key={item.id} item={item} index={index} />
         ))}
+
+        {showMorphIntro && (
+          <HeroMorphIntro
+            onComplete={() => {
+              sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');
+              setShowMorphIntro(false);
+            }}
+          />
+        )}
       </div>
 
       <motion.div
