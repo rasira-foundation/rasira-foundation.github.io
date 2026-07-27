@@ -13,7 +13,7 @@ export function ClosingFooter() {
       <div className="closing-footer-glow" aria-hidden="true" />
 
       <div className="closing-footer-clock-wrap">
-        <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} secondDeg={clock.secondDeg} />
+        <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
         <span className="closing-footer-digital">{clock.digital}</span>
       </div>
 

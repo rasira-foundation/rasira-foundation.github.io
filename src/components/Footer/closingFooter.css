@@ -5,7 +5,7 @@
   min-height: 70vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 
 .closing-footer-glow {
@@ -27,8 +27,8 @@
   left: 50%;
   top: 30%;
   transform: translate(-50%, -50%);
-  width: 92px;
-  height: 92px;
+  width: 180px;
+  height: 180px;
 }
 
 .analog-clock {
@@ -43,29 +43,19 @@
 }
 
 .analog-clock-hour {
-  stroke-width: 3;
-  stroke-opacity: 0.85;
+  stroke-width: 1;
+  stroke-opacity: 0.8;
 }
 
 .analog-clock-minute {
-  stroke-width: 2;
-  stroke-opacity: 0.7;
-}
-
-.analog-clock-second {
   stroke-width: 0.8;
-  stroke: var(--color-dawn-orange);
-  stroke-opacity: 0.9;
-}
-
-.analog-clock-pivot {
-  fill: var(--color-ink);
+  stroke-opacity: 0.65;
 }
 
 .closing-footer-digital {
   position: absolute;
-  top: -6px;
-  left: calc(100% + 14px);
+  top: -8px;
+  left: calc(100% + 10px);
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-ink-soft);
@@ -73,7 +63,9 @@
 }
 
 .closing-footer-narrative {
-  position: relative;
+  position: absolute;
+  left: 6%;
+  top: 42%;
   font-family: var(--font-mono);
   font-size: 13px;
   line-height: 1.6;
@@ -82,8 +74,8 @@
   opacity: 0.75;
   -webkit-mask-image: linear-gradient(180deg, black 55%, transparent 100%);
   mask-image: linear-gradient(180deg, black 55%, transparent 100%);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .closing-footer-contact {
@@ -123,5 +115,8 @@
   .closing-footer-contact {
     flex-direction: column;
     gap: 12px;
+  }
+  .closing-footer-narrative {
+    max-width: 70vw;
   }
 }

@@ -1,28 +1,35 @@
 import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { AsteriskMark } from './AsteriskMark';
 import twoLineLogo from '../../assets/rasira-2lines.svg';
-import oneLineLogo from '../../assets/rasira-1line.svg';
 import './splash.css';
 
-type Stage = 'reveal' | 'handoff';
+type Stage = 'dot' | 'star' | 'logo' | 'fadeOut';
 
 // Where the "*" sits within rasira-2lines.svg's own bounding box (viewBox
-// 0 0 477 167), as a percentage — the clip-path circle is centered here so
-// the iris opens on the star first before revealing the rest of the mark.
-const STAR_CLIP_ORIGIN = '4.1% 12.1%';
+// 0 0 477 167), as a fraction — used to line the logo's own baked-in star
+// up with the standalone dot/star mark it grows out of.
+const STAR_X_FRACTION = 0.041;
+const GLIDE_OFFSET_PX = 90; // how far left the dot glides before morphing
+const LOGO_WIDTH_PX = 360;
 
 const TIMINGS = {
-  revealTotal: 2500,
-  holdBeforeHandoff: 500,
-  handoff: 950,
+  dotHold: 500,
+  glide: 800, // spec: 800ms cubic-bezier(0.65, 0, 0.35, 1)
+  starHold: 300,
+  logoIn: 700,
+  logoHold: 800,
+  fadeOut: 1000, // spec: clean 1000ms cross-fade into the homepage
 };
+
+const GLIDE_EASE = [0.65, 0, 0.35, 1] as const;
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 export function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [stage, setStage] = useState<Stage>('reveal');
+  const [stage, setStage] = useState<Stage>('dot');
 
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -31,72 +38,71 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
       return;
     }
 
-    const t1 = window.setTimeout(() => setStage('handoff'), TIMINGS.revealTotal + TIMINGS.holdBeforeHandoff);
-    const t2 = window.setTimeout(
-      onComplete,
-      TIMINGS.revealTotal + TIMINGS.holdBeforeHandoff + TIMINGS.handoff,
-    );
+    const tStar = TIMINGS.dotHold;
+    const tLogo = tStar + TIMINGS.glide + TIMINGS.starHold;
+    const tFadeOut = tLogo + TIMINGS.logoIn + TIMINGS.logoHold;
+    const tDone = tFadeOut + TIMINGS.fadeOut;
 
-    return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    };
+    const timers = [
+      window.setTimeout(() => setStage('star'), tStar),
+      window.setTimeout(() => setStage('logo'), tLogo),
+      window.setTimeout(() => setStage('fadeOut'), tFadeOut),
+      window.setTimeout(onComplete, tDone),
+    ];
+
+    return () => timers.forEach(window.clearTimeout);
   }, [onComplete]);
 
+  const glided = stage !== 'dot';
+  const logoLeftEdge = `calc(50% - ${GLIDE_OFFSET_PX + STAR_X_FRACTION * LOGO_WIDTH_PX}px)`;
+
   return (
-    <div className="splash" role="presentation">
+    <motion.div
+      className="splash"
+      role="presentation"
+      animate={{ opacity: stage === 'fadeOut' ? 0 : 1 }}
+      transition={{ duration: TIMINGS.fadeOut / 1000, ease: 'easeInOut' }}
+      style={{ pointerEvents: stage === 'fadeOut' ? 'none' : 'auto' }}
+    >
       <motion.div
-        className="splash-logo-wrap"
-        style={{ left: '50%', x: '-50%' }}
-        animate={stage === 'handoff' ? 'handoff' : 'center'}
-        variants={{
-          center: { top: '50%', y: '-50%', scale: 1 },
-          handoff: { top: '20px', y: '0%', scale: 0.17 },
+        className="splash-dot"
+        animate={{
+          left: glided ? `calc(50% - ${GLIDE_OFFSET_PX}px)` : '50%',
+          opacity: stage === 'dot' || stage === 'star' ? 1 : 0,
+          scale: stage === 'dot' ? 1 : 0.4,
         }}
-        transition={{ duration: TIMINGS.handoff / 1000, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ left: { duration: TIMINGS.glide / 1000, ease: GLIDE_EASE }, opacity: { duration: 0.3 } }}
+      />
+
+      <motion.div
+        className="splash-star"
+        initial={{ opacity: 0 }}
+        animate={{
+          left: `calc(50% - ${GLIDE_OFFSET_PX}px)`,
+          opacity: stage === 'star' ? 1 : 0,
+        }}
+        transition={{ left: { duration: TIMINGS.glide / 1000, ease: GLIDE_EASE }, opacity: { duration: 0.4 } }}
       >
-        <motion.img
-          src={twoLineLogo}
-          alt=""
-          className="splash-logo splash-logo--two"
-          animate={{
-            clipPath: [
-              `circle(0% at ${STAR_CLIP_ORIGIN})`,
-              `circle(6.5% at ${STAR_CLIP_ORIGIN})`,
-              `circle(6.5% at ${STAR_CLIP_ORIGIN})`,
-              `circle(150% at ${STAR_CLIP_ORIGIN})`,
-            ],
-            opacity: stage === 'handoff' ? 0 : 1,
-          }}
-          transition={{
-            clipPath: { duration: TIMINGS.revealTotal / 1000, times: [0, 0.22, 0.5, 1], ease: [0.22, 1, 0.36, 1] },
-            opacity: { duration: 0.5 },
-          }}
-        />
-        <motion.img
-          src={oneLineLogo}
-          alt="Rasira Foundation"
-          className="splash-logo splash-logo--one"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: stage === 'handoff' ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: stage === 'handoff' ? 0.25 : 0 }}
-        />
+        <AsteriskMark />
       </motion.div>
 
-      <AnimatePresence>
-        {stage === 'handoff' && (
-          <motion.div
-            className="splash-dawn-curtain"
-            initial={{ clipPath: 'inset(0 0 100% 0)' }}
-            animate={{ clipPath: 'inset(0 0 0% 0)' }}
-            transition={{ duration: TIMINGS.handoff / 1000, ease: 'easeInOut' }}
-          />
-        )}
-      </AnimatePresence>
+      <div className="splash-logotype-wrap" style={{ left: logoLeftEdge, width: LOGO_WIDTH_PX }}>
+        <motion.img
+          src={twoLineLogo}
+          alt="Rasira Foundation"
+          className="splash-logotype"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{
+            opacity: stage === 'logo' || stage === 'fadeOut' ? 1 : 0,
+            y: stage === 'logo' || stage === 'fadeOut' ? 0 : 20,
+          }}
+          transition={{ duration: TIMINGS.logoIn / 1000, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
 
       <button type="button" className="splash-skip" onClick={onComplete}>
         Skip
       </button>
-    </div>
+    </motion.div>
   );
 }

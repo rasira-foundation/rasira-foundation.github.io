@@ -3,32 +3,38 @@
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  /* Cool blue-grey light falling from a high window, not pitch black. */
-  background: radial-gradient(120% 60% at 50% -10%, #4a5c6d 0%, #232b32 45%, #0b0a08 100%);
+  background: #f6f3ed;
 }
 
-.splash-logo-wrap {
+.splash-dot {
   position: absolute;
-  width: clamp(220px, 32vw, 420px);
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: var(--color-ink);
 }
 
-.splash-logo {
+.splash-star {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  color: var(--color-ink);
+}
+
+.splash-logotype-wrap {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.splash-logotype {
+  display: block;
   width: 100%;
   height: auto;
-  filter: invert(1) drop-shadow(0 0 40px rgba(246, 241, 231, 0.2));
-}
-
-.splash-logo--two {
-  position: relative;
-}
-
-.splash-dawn-curtain {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(180deg, var(--color-dawn-peach) 0%, var(--color-dawn-orange) 55%, var(--color-cream) 100%);
 }
 
 .splash-skip {
@@ -37,8 +43,8 @@
   right: 28px;
   z-index: 3;
   background: none;
-  border: 1px solid rgba(246, 241, 231, 0.3);
-  color: rgba(246, 241, 231, 0.7);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-soft);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.06em;
@@ -50,6 +56,6 @@
 }
 
 .splash-skip:hover {
-  color: var(--color-cream);
-  border-color: rgba(246, 241, 231, 0.7);
+  color: var(--color-ink);
+  border-color: var(--color-ink-faint);
 }
