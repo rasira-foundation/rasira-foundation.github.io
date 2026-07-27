@@ -25,52 +25,58 @@ export function FloatingNodes() {
         <NodeDot position={spokeNodes.measure} floatClass="node-float-1" />
         <NodeDot position={spokeNodes.design} floatClass="node-float-2" />
 
-        <motion.div className="node-hub node-float-0" style={hubPosition} {...fadeUp} transition={{ duration: 0.8 }}>
-          <AsteriskMark className="node-hub-mark" />
-        </motion.div>
+        <div className="node-content-wrap node-hub-wrap node-drift-1" style={hubPosition}>
+          <motion.div className="node-hub" {...fadeUp} transition={{ duration: 0.8 }}>
+            <AsteriskMark className="node-hub-mark" />
+          </motion.div>
+        </div>
 
-        <motion.div
-          className="node-content node-bullets"
+        <div
+          className="node-content-wrap node-drift-0"
           style={{ top: `${spokeNodes.bullets.top - 12}%`, left: `${spokeNodes.bullets.left - 24}%` }}
-          {...fadeUp}
-          transition={{ duration: 0.8, delay: 0.1 }}
         >
-          <h3>{programAims.heading}</h3>
-          <ul>
-            {programAims.items.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </motion.div>
+          <motion.div className="node-content node-bullets" {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
+            <h3>{programAims.heading}</h3>
+            <ul>
+              {programAims.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </motion.div>
+        </div>
 
-        <motion.p
-          className="node-content node-measure"
+        <div
+          className="node-content-wrap node-drift-2"
           style={{ top: `${spokeNodes.measure.top - 5}%`, left: `${spokeNodes.measure.left + 3}%` }}
-          {...fadeUp}
-          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <BoldLeadText node={floatingNodes[0]} />
-        </motion.p>
+          <motion.p className="node-content node-measure" {...fadeUp} transition={{ duration: 0.8, delay: 0.2 }}>
+            <BoldLeadText node={floatingNodes[0]} />
+          </motion.p>
+        </div>
 
-        <motion.p
-          className="node-content node-design"
+        <div
+          className="node-content-wrap node-drift-1"
           style={{ top: `${spokeNodes.design.top + 2}%`, left: `${spokeNodes.design.left + 3}%` }}
-          {...fadeUp}
-          transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <BoldLeadText node={floatingNodes[1]} />
-        </motion.p>
+          <motion.p className="node-content node-design" {...fadeUp} transition={{ duration: 0.8, delay: 0.3 }}>
+            <BoldLeadText node={floatingNodes[1]} />
+          </motion.p>
+        </div>
 
-        <motion.a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="node-content node-collab"
+        <div
+          className="node-content-wrap node-drift-0"
           style={{ top: `${collabPosition.top - 5}%`, left: `${collabPosition.left - 18}%` }}
-          {...fadeUp}
-          transition={{ duration: 0.8, delay: 0.15 }}
         >
-          <h2>{collabPrompt.heading}</h2>
-          <p>{collabPrompt.sub}</p>
-        </motion.a>
+          <motion.a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="node-content node-collab"
+            {...fadeUp}
+            transition={{ duration: 0.8, delay: 0.15 }}
+          >
+            <h2>{collabPrompt.heading}</h2>
+            <p>{collabPrompt.sub}</p>
+          </motion.a>
+        </div>
       </div>
     </section>
   );

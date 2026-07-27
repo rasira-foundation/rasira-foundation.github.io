@@ -9,10 +9,15 @@ import { ArticleDetail } from './components/Articles/ArticleDetail';
 import { ClosingFooter } from './components/Footer/ClosingFooter';
 import { useHashRoute } from './hooks/useHashRoute';
 
+const SPLASH_SEEN_KEY = 'rasira-splash-seen';
+
 function App() {
-  const [splashDone, setSplashDone] = useState(false);
+  const [splashDone, setSplashDone] = useState(() => sessionStorage.getItem(SPLASH_SEEN_KEY) === '1');
   const route = useHashRoute();
-  const handleSplashComplete = useCallback(() => setSplashDone(true), []);
+  const handleSplashComplete = useCallback(() => {
+    sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
+    setSplashDone(true);
+  }, []);
 
   return (
     <>
@@ -27,8 +32,10 @@ function App() {
             <ArticleDetail slug={route.slug} />
           ) : (
             <>
-              <NarrativeHero />
-              <FloatingNodes />
+              <div className="atmosphere-band">
+                <NarrativeHero />
+                <FloatingNodes />
+              </div>
               <ArticleGrid />
             </>
           )}

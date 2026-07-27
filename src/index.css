@@ -68,6 +68,21 @@ button {
   color: var(--color-cream);
 }
 
+/* One continuous sky -> dawn -> off-white wash spanning the hero and node
+   sections, instead of separate per-section gradients with a seam. */
+.atmosphere-band {
+  background: linear-gradient(
+    180deg,
+    var(--color-sky) 0%,
+    var(--color-sky-soft) 12%,
+    var(--color-cream) 25%,
+    var(--color-dawn-peach) 55%,
+    var(--color-dawn-orange) 72%,
+    var(--color-cream) 92%,
+    var(--color-cream) 100%
+  );
+}
+
 /* film-grain noise overlay, sits above every section for the tactile/analog feel */
 .noise-overlay {
   position: fixed;

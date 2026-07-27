@@ -80,9 +80,9 @@ src/
   lib/sheets.ts Google Sheets gviz fetch + parsing
 ```
 
-## Swapping in real photography
+## Hero moodboard
 
-`src/data/heroScatter.ts` lays out the hero moodboard with styled
-placeholders (no real photo assets were supplied at build time). Drop real
-images into `src/assets/photos/`, import them, and swap `scatter-photo-surface`
-in `HeroScatterItem.tsx` for an `<img>`.
+`src/data/heroScatter.ts` lays out the hero collage (position, rotation,
+scroll-parallax depth) against the real photography in `src/assets/photos/`.
+To swap or add a piece: drop the image in that folder, import it, and add/edit
+an entry with `kind: 'image'`.

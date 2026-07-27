@@ -1,12 +1,5 @@
 .floating-nodes {
   position: relative;
-  background: linear-gradient(
-    180deg,
-    var(--color-cream) 0%,
-    var(--color-dawn-peach) 40%,
-    var(--color-dawn-orange) 58%,
-    var(--color-cream) 100%
-  );
   padding: 8vh 0;
 }
 
@@ -41,19 +34,6 @@
   background: var(--color-ink);
 }
 
-.node-hub {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  margin: -14px 0 0 -14px;
-  color: var(--color-ink);
-}
-
-.node-hub-mark {
-  width: 100%;
-  height: 100%;
-}
-
 @keyframes node-float-0 {
   0%, 100% { transform: translate(0, 0); }
   50% { transform: translate(3px, -10px); }
@@ -71,10 +51,48 @@
 .node-float-1 { animation: node-float-1 7.5s ease-in-out infinite; }
 .node-float-2 { animation: node-float-2 8.2s ease-in-out infinite; }
 
-.node-content {
+/* Positioned wrapper carries placement + the idle sky-drift; the motion
+   child inside handles the one-time scroll-reveal, so the two transforms
+   never fight on the same element. */
+.node-content-wrap {
   position: absolute;
   max-width: 280px;
 }
+
+.node-hub-wrap {
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  max-width: none;
+}
+
+.node-hub {
+  width: 100%;
+  height: 100%;
+  color: var(--color-ink);
+}
+
+.node-hub-mark {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes node-drift-0 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(-0.6deg); }
+}
+@keyframes node-drift-1 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(6px) rotate(0.5deg); }
+}
+@keyframes node-drift-2 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-5px) rotate(0.4deg); }
+}
+
+.node-drift-0 { animation: node-drift-0 10s ease-in-out infinite; }
+.node-drift-1 { animation: node-drift-1 12s ease-in-out infinite; }
+.node-drift-2 { animation: node-drift-2 8.6s ease-in-out infinite; }
 
 .node-bullets h3 {
   font-family: var(--font-serif);
@@ -143,13 +161,14 @@
   .node-lines {
     display: none;
   }
-  .node-content {
+  .node-content-wrap {
     position: static;
     max-width: none;
     margin-bottom: 40px;
+    animation: none;
   }
   .node-dot,
-  .node-hub {
+  .node-hub-wrap {
     display: none;
   }
 }

@@ -1,6 +1,5 @@
 .narrative-hero {
   position: relative;
-  background: linear-gradient(180deg, var(--color-sky-soft) 0%, var(--color-cream) 55%);
   padding-top: 6vh;
 }
 
@@ -10,14 +9,6 @@
   max-width: var(--container-max);
   margin: 0 auto;
   transition: filter 0.2s linear;
-}
-
-.hero-particle-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
 }
 
 .scatter-item {
@@ -42,20 +33,15 @@
 .scatter-float-1 { animation: scatter-drift-1 8.5s ease-in-out infinite; }
 .scatter-float-2 { animation: scatter-drift-2 6.2s ease-in-out infinite; }
 
-.scatter-card {
-  position: relative;
-  background: #fff;
-  box-shadow: 0 12px 30px -12px rgba(20, 18, 15, 0.25);
-  padding: 10px;
-}
-
-.scatter-resume-card {
+/* No card chrome — the paper/photo elements sit directly on the atmosphere. */
+.scatter-resume {
   width: 100%;
   aspect-ratio: 3 / 4;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  border: 1px solid var(--color-line);
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.55);
 }
 
 .scatter-resume-title {
@@ -77,25 +63,11 @@
   width: 60%;
 }
 
-.scatter-photo-card {
-  padding: 6px 6px 22px;
+.scatter-image {
+  display: block;
   width: 100%;
-}
-
-.scatter-photo-surface {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  background: linear-gradient(150deg, #cfc2ae 0%, #a9968a 45%, #7c716c 100%);
-  filter: saturate(0.55) contrast(1.05);
-}
-
-.scatter-photo-caption {
-  position: absolute;
-  left: 10px;
-  bottom: 6px;
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--color-ink-soft);
+  height: auto;
+  filter: drop-shadow(0 14px 26px rgba(20, 18, 15, 0.22));
 }
 
 .scatter-quote,
@@ -103,48 +75,12 @@
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-ink-faint);
-  white-space: nowrap;
   max-width: 240px;
-  white-space: normal;
 }
 
 .scatter-label {
   font-weight: 500;
   color: var(--color-ink-soft);
-}
-
-.scatter-door {
-  width: 100%;
-  filter: drop-shadow(0 10px 18px rgba(20, 18, 15, 0.2));
-}
-
-.scatter-sdg {
-  width: 100%;
-  aspect-ratio: 1;
-  background: #d21868;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 6px;
-  box-shadow: 0 10px 22px -10px rgba(20, 18, 15, 0.4);
-}
-
-.scatter-sdg-number {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1;
-}
-
-.scatter-sdg-label {
-  font-family: var(--font-sans);
-  font-size: 5.5px;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-  margin-top: 3px;
 }
 
 .hero-copy {

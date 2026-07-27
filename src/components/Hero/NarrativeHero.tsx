@@ -2,28 +2,27 @@ import { motion } from 'framer-motion';
 import { useScrollProgress } from '../../hooks/useScrollProgress';
 import { heroScatter } from '../../data/heroScatter';
 import { heroIntro } from '../../data/siteContent';
-import { ParticleCanvas } from './ParticleCanvas';
 import { HeroScatterItem } from './HeroScatterItem';
 import './narrativeHero.css';
 
 export function NarrativeHero() {
-  const { ref, progress } = useScrollProgress<HTMLElement>();
+  const { ref, progress } = useScrollProgress<HTMLDivElement>();
 
-  // Photos hold sharp through the first ~40% of the section scrolling past,
+  // Photos hold sharp through the first ~40% of the field scrolling past,
   // then progressively blur/desaturate as the reader scrolls toward the nodes.
   const exitProgress = Math.min(1, Math.max(0, (progress - 0.4) / 0.6));
 
   return (
-    <section className="narrative-hero" ref={ref}>
+    <section className="narrative-hero">
       <div
+        ref={ref}
         className="hero-scatter-field"
         style={{
-          filter: `blur(${exitProgress * 5}px) saturate(${1 - exitProgress * 0.7}) brightness(${1 - exitProgress * 0.08})`,
+          filter: `blur(${exitProgress * 5}px) grayscale(${exitProgress * 0.85}) contrast(${1 - exitProgress * 0.1})`,
         }}
       >
-        <ParticleCanvas scrollProgress={progress} />
-        {heroScatter.map((item) => (
-          <HeroScatterItem key={item.id} item={item} />
+        {heroScatter.map((item, index) => (
+          <HeroScatterItem key={item.id} item={item} index={index} />
         ))}
       </div>
 
