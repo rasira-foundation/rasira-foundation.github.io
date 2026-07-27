@@ -69,13 +69,19 @@
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
-  background: var(--color-cream);
+  background-color: var(--color-cream);
   border: none;
   cursor: pointer;
   padding: 20px;
   overflow: hidden;
   font-family: var(--font-editorial-sans);
   transition: background 0.25s var(--ease-soft);
+  /* The grid's dark gap-as-divider background sits directly behind these
+     cards; without its own compositing layer, an animating filter:blur()
+     can transiently bleed that dark background through at the card edges.
+     isolation:isolate contains the card's paint to its own layer. */
+  isolation: isolate;
+  will-change: transform, filter;
 }
 
 .article-card--ascii:hover {

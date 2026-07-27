@@ -52,6 +52,8 @@
   position: absolute;
   text-align: center;
   max-width: 320px;
+  transform: perspective(800px) rotateX(12deg) translateZ(-20px);
+  transform-style: preserve-3d;
 }
 
 .hero-morph-headline {
@@ -68,4 +70,7 @@
   font-family: var(--font-mono);
   font-size: 13px;
   color: var(--color-ink-faint);
+  /* Leaves a soft atmospheric blur even once revealed, unlike the crisp
+     headline above it — a secondary, half-focused line. */
+  filter: blur(0.6px);
 }

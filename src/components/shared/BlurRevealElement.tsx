@@ -15,7 +15,7 @@ export function BlurRevealElement({
   className,
   delay = 0,
   once = true,
-  amount = 0.3,
+  amount = 0.25,
 }: BlurRevealElementProps) {
   const variants: Variants = {
     hidden: { filter: 'blur(16px)', opacity: 0, y: 24 },

@@ -71,6 +71,7 @@ export function SplashScreen({ onComplete }: SplashScreenProps) {
 
       <motion.div
         className="splash-star"
+        layoutId="splash-star"
         initial={{ opacity: 0, scale: 0.3 }}
         animate={{
           left: `calc(50% - ${GLIDE_OFFSET_PX}px)`,

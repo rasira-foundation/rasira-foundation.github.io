@@ -43,7 +43,7 @@ export function BlurRevealText({
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: false, amount: 0.3 }}
+      viewport={{ once: true, amount: 0.25 }}
       className={`blur-reveal ${className}`}
     >
       {words.map((word, index) => (
