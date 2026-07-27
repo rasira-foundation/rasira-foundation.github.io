@@ -72,8 +72,24 @@
   cursor: pointer;
   padding: 22px;
   min-height: 240px;
+  overflow: hidden;
   font-family: var(--font-editorial-sans);
   transition: background 0.25s var(--ease-soft);
+}
+
+/* Highlight tab's collapsed view: a clean, evenly-matched 2x2. */
+.article-grid--2x2 .article-card {
+  min-height: 320px;
+}
+
+.article-card--featured .article-card-title {
+  font-size: 26px;
+  line-height: 1.2;
+}
+
+.article-card--featured .article-card-excerpt {
+  font-size: 14px;
+  -webkit-line-clamp: 3;
 }
 
 .article-card--ascii:hover {
@@ -106,12 +122,20 @@
   line-height: 1.25;
   color: var(--color-ink);
   margin: 0 0 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .article-card-excerpt {
   font-size: 13px;
   line-height: 1.5;
   color: var(--color-ink-soft);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .article-card-footrow {
@@ -141,7 +165,10 @@
 .article-card--image {
   padding: 0;
   min-height: 320px;
-  overflow: hidden;
+}
+
+.article-grid--2x2 .article-card--image {
+  min-height: 340px;
 }
 
 .article-card-image {
@@ -179,6 +206,7 @@
 
 .article-card-title--on-image {
   color: #fff;
+  -webkit-line-clamp: 3;
 }
 
 .article-card-meta--on-image {

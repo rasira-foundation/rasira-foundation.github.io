@@ -3,18 +3,28 @@ import type { Article } from '../../lib/sheets';
 import { navigateToArticle } from '../../hooks/useHashRoute';
 import { getAsciiArt } from './asciiArt';
 
-// Asymmetrical rhythm, columns out of a 12-col grid: one wide feature
-// followed by a row of smaller pieces, repeating — frog.co/designmind style.
-const SPAN_PATTERN = [7, 5, 4, 4, 4];
+interface ArticleCardProps {
+  article: Article;
+  index: number;
+  span: number;
+  featured?: boolean;
+}
 
-export function ArticleCard({ article, index }: { article: Article; index: number }) {
-  const span = SPAN_PATTERN[index % SPAN_PATTERN.length];
+export function ArticleCard({ article, index, span, featured = false }: ArticleCardProps) {
   const hasImage = Boolean(article.coverImage);
+
+  const classNames = [
+    'article-card',
+    hasImage ? 'article-card--image' : 'article-card--ascii',
+    featured && 'article-card--featured',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <motion.button
       type="button"
-      className={hasImage ? 'article-card article-card--image' : 'article-card article-card--ascii'}
+      className={classNames}
       style={{ gridColumn: `span ${span}` }}
       onClick={() => navigateToArticle(article.slug)}
       initial={{ opacity: 0, y: 18 }}
@@ -41,9 +51,11 @@ export function ArticleCard({ article, index }: { article: Article; index: numbe
       ) : (
         <>
           <span className="article-card-category">{article.category}</span>
-          <pre className="article-card-ascii" aria-hidden="true">
-            {getAsciiArt(article.slug)}
-          </pre>
+          {!featured && (
+            <pre className="article-card-ascii" aria-hidden="true">
+              {getAsciiArt(article.slug)}
+            </pre>
+          )}
           <h3 className="article-card-title">{article.title}</h3>
           <p className="article-card-excerpt">{article.excerpt}</p>
           <div className="article-card-footrow">

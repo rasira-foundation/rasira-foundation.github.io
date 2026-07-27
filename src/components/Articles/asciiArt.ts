@@ -1,12 +1,11 @@
 const PATTERNS = [
+  // All patterns are exactly 5 lines so ASCII cards sit at a consistent
+  // height alongside their siblings in the grid.
   `┌───┐     ┌───┐
 │ □ │ ──▶ │ □ │
 └───┘     └───┘
    │         │
-   ▼         ▼
-┌───┐     ┌───┐
-│ □ │ ──▶ │ □ │
-└───┘     └───┘`,
+   ▼         ▼`,
   `▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ▓▓▓▓▓▓▓▓▓░░░░░
 ▓▓▓▓▓▓▓░░░░░░░

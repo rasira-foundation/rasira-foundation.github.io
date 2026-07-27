@@ -25,23 +25,27 @@ function App() {
 
       <AnimatePresence>{!splashDone && <SplashScreen onComplete={handleSplashComplete} />}</AnimatePresence>
 
-      {splashDone && (
-        <>
-          <SiteHeader />
-          {route.view === 'article' ? (
+      {splashDone &&
+        (route.view === 'article' ? (
+          <>
+            <SiteHeader />
             <ArticleDetail slug={route.slug} />
-          ) : (
-            <>
-              <div className="atmosphere-band">
-                <NarrativeHero />
-                <FloatingNodes />
-              </div>
-              <ArticleGrid />
-            </>
-          )}
-          <ClosingFooter />
-        </>
-      )}
+            <ClosingFooter />
+          </>
+        ) : (
+          <>
+            {/* Header lives inside the atmosphere band so the sky gradient
+                runs continuously from the very top of the viewport, with
+                no seam behind the sticky nav. */}
+            <div className="atmosphere-band">
+              <SiteHeader />
+              <NarrativeHero />
+              <FloatingNodes />
+            </div>
+            <ArticleGrid />
+            <ClosingFooter />
+          </>
+        ))}
     </>
   );
 }

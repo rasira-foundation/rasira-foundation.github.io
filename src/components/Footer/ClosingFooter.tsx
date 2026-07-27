@@ -1,22 +1,20 @@
 import { motion } from 'framer-motion';
-import { useRealtimeClock } from '../../hooks/useRealtimeClock';
+import { useLocalClock } from '../../hooks/useLocalClock';
 import { CONTACT_EMAIL, closingNarrative } from '../../data/siteContent';
+import { AnalogClock } from './AnalogClock';
 import oneLineLogo from '../../assets/rasira-1line.svg';
 import './closingFooter.css';
 
 export function ClosingFooter() {
-  const clock = useRealtimeClock();
+  const clock = useLocalClock();
 
   return (
     <footer className="closing-footer">
       <div className="closing-footer-glow" aria-hidden="true" />
 
-      <div className="closing-footer-graphic" aria-hidden="true">
-        <svg viewBox="0 0 200 260" className="closing-footer-line">
-          <line x1="100" y1="0" x2="100" y2="150" />
-          <line x1="100" y1="150" x2="150" y2="230" />
-        </svg>
-        <span className="closing-footer-clock">{clock}</span>
+      <div className="closing-footer-clock-wrap">
+        <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} secondDeg={clock.secondDeg} />
+        <span className="closing-footer-digital">{clock.digital}</span>
       </div>
 
       <motion.p
