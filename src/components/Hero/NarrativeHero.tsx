@@ -10,7 +10,14 @@ import './narrativeHero.css';
 
 const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
 
-export function NarrativeHero() {
+interface NarrativeHeroProps {
+  /** Only start the morph intro's own timers once the splash has actually cleared —
+   * this component is mounted (hidden behind the splash) from page load, so
+   * starting on mount would let the whole sequence run out unseen. */
+  splashDone: boolean;
+}
+
+export function NarrativeHero({ splashDone }: NarrativeHeroProps) {
   const { ref, progress } = useScrollProgress<HTMLDivElement>();
   const [showMorphIntro, setShowMorphIntro] = useState(
     () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
@@ -33,7 +40,7 @@ export function NarrativeHero() {
           <HeroScatterItem key={item.id} item={item} index={index} />
         ))}
 
-        {showMorphIntro && (
+        {showMorphIntro && splashDone && (
           <HeroMorphIntro
             onComplete={() => {
               sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');

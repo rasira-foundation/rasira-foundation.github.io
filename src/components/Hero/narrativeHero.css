@@ -33,36 +33,6 @@
 .scatter-float-1 { animation: scatter-drift-1 8.5s ease-in-out infinite; }
 .scatter-float-2 { animation: scatter-drift-2 6.2s ease-in-out infinite; }
 
-/* No card chrome — the paper/photo elements sit directly on the atmosphere. */
-.scatter-resume {
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.55);
-}
-
-.scatter-resume-title {
-  font-family: var(--font-mono);
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-soft);
-  margin-bottom: 4px;
-}
-
-.scatter-resume-line {
-  display: block;
-  height: 3px;
-  background: var(--color-line);
-  border-radius: 2px;
-}
-
-.scatter-resume-line.short {
-  width: 60%;
-}
-
 .scatter-image {
   display: block;
   width: 100%;

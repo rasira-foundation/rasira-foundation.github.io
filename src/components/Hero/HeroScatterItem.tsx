@@ -18,15 +18,6 @@ export function HeroScatterItem({ item, index }: { item: ScatterItem; index: num
 
 function renderScatterContent(item: ScatterItem) {
   switch (item.kind) {
-    case 'resume':
-      return (
-        <div className="scatter-resume">
-          <span className="scatter-resume-title">RESUME</span>
-          <span className="scatter-resume-line" />
-          <span className="scatter-resume-line" />
-          <span className="scatter-resume-line short" />
-        </div>
-      );
     case 'image':
       return <img className="scatter-image" src={item.src} alt={item.alt ?? ''} loading="lazy" />;
     case 'quote':

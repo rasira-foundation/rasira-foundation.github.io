@@ -1,3 +1,4 @@
+import resume from '../assets/photos/resume.png';
 import youthGroup from '../assets/photos/youth-group.png';
 import archivalCutout from '../assets/photos/archival-cutout.png';
 import openDoor from '../assets/photos/open-door.png';
@@ -5,7 +6,7 @@ import sdg10Badge from '../assets/photos/sdg10-badge.png';
 
 export interface ScatterItem {
   id: string;
-  kind: 'resume' | 'image' | 'quote' | 'label';
+  kind: 'image' | 'quote' | 'label';
   top: string;
   left: string;
   rotate: number;
@@ -18,7 +19,17 @@ export interface ScatterItem {
 
 // Organic, borderless anchor layout — no card chrome around the photography.
 export const heroScatter: ScatterItem[] = [
-  { id: 'resume', kind: 'resume', top: '4%', left: '6%', rotate: -8, depth: 0.9, width: '90px' },
+  {
+    id: 'resume',
+    kind: 'image',
+    top: '4%',
+    left: '6%',
+    rotate: -8,
+    depth: 0.9,
+    width: '96px',
+    src: resume,
+    alt: 'Resume sticky note with a checklist',
+  },
   { id: 'question', kind: 'label', top: '3%', left: '30%', rotate: -2, depth: 0.5, text: 'Indonesia Emas 2045?' },
   {
     id: 'youth-group',

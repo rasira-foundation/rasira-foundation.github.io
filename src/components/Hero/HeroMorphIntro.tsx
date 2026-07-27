@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BlurRevealText } from '../shared/BlurRevealText';
+import resume from '../../assets/photos/resume.png';
 import openDoor from '../../assets/photos/open-door.png';
 import youthGroup from '../../assets/photos/youth-group.png';
 import archivalCutout from '../../assets/photos/archival-cutout.png';
@@ -120,17 +121,14 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <motion.div
-                className="hero-morph-resume"
+              <motion.img
+                src={resume}
+                alt=""
+                className="hero-morph-resume-img"
                 initial={{ opacity: 0, scale: 0.7, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: EASE }}
-              >
-                <span className="hero-morph-resume-title">RESUME</span>
-                <span className="hero-morph-resume-line" />
-                <span className="hero-morph-resume-line" />
-                <span className="hero-morph-resume-line short" />
-              </motion.div>
+              />
               <motion.img
                 src={sdg10Badge}
                 alt=""

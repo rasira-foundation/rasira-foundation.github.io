@@ -47,7 +47,7 @@ function App() {
               no seam behind the sticky nav. */}
           <div className="atmosphere-band">
             <SiteHeader />
-            <NarrativeHero />
+            <NarrativeHero splashDone={!showSplash} />
             <FloatingNodes />
           </div>
           <ArticleGrid />

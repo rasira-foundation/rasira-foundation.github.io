@@ -5,7 +5,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-cream);
   overflow: hidden;
 }
 
@@ -39,33 +38,9 @@
   gap: 24px;
 }
 
-.hero-morph-resume {
+.hero-morph-resume-img {
   width: 110px;
-  aspect-ratio: 3 / 4;
-  background: #fff;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  box-shadow: 0 12px 30px -12px rgba(20, 18, 15, 0.25);
-}
-
-.hero-morph-resume-title {
-  font-family: var(--font-mono);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-soft);
-}
-
-.hero-morph-resume-line {
-  display: block;
-  height: 3px;
-  background: var(--color-line);
-  border-radius: 2px;
-}
-
-.hero-morph-resume-line.short {
-  width: 60%;
+  filter: drop-shadow(0 12px 24px rgba(20, 18, 15, 0.25));
 }
 
 .hero-morph-sdg {
