@@ -1,0 +1,8 @@
+.blur-reveal {
+  display: inline-block;
+}
+
+.blur-reveal-word {
+  display: inline-block;
+  will-change: filter, transform, opacity;
+}

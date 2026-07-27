@@ -3,6 +3,7 @@ import { useScrollProgress } from '../../hooks/useScrollProgress';
 import { heroScatter } from '../../data/heroScatter';
 import { heroIntro } from '../../data/siteContent';
 import { HeroScatterItem } from './HeroScatterItem';
+import { BlurRevealText } from '../shared/BlurRevealText';
 import './narrativeHero.css';
 
 export function NarrativeHero() {
@@ -33,7 +34,7 @@ export function NarrativeHero() {
         viewport={{ once: true, margin: '-20% 0px' }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className="hero-copy-paragraph">{heroIntro.paragraph}</p>
+        <BlurRevealText text={heroIntro.paragraph} className="hero-copy-paragraph" />
         <p className="hero-copy-tags">{heroIntro.tags.join(' / ')}</p>
       </motion.div>
     </section>
