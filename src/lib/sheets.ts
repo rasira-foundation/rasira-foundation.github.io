@@ -9,25 +9,30 @@ export interface Article {
   coverImage: string | null;
   author: string;
   date: string | null;
+  readTime: string;
 }
 
 const CATEGORIES: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
 
 const SHEET_ID = import.meta.env.VITE_SHEET_ID as string | undefined;
-const SHEET_NAME = (import.meta.env.VITE_SHEET_NAME as string | undefined) || 'Articles';
+// Named tab takes priority; otherwise address the tab by gid (0 = first tab,
+// matching the "#gid=0" you get by default when copying a sheet's URL).
+const SHEET_NAME = import.meta.env.VITE_SHEET_NAME as string | undefined;
+const SHEET_GID = (import.meta.env.VITE_SHEET_GID as string | undefined) || '0';
 
 /**
- * Fetches the public "Articles" sheet client-side via the gviz JSON
- * endpoint (no API key, no backend — the sheet just needs to be published
- * or shared as "anyone with the link can view"). Publishing a new row
- * updates the live site on next page load, no rebuild required.
+ * Fetches the public Articles sheet client-side via the gviz JSON endpoint
+ * (no API key, no backend — the sheet just needs to be shared as "anyone
+ * with the link can view"). Publishing a new row updates the live site on
+ * next page load, no rebuild required.
  */
 export async function fetchArticles(): Promise<Article[]> {
   if (!SHEET_ID) {
     throw new Error('VITE_SHEET_ID is not configured');
   }
 
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+  const sheetParam = SHEET_NAME ? `sheet=${encodeURIComponent(SHEET_NAME)}` : `gid=${SHEET_GID}`;
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&${sheetParam}`;
   const res = await fetch(url);
   if (!res.ok) {
     throw new Error(`Sheet fetch failed: ${res.status}`);
@@ -38,7 +43,7 @@ export async function fetchArticles(): Promise<Article[]> {
   const rows = tableToRows(table);
 
   return rows
-    .filter((row) => normalize(row.status) === 'published')
+    .filter((row) => normalize(row.status) === 'publish')
     .map(rowToArticle)
     .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
 }
@@ -76,16 +81,18 @@ function rowToArticle(row: SheetRow): Article {
   const category = CATEGORIES.includes(row.category as ArticleCategory)
     ? (row.category as ArticleCategory)
     : 'Article';
+  const content = row.content?.trim() || '';
 
   return {
     slug,
     title,
     excerpt: row.excerpt?.trim() || '',
-    content: row.content?.trim() || '',
+    content,
     category,
     coverImage: resolveImageUrl(row.coverimage?.trim() || row.cover?.trim() || ''),
     author: row.author?.trim() || 'Rasira Foundation',
     date: row.date?.trim() || null,
+    readTime: row.readtime?.trim() || estimateReadTime(content),
   };
 }
 
@@ -101,6 +108,12 @@ function resolveImageUrl(url: string): string | null {
 
 function normalize(value: string): string {
   return value.trim().toLowerCase();
+}
+
+function estimateReadTime(content: string): string {
+  const words = content.split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min read`;
 }
 
 function slugify(value: string): string {

@@ -2,5 +2,6 @@
 
 interface ImportMetaEnv {
   readonly VITE_SHEET_ID?: string;
+  readonly VITE_SHEET_GID?: string;
   readonly VITE_SHEET_NAME?: string;
 }

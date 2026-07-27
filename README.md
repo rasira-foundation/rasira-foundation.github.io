@@ -23,26 +23,27 @@ npm run dev
 ## Content: the Articles sheet
 
 Create a Google Sheet, publish/share it as "Anyone with the link can view",
-and add a tab (default name `Articles`) with these columns (case-insensitive
-header names, in any order):
+and add these columns to a tab (case-insensitive header names, in any order):
 
 | Column      | Notes                                                                 |
 | ----------- | ---------------------------------------------------------------------- |
-| Status      | Must be exactly `published` for the row to appear. Anything else (e.g. `draft`) is filtered out. |
+| Status      | Must be exactly `publish` for the row to appear. Anything else (e.g. `draft`) is filtered out. |
 | Title       | Required.                                                             |
 | Slug        | Optional — derived from Title if blank. Used in the `#/article/<slug>` URL. |
-| Category    | One of `Highlight`, `Toolkit`, `Framework`, `Article`. Defaults to `Article`. |
+| Category    | One of `Highlight`, `Toolkit`, `Framework`, `Article`. Defaults to `Article`. Cards with no CoverImage render as an ASCII-styled card regardless of category. |
 | Excerpt     | Shown on the grid card.                                               |
-| CoverImage  | A Google Drive share link or any public image URL. Drive links are auto-converted to a direct-viewable URL. |
+| CoverImage  | A Google Drive share link (`.../file/d/FILE_ID/view`) or any public image URL. Drive links are auto-converted to a direct-viewable URL. Leave blank for an ASCII-styled card instead of a full-bleed image. |
 | Author      | Defaults to "Rasira Foundation".                                      |
 | Date        | Free text, used for sort order (newest first) and the detail page byline. |
-| Content     | Long-form body. Separate paragraphs with a blank line.                |
+| ReadTime    | Optional, e.g. `4 min read`. Auto-estimated from Content word count if left blank. |
+| Content     | Long-form body. Supports light markdown: `# `/`## ` headers, `> ` blockquotes, `- ` list items, blank-line-separated paragraphs. |
 
-Then set the Sheet ID as an env var:
+Then point the site at it:
 
 ```bash
 cp .env.example .env.local
-# edit .env.local — VITE_SHEET_ID is the long ID in the sheet's URL
+# edit .env.local — VITE_SHEET_ID is the long ID in the sheet's URL,
+# VITE_SHEET_GID is the tab (0 = first tab, from the URL's "#gid=")
 ```
 
 Without `VITE_SHEET_ID` configured (or if the fetch fails), the site falls
@@ -57,7 +58,7 @@ push to `main`.
 One-time setup on GitHub:
 
 1. In the repo, go to **Settings → Pages** and set the source to **GitHub Actions**.
-2. If you're using a live sheet, go to **Settings → Secrets and variables → Actions → Variables** and add `VITE_SHEET_ID` (and `VITE_SHEET_NAME` if not `Articles`). These are plain repo variables, not secrets — the sheet ID is already public in the client bundle either way.
+2. If you're using a live sheet, go to **Settings → Secrets and variables → Actions → Variables** and add `VITE_SHEET_ID` (and `VITE_SHEET_GID`/`VITE_SHEET_NAME` if not tab 0). These are plain repo variables, not secrets — the sheet ID is already public in the client bundle either way.
 3. Push to `main`.
 
 The site is an organization root page (`rasira-foundation.github.io`), so

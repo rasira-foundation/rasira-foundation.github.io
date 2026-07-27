@@ -17,6 +17,7 @@ export const mockArticles: Article[] = [
     coverImage: null,
     author: 'Rasira Foundation',
     date: '2026-05-12',
+    readTime: '3 min read',
   },
   {
     slug: 'adoption-that-sticks',
@@ -28,17 +29,32 @@ export const mockArticles: Article[] = [
     coverImage: null,
     author: 'Rasira Foundation',
     date: '2026-04-30',
+    readTime: '2 min read',
   },
   {
     slug: 'affordable-design-lasting-impact',
     title: 'Affordable design, lasting impact',
     excerpt: 'Frugal innovation beats novelty. Notes from the field on what actually gets used.',
-    content:
-      'Technology adoption in rural programs rarely fails because the tool was wrong. It fails because nobody budgeted for the six months after launch. This is what we changed after watching three pilots stall.',
+    content: `# Why novelty loses
+
+Technology adoption in rural programs rarely fails because the tool was wrong. It fails because nobody budgeted for the six months after launch.
+
+## What we changed
+
+After watching three pilots stall at the same point, we rebuilt the rollout around three checkpoints instead of one big launch day.
+
+- Week 1: a single supervised session, no take-home device
+- Week 4: unsupervised use, checked against a short call
+- Month 3: adoption re-measured against the original baseline
+
+> The tool was never the bottleneck. The six months after launch was.
+
+That reframing changed what we budget for, and it is the one line item partners no longer try to cut.`,
     category: 'Highlight',
-    coverImage: null,
+    coverImage: 'https://picsum.photos/id/1015/1200/900',
     author: 'Rasira Foundation',
     date: '2026-06-02',
+    readTime: '4 min read',
   },
   {
     slug: 'measuring-what-moves',
@@ -50,5 +66,6 @@ export const mockArticles: Article[] = [
     coverImage: null,
     author: 'Rasira Foundation',
     date: '2026-03-18',
+    readTime: '3 min read',
   },
 ];

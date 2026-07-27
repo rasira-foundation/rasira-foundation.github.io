@@ -37,6 +37,7 @@ jobs:
         run: npm run build
         env:
           VITE_SHEET_ID: ${{ vars.VITE_SHEET_ID }}
+          VITE_SHEET_GID: ${{ vars.VITE_SHEET_GID }}
           VITE_SHEET_NAME: ${{ vars.VITE_SHEET_NAME }}
 
       - name: Setup Pages

@@ -1,5 +1,6 @@
 import { useArticles } from './useArticles';
 import { navigateHome } from '../../hooks/useHashRoute';
+import { parseMarkdownLite } from '../../lib/markdown';
 import './articleDetail.css';
 
 export function ArticleDetail({ slug }: { slug: string }) {
@@ -17,42 +18,41 @@ export function ArticleDetail({ slug }: { slug: string }) {
   if (!article) {
     return (
       <main className="article-detail">
-        <button type="button" className="article-detail-back" onClick={navigateHome}>
-          ← Back
-        </button>
-        <p className="article-detail-loading">This article couldn&apos;t be found.</p>
+        <div className="article-detail-col">
+          <button type="button" className="article-detail-back" onClick={navigateHome}>
+            ← Back
+          </button>
+          <p className="article-detail-loading">This article couldn&apos;t be found.</p>
+        </div>
       </main>
     );
   }
 
-  const paragraphs = article.content.split(/\n{2,}/).filter(Boolean);
+  const body = article.content ? parseMarkdownLite(article.content) : [<p key="excerpt">{article.excerpt}</p>];
 
   return (
     <main className="article-detail">
-      <button type="button" className="article-detail-back" onClick={navigateHome}>
-        ← Back
-      </button>
+      <div className="article-detail-col">
+        <button type="button" className="article-detail-back" onClick={navigateHome}>
+          ← Back
+        </button>
 
-      <p className="article-detail-category">{article.category}</p>
-      <h1 className="article-detail-title">{article.title}</h1>
-      <p className="article-detail-meta">
-        {article.author}
-        {article.date && ` · ${article.date}`}
-      </p>
+        <span className="article-detail-badge">{article.category}</span>
+        <h1 className="article-detail-title">{article.title}</h1>
+        <p className="article-detail-meta">
+          {article.author}
+          {article.date && ` · ${article.date}`}
+          {` · ${article.readTime}`}
+        </p>
+      </div>
 
       {article.coverImage && (
-        <div className="article-detail-cover">
+        <div className="article-detail-hero">
           <img src={article.coverImage} alt="" />
         </div>
       )}
 
-      <div className="article-detail-body">
-        {paragraphs.length > 0 ? (
-          paragraphs.map((p, i) => <p key={i}>{p}</p>)
-        ) : (
-          <p>{article.excerpt}</p>
-        )}
-      </div>
+      <div className="article-detail-col article-detail-body">{body}</div>
     </main>
   );
 }
