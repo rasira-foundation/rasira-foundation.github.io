@@ -16,10 +16,10 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
       type="button"
       className={hasImage ? 'article-card article-card--image' : 'article-card article-card--ascii'}
       onClick={() => navigateToArticle(article.slug)}
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-10% 0px' }}
-      transition={{ duration: 0.6, delay: (index % 4) * 0.06 }}
+      initial={{ opacity: 0, y: 24, filter: 'blur(16px)' }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      viewport={{ once: false, amount: 0.3 }}
+      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: (index % 4) * 0.06 }}
     >
       {hasImage ? (
         <>

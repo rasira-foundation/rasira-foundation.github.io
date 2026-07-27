@@ -1,14 +1,8 @@
-import { motion } from 'framer-motion';
 import { AsteriskMark } from '../Splash/AsteriskMark';
+import { BlurRevealElement } from '../shared/BlurRevealElement';
 import { CONTACT_EMAIL, programAims, floatingNodes, collabPrompt } from '../../data/siteContent';
 import { hubPosition, spokeNodes, collabPosition } from '../../data/floatingNodesLayout';
 import './floatingNodes.css';
-
-const fadeUp = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-15% 0px' },
-} as const;
 
 export function FloatingNodes() {
   return (
@@ -26,56 +20,61 @@ export function FloatingNodes() {
         <NodeDot position={spokeNodes.design} floatClass="node-float-2" />
 
         <div className="node-content-wrap node-hub-wrap node-drift-1" style={hubPosition}>
-          <motion.div className="node-hub" {...fadeUp} transition={{ duration: 0.8 }}>
-            <AsteriskMark className="node-hub-mark" />
-          </motion.div>
+          <BlurRevealElement className="node-hub-blur-wrap">
+            <div className="node-hub">
+              <AsteriskMark className="node-hub-mark" />
+            </div>
+          </BlurRevealElement>
         </div>
 
         <div
           className="node-content-wrap node-drift-0"
           style={{ top: `${spokeNodes.bullets.top - 12}%`, left: `${spokeNodes.bullets.left - 24}%` }}
         >
-          <motion.div className="node-content node-bullets" {...fadeUp} transition={{ duration: 0.8, delay: 0.1 }}>
-            <h3>{programAims.heading}</h3>
-            <ul>
-              {programAims.items.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </motion.div>
+          <BlurRevealElement delay={0.1}>
+            <div className="node-content node-bullets">
+              <h3>{programAims.heading}</h3>
+              <ul>
+                {programAims.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </BlurRevealElement>
         </div>
 
         <div
           className="node-content-wrap node-drift-2"
           style={{ top: `${spokeNodes.measure.top - 5}%`, left: `${spokeNodes.measure.left + 3}%` }}
         >
-          <motion.p className="node-content node-measure" {...fadeUp} transition={{ duration: 0.8, delay: 0.2 }}>
-            <BoldLeadText node={floatingNodes[0]} />
-          </motion.p>
+          <BlurRevealElement delay={0.2}>
+            <p className="node-content node-measure">
+              <BoldLeadText node={floatingNodes[0]} />
+            </p>
+          </BlurRevealElement>
         </div>
 
         <div
           className="node-content-wrap node-drift-1"
           style={{ top: `${spokeNodes.design.top + 2}%`, left: `${spokeNodes.design.left + 3}%` }}
         >
-          <motion.p className="node-content node-design" {...fadeUp} transition={{ duration: 0.8, delay: 0.3 }}>
-            <BoldLeadText node={floatingNodes[1]} />
-          </motion.p>
+          <BlurRevealElement delay={0.3}>
+            <p className="node-content node-design">
+              <BoldLeadText node={floatingNodes[1]} />
+            </p>
+          </BlurRevealElement>
         </div>
 
         <div
           className="node-content-wrap node-drift-0"
           style={{ top: `${collabPosition.top - 5}%`, left: `${collabPosition.left - 18}%` }}
         >
-          <motion.a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="node-content node-collab"
-            {...fadeUp}
-            transition={{ duration: 0.8, delay: 0.15 }}
-          >
-            <h2>{collabPrompt.heading}</h2>
-            <p>{collabPrompt.sub}</p>
-          </motion.a>
+          <BlurRevealElement delay={0.15}>
+            <a href={`mailto:${CONTACT_EMAIL}`} className="node-content node-collab">
+              <h2>{collabPrompt.heading}</h2>
+              <p>{collabPrompt.sub}</p>
+            </a>
+          </BlurRevealElement>
         </div>
       </div>
     </section>

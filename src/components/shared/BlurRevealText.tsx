@@ -10,13 +10,13 @@ interface BlurRevealTextProps {
   stagger?: number;
 }
 
-/** Word-by-word blur-in reveal, triggered once the text scrolls into view. */
+/** Word-by-word blur-in reveal, triggered as the text scrolls into view. */
 export function BlurRevealText({
   text,
   className = '',
   delay = 0,
-  duration = 0.8,
-  stagger = 0.03,
+  duration = 1.2,
+  stagger = 0.04,
 }: BlurRevealTextProps) {
   const words = text.split(' ');
 
@@ -43,7 +43,7 @@ export function BlurRevealText({
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: '-50px' }}
+      viewport={{ once: false, amount: 0.3 }}
       className={`blur-reveal ${className}`}
     >
       {words.map((word, index) => (

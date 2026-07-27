@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useLocalClock } from '../../hooks/useLocalClock';
 import { CONTACT_EMAIL, closingNarrative } from '../../data/siteContent';
 import { AnalogClock } from './AnalogClock';
+import { BlurRevealElement } from '../shared/BlurRevealElement';
 import oneLineLogo from '../../assets/rasira-1line.svg';
 import './closingFooter.css';
 
@@ -13,7 +14,9 @@ export function ClosingFooter() {
       <div className="closing-footer-glow" aria-hidden="true" />
 
       <div className="closing-footer-clock-wrap">
-        <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
+        <BlurRevealElement className="closing-footer-clock-blur">
+          <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
+        </BlurRevealElement>
         <span className="closing-footer-digital">{clock.digital}</span>
       </div>
 
