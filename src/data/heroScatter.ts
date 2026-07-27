@@ -19,7 +19,6 @@ export interface ScatterItem {
 // Organic, borderless anchor layout — no card chrome around the photography.
 export const heroScatter: ScatterItem[] = [
   { id: 'resume', kind: 'resume', top: '4%', left: '6%', rotate: -8, depth: 0.9, width: '90px' },
-  { id: 'quote', kind: 'quote', top: '22%', left: '3%', rotate: -3, depth: 0.35, text: '"Not for people like me."' },
   { id: 'question', kind: 'label', top: '3%', left: '30%', rotate: -2, depth: 0.5, text: 'Indonesia Emas 2045?' },
   {
     id: 'youth-group',

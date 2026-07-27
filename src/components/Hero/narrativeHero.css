@@ -85,7 +85,7 @@
 
 .hero-copy {
   max-width: 640px;
-  margin: 0 auto;
+  margin: -50px auto 0;
   text-align: center;
   padding: 4vh 24px 10vh;
 }

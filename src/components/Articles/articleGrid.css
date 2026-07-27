@@ -50,36 +50,65 @@
   padding: 40px 0;
 }
 
-/* 1px dividers everywhere via the classic grid-gap-as-background trick */
+/* Default view: a tight, horizontally scrollable single-row card reel,
+   equal-width cards with hairline dividers between them. */
 .article-grid {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-auto-flow: dense;
-  gap: 1px;
-  background: var(--color-border-neutral);
-  border: 1px solid var(--color-border-neutral);
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  border: 1px solid var(--color-border-strong);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.article-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.article-grid::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 3px;
 }
 
 .article-card {
   position: relative;
   display: flex;
+  flex: 0 0 320px;
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
   background: var(--color-cream);
   border: none;
+  border-right: 1px solid var(--color-border-strong);
   cursor: pointer;
   padding: 22px;
   min-height: 240px;
   overflow: hidden;
   font-family: var(--font-editorial-sans);
+  scroll-snap-align: start;
   transition: background 0.25s var(--ease-soft);
 }
 
-/* Highlight tab's collapsed view: a clean, evenly-matched 2x2. */
+.article-card:last-child {
+  border-right: none;
+}
+
+/* Highlight tab's collapsed view: a clean, evenly-matched 2x2 grid instead
+   of the reel. */
+.article-grid--2x2 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1px;
+  overflow-x: visible;
+  background: var(--color-border-neutral);
+  border: 1px solid var(--color-border-neutral);
+}
+
 .article-grid--2x2 .article-card {
+  flex: unset;
   min-height: 320px;
+  border-right: none;
 }
 
 .article-card--featured .article-card-title {
@@ -88,8 +117,7 @@
 }
 
 .article-card--featured .article-card-excerpt {
-  font-size: 14px;
-  -webkit-line-clamp: 3;
+  font-size: 15px;
 }
 
 .article-card--ascii:hover {
@@ -101,7 +129,7 @@
   font-size: 10.5px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   color: var(--color-dawn-orange);
 }
 
@@ -117,8 +145,8 @@
 
 .article-card-title {
   font-family: var(--font-editorial-serif);
-  font-weight: 500;
-  font-size: 21px;
+  font-weight: 700;
+  font-size: 22px;
   line-height: 1.25;
   color: var(--color-ink);
   margin: 0 0 8px;
@@ -129,12 +157,14 @@
 }
 
 .article-card-excerpt {
-  font-size: 13px;
+  font-family: var(--font-editorial-serif);
+  font-weight: 400;
+  font-size: 14px;
   line-height: 1.5;
-  color: var(--color-ink-soft);
+  color: var(--color-neutral-600);
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
 
@@ -148,6 +178,8 @@
 .article-card-meta {
   font-family: var(--font-editorial-mono);
   font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: var(--color-ink-faint);
 }
 
@@ -239,10 +271,17 @@
 }
 
 @media (max-width: 860px) {
-  .article-grid {
+  .article-grid .article-card {
+    flex-basis: 82vw;
+  }
+  .article-grid--2x2 {
     grid-template-columns: 1fr;
   }
-  .article-card {
+  .article-grid--2x2 .article-card {
     grid-column: span 1 !important;
+    border-bottom: 1px solid var(--color-border-neutral);
+  }
+  .article-grid--2x2 .article-card:last-child {
+    border-bottom: none;
   }
 }

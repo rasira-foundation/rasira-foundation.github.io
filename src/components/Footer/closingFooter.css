@@ -27,23 +27,14 @@
   left: 50%;
   top: 30%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
+  width: 92px;
+  height: 92px;
 }
 
 .analog-clock {
-  width: 92px;
-  height: 92px;
+  width: 100%;
+  height: 100%;
   overflow: visible;
-}
-
-.analog-clock-face {
-  fill: none;
-  stroke: var(--color-ink);
-  stroke-opacity: 0.25;
-  stroke-width: 1;
 }
 
 .analog-clock-hand {
@@ -72,6 +63,9 @@
 }
 
 .closing-footer-digital {
+  position: absolute;
+  top: -6px;
+  left: calc(100% + 14px);
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--color-ink-soft);
@@ -85,6 +79,11 @@
   line-height: 1.6;
   color: var(--color-ink-faint);
   max-width: 260px;
+  opacity: 0.75;
+  -webkit-mask-image: linear-gradient(180deg, black 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, black 55%, transparent 100%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .closing-footer-contact {
