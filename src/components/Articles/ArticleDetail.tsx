@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useArticles } from './useArticles';
 import { navigateHome } from '../../hooks/useHashRoute';
 import { parseMarkdownLite } from '../../lib/markdown';
@@ -6,6 +7,10 @@ import './articleDetail.css';
 export function ArticleDetail({ slug }: { slug: string }) {
   const { articles, loading } = useArticles();
   const article = articles.find((a) => a.slug === slug);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [slug]);
 
   if (loading) {
     return (

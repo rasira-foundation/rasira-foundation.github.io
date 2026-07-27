@@ -6,19 +6,21 @@ import { ArticleCard } from './ArticleCard';
 import './articleGrid.css';
 
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
-const PREVIEW_COUNT = 4;
+const PER_ROW = 4;
 
 export function ArticleGrid() {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
-  const [showAll, setShowAll] = useState(false);
+  const [visibleRows, setVisibleRows] = useState(1);
 
   const filtered = useMemo(
     () => (activeTab === 'Highlight' ? articles : articles.filter((a) => a.category === activeTab)),
     [articles, activeTab],
   );
 
-  const visible = showAll ? filtered : filtered.slice(0, PREVIEW_COUNT);
+  const visibleCount = visibleRows * PER_ROW;
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = filtered.length > visibleCount;
 
   return (
     <section className="article-hub">
@@ -31,7 +33,7 @@ export function ArticleGrid() {
               className={tab === activeTab ? 'article-tab active' : 'article-tab'}
               onClick={() => {
                 setActiveTab(tab);
-                setShowAll(false);
+                setVisibleRows(1);
               }}
             >
               {tab}
@@ -52,13 +54,13 @@ export function ArticleGrid() {
         ) : (
           <motion.div className="article-grid" layout>
             {visible.map((article, i) => (
-              <ArticleCard key={article.slug} article={article} index={i} />
+              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} />
             ))}
           </motion.div>
         )}
 
-        {!showAll && filtered.length > PREVIEW_COUNT && (
-          <button type="button" className="article-hub-see-all" onClick={() => setShowAll(true)}>
+        {hasMore && (
+          <button type="button" className="article-hub-see-all" onClick={() => setVisibleRows((r) => r + 1)}>
             See All
           </button>
         )}

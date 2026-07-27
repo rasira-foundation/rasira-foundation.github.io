@@ -27,14 +27,21 @@
 
 .splash-logotype-wrap {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+  width: 360px;
 }
 
 .splash-logotype {
-  display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: auto;
+}
+
+.splash-dawn-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, var(--color-dawn-peach) 0%, var(--color-dawn-orange) 55%, var(--color-cream) 100%);
 }
 
 .splash-skip {

@@ -81,7 +81,11 @@ function rowToArticle(row: SheetRow): Article {
   const category = CATEGORIES.includes(row.category as ArticleCategory)
     ? (row.category as ArticleCategory)
     : 'Article';
-  const content = row.content?.trim() || '';
+  // Header keys are normalized (spaces/underscores/hyphens stripped, see
+  // normalize()), so "content_markdown", "Content Markdown" etc. all land
+  // on "contentmarkdown" here — check the long form first, short form as
+  // a fallback for simpler sheets.
+  const content = row.contentmarkdown?.trim() || row.content?.trim() || '';
 
   return {
     slug,
@@ -89,9 +93,9 @@ function rowToArticle(row: SheetRow): Article {
     excerpt: row.excerpt?.trim() || '',
     content,
     category,
-    coverImage: resolveImageUrl(row.coverimage?.trim() || row.cover?.trim() || ''),
+    coverImage: resolveImageUrl(row.coverimageurl?.trim() || row.coverimage?.trim() || row.cover?.trim() || ''),
     author: row.author?.trim() || 'Rasira Foundation',
-    date: row.date?.trim() || null,
+    date: row.publishdate?.trim() || row.date?.trim() || null,
     readTime: row.readtime?.trim() || estimateReadTime(content),
   };
 }
@@ -107,7 +111,7 @@ function resolveImageUrl(url: string): string | null {
 }
 
 function normalize(value: string): string {
-  return value.trim().toLowerCase();
+  return value.trim().toLowerCase().replace(/[\s_-]+/g, '');
 }
 
 function estimateReadTime(content: string): string {

@@ -50,48 +50,32 @@
   padding: 40px 0;
 }
 
-/* Single-row horizontal reel: tall, narrow (3:4), equal-width cards inside
-   one crisp unified outline, with hairline dividers between them. */
+/* Paginated box-grid: 4 tall/narrow (3:4) cards per row, growing by one row
+   at a time via "See All". Dividers (both directions) via the classic
+   grid-gap-as-background trick, wrapped in one crisp outer border. */
 .article-grid {
   width: 100%;
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  border: 1.5px solid var(--color-border-strong);
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-border-strong) transparent;
-}
-
-.article-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.article-grid::-webkit-scrollbar-thumb {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
   background: var(--color-border-strong);
-  border-radius: 3px;
+  border: 1.5px solid var(--color-border-strong);
 }
 
 .article-card {
   position: relative;
   display: flex;
-  flex: 0 0 240px;
-  height: 320px;
+  aspect-ratio: 3 / 4;
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
   background: var(--color-cream);
   border: none;
-  border-right: 1px solid var(--color-border-strong);
   cursor: pointer;
   padding: 20px;
   overflow: hidden;
   font-family: var(--font-editorial-sans);
-  scroll-snap-align: start;
   transition: background 0.25s var(--ease-soft);
-}
-
-.article-card:last-child {
-  border-right: none;
 }
 
 .article-card--ascii:hover {
@@ -244,7 +228,13 @@
 }
 
 @media (max-width: 860px) {
-  .article-grid .article-card {
-    flex-basis: 68vw;
+  .article-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .article-grid {
+    grid-template-columns: 1fr;
   }
 }

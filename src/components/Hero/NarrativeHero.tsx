@@ -18,7 +18,7 @@ export function NarrativeHero() {
         ref={ref}
         className="hero-scatter-field"
         style={{
-          filter: `blur(${exitProgress * 5}px) grayscale(${exitProgress * 0.85}) contrast(${1 - exitProgress * 0.1})`,
+          filter: `blur(${exitProgress * 8}px) grayscale(${exitProgress * 0.85}) brightness(${1 - exitProgress * 0.1})`,
         }}
       >
         {heroScatter.map((item, index) => (

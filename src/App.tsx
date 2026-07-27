@@ -31,8 +31,9 @@ function App() {
     <>
       <div className="noise-overlay" />
 
-      {/* Homepage is always mounted so the splash's own opacity fade reveals
-          it directly underneath — a real cross-fade, not a hard swap. */}
+      {/* Homepage is always mounted underneath the splash, so once the dawn
+          curtain finishes and the splash unmounts, the header it just
+          shrank the logo into is already there waiting, in place. */}
       {route.view === 'article' ? (
         <>
           <SiteHeader />

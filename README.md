@@ -25,18 +25,22 @@ npm run dev
 Create a Google Sheet, publish/share it as "Anyone with the link can view",
 and add these columns to a tab (case-insensitive header names, in any order):
 
-| Column      | Notes                                                                 |
-| ----------- | ---------------------------------------------------------------------- |
-| Status      | Must be exactly `publish` for the row to appear. Anything else (e.g. `draft`) is filtered out. |
-| Title       | Required.                                                             |
-| Slug        | Optional — derived from Title if blank. Used in the `#/article/<slug>` URL. |
-| Category    | One of `Highlight`, `Toolkit`, `Framework`, `Article`. Defaults to `Article`. Cards with no CoverImage render as an ASCII-styled card regardless of category. |
-| Excerpt     | Shown on the grid card.                                               |
-| CoverImage  | A Google Drive share link (`.../file/d/FILE_ID/view`) or any public image URL. Drive links are auto-converted to a direct-viewable URL. Leave blank for an ASCII-styled card instead of a full-bleed image. |
-| Author      | Defaults to "Rasira Foundation".                                      |
-| Date        | Free text, used for sort order (newest first) and the detail page byline. |
-| ReadTime    | Optional, e.g. `4 min read`. Auto-estimated from Content word count if left blank. |
-| Content     | Long-form body. Supports light markdown: `# `/`## ` headers, `> ` blockquotes, `- ` list items, blank-line-separated paragraphs. |
+Header names are normalized (lowercased, spaces/underscores/hyphens
+stripped) before matching, so `Content Markdown`, `content_markdown`, and
+`ContentMarkdown` are all treated the same — use whichever style you like.
+
+| Column           | Notes                                                                 |
+| ---------------- | ---------------------------------------------------------------------- |
+| status           | Must be exactly `publish` for the row to appear. Anything else (e.g. `draft`) is filtered out. |
+| title            | Required.                                                             |
+| slug             | Optional — derived from title if blank. Used in the `#/article/<slug>` URL. |
+| category         | One of `Highlight`, `Toolkit`, `Framework`, `Article`. Defaults to `Article`. Cards with no cover image render as an ASCII-styled card regardless of category. |
+| excerpt          | Shown on the grid card.                                               |
+| cover_image_url  | A Google Drive share link (`.../file/d/FILE_ID/view`) or any public image URL. Drive links are auto-converted to a direct-viewable URL. Leave blank for an ASCII-styled card instead of a full-bleed image. |
+| author           | Defaults to "Rasira Foundation".                                      |
+| publish_date     | Free text (or a Sheets date column), used for sort order (newest first) and the detail page byline. |
+| read_time        | Optional, e.g. `4 min read`. Auto-estimated from content_markdown word count if left blank. |
+| content_markdown | Long-form body. Supports light markdown: `# `/`## ` headers, `> ` blockquotes, `- ` list items, blank-line-separated paragraphs. |
 
 Then point the site at it:
 
