@@ -1,5 +1,5 @@
 .article-hub {
-  background: var(--color-cream);
+  background: var(--color-gradient-4);
   padding: 10vh 24px 12vh;
 }
 
@@ -51,15 +51,18 @@
 }
 
 /* Paginated box-grid: 4 tall/narrow (3:4) cards per row, growing by one row
-   at a time via "See All". Dividers (both directions) via the classic
-   grid-gap-as-background trick, wrapped in one crisp outer border. */
+   at a time via "See All". Border-collapse pattern: the container draws
+   only the top+left edges, each card draws only its own right+bottom edge
+   — adjacent cards share a single line with no doubling, and a partial
+   last row (e.g. one lone card) never paints a border or fill into the
+   empty columns beside it, since there's no shared gap-background there
+   to show through. Both edges use the same token/weight throughout. */
 .article-grid {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--color-border-strong);
-  border: 1.5px solid var(--color-border-strong);
+  border-left: 1px solid var(--color-border-neutral);
+  border-top: 1px solid var(--color-border-neutral);
 }
 
 .article-card {
@@ -69,17 +72,15 @@
   flex-direction: column;
   justify-content: space-between;
   text-align: left;
-  background-color: var(--color-cream);
+  background-color: var(--color-gradient-4);
   border: none;
+  border-right: 1px solid var(--color-border-neutral);
+  border-bottom: 1px solid var(--color-border-neutral);
   cursor: pointer;
   padding: 20px;
   overflow: hidden;
   font-family: var(--font-editorial-sans);
   transition: background 0.25s var(--ease-soft);
-  /* The grid's dark gap-as-divider background sits directly behind these
-     cards; without its own compositing layer, an animating filter:blur()
-     can transiently bleed that dark background through at the card edges.
-     isolation:isolate contains the card's paint to its own layer. */
   isolation: isolate;
   will-change: transform, filter;
 }
@@ -216,21 +217,29 @@
   font-size: 18px;
 }
 
+/* Same fluid-glass pill treatment as .node-collab-pill, so the two primary
+   CTAs on the page read as one consistent button language. */
 .article-hub-see-all {
-  margin-top: 36px;
+  margin-top: 56px;
   padding: 10px 26px;
-  border: 1px solid var(--color-ink);
   border-radius: 999px;
-  background: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.16));
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 30px rgba(20, 18, 15, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   font-family: var(--font-editorial-sans);
   font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
   cursor: pointer;
-  transition: background 0.2s var(--ease-soft), color 0.2s var(--ease-soft);
+  transition: transform 0.35s var(--ease-soft), box-shadow 0.35s var(--ease-soft), background 0.35s var(--ease-soft);
 }
 
 .article-hub-see-all:hover {
-  background: var(--color-ink);
-  color: var(--color-cream);
+  transform: translateY(-3px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.26));
+  box-shadow: 0 14px 40px rgba(20, 18, 15, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 @media (max-width: 860px) {

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
@@ -31,9 +32,9 @@ function App() {
     <>
       <div className="noise-overlay" />
 
-      {/* Homepage is always mounted underneath the splash, so once the dawn
-          curtain finishes and the splash unmounts, the header it just
-          shrank the logo into is already there waiting, in place. */}
+      {/* Homepage is always mounted underneath the splash. The header's own
+          logo stays invisible (see visible={!showSplash} below) until the
+          splash's copy hands off to it via a shared layoutId. */}
       {route.view === 'article' ? (
         <>
           <SiteHeader />
@@ -46,7 +47,7 @@ function App() {
               runs continuously from the very top of the viewport, with
               no seam behind the sticky nav. */}
           <div className="atmosphere-band">
-            <SiteHeader />
+            <SiteHeader visible={!showSplash} />
             <NarrativeHero splashDone={!showSplash} />
             <FloatingNodes />
           </div>
@@ -55,7 +56,14 @@ function App() {
         </>
       )}
 
-      {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
+      {/* AnimatePresence + the splash's own exit fade keeps it rendered
+          (fading opacity 1 -> 0) through roughly the hero scatter items'
+          settle window, instead of yanking it out the instant its internal
+          handoff timer fires — no hard cut, no risk of a seam flashing
+          through at the exact unmount instant. */}
+      <AnimatePresence>
+        {showSplash && <SplashScreen key="splash" onComplete={handleSplashComplete} />}
+      </AnimatePresence>
     </>
   );
 }

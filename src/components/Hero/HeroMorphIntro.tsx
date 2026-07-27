@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BlurRevealText } from '../shared/BlurRevealText';
 import resume from '../../assets/photos/resume.png';
 import openDoor from '../../assets/photos/open-door.png';
 import youthGroup from '../../assets/photos/youth-group.png';
@@ -11,12 +10,12 @@ import './heroMorphIntro.css';
 type Stage = 'door' | 'youth' | 'newspaper' | 'resumeSdg' | 'text' | 'exit';
 
 const TIMINGS = {
-  door: 1300,
-  youth: 1100,
-  newspaper: 1100,
-  resumeSdg: 1300,
-  text: 1800,
-  exit: 700,
+  door: 950,
+  youth: 800,
+  newspaper: 800,
+  resumeSdg: 950,
+  text: 1300,
+  exit: 550,
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -55,7 +54,10 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
       elapsed += delay;
       return window.setTimeout(() => setStage(nextStage), elapsed);
     });
-    const doneTimer = window.setTimeout(onComplete, elapsed + TIMINGS.exit);
+    // Fires 200ms before the exit fade visually finishes, so the hero
+    // scatter items' own pop-in starts while the very tail of the text
+    // fade-out is still on screen — no blank frame between the two.
+    const doneTimer = window.setTimeout(onComplete, elapsed + TIMINGS.exit - 200);
 
     return () => {
       timers.forEach(window.clearTimeout);
@@ -69,6 +71,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
     <motion.div
       className="hero-morph-intro"
       animate={{ opacity: isExiting ? 0 : 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: TIMINGS.exit / 1000, ease: 'easeInOut' }}
       style={{ pointerEvents: isExiting ? 'none' : 'auto' }}
     >
@@ -149,8 +152,24 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <BlurRevealText text="Indonesia Emas 2045?" className="hero-morph-headline" />
-              <BlurRevealText text="time is ticking.." className="hero-morph-subline" delay={0.3} />
+              <div className="hero-morph-headline">
+                <motion.span
+                  initial={{ filter: 'blur(10px)', opacity: 0, y: 12 }}
+                  animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, ease: EASE }}
+                >
+                  Indonesia Emas 2045?
+                </motion.span>
+              </div>
+              <div className="hero-morph-subline">
+                <motion.span
+                  initial={{ filter: 'blur(10px)', opacity: 0, y: 12 }}
+                  animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
+                  transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+                >
+                  time is ticking..
+                </motion.span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

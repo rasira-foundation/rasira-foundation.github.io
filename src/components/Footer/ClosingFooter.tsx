@@ -3,7 +3,6 @@ import { useLocalClock } from '../../hooks/useLocalClock';
 import { CONTACT_EMAIL, closingNarrative } from '../../data/siteContent';
 import { AnalogClock } from './AnalogClock';
 import { BlurRevealElement } from '../shared/BlurRevealElement';
-import oneLineLogo from '../../assets/rasira-1line.svg';
 import './closingFooter.css';
 
 export function ClosingFooter() {
@@ -36,7 +35,6 @@ export function ClosingFooter() {
         <a href={`mailto:${CONTACT_EMAIL}`} className="closing-footer-mail">
           {CONTACT_EMAIL}
         </a>
-        <img src={oneLineLogo} alt="Rasira Foundation" className="closing-footer-logo" />
         <span className="closing-footer-year">© {new Date().getFullYear()}</span>
       </div>
     </footer>

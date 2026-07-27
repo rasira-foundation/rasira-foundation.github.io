@@ -1,11 +1,11 @@
 .narrative-hero {
   position: relative;
-  padding-top: 6vh;
+  padding-top: 4.5vh;
 }
 
 .hero-scatter-field {
   position: relative;
-  height: min(78vh, 620px);
+  height: min(46vh, 380px);
   max-width: var(--container-max);
   margin: 0 auto;
   transition: filter 0.2s linear;
@@ -55,9 +55,9 @@
 
 .hero-copy {
   max-width: 640px;
-  margin: -30px auto 0;
+  margin: -10px auto 0;
   text-align: center;
-  padding: 4vh 24px 10vh;
+  padding: 3.5vh 24px 10vh;
 }
 
 .hero-copy-paragraph {
@@ -77,10 +77,13 @@
 
 @media (max-width: 720px) {
   .hero-scatter-field {
-    height: 60vh;
+    height: 38vh;
   }
   .scatter-item {
     transform: scale(0.72);
     transform-origin: top left;
+  }
+  .hero-copy {
+    padding: 32px 16px 10vh;
   }
 }

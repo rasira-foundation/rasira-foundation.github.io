@@ -10,8 +10,8 @@
 
 .hero-morph-stage {
   position: relative;
-  width: 260px;
-  height: 260px;
+  width: min(260px, 62vw);
+  height: min(260px, 62vw);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,17 +51,21 @@
 .hero-morph-text {
   position: absolute;
   text-align: center;
-  max-width: 320px;
+  max-width: min(320px, 82vw);
   transform: perspective(800px) rotateX(12deg) translateZ(-20px);
   transform-style: preserve-3d;
 }
 
 .hero-morph-headline {
   display: block;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 20px;
+  font-size: 19px;
+  letter-spacing: -0.01em;
   color: var(--color-ink);
+  /* Same idea as the subline below — a faint residual blur even once
+     revealed, so the crisp reveal settles into something softer. */
+  filter: blur(0.4px);
 }
 
 .hero-morph-subline {

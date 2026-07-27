@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react';
-import { motion, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
+import { useCallback, useRef, useState } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 import { heroScatter } from '../../data/heroScatter';
 import { heroIntro } from '../../data/siteContent';
 import { HeroScatterItem } from './HeroScatterItem';
@@ -21,6 +21,17 @@ export function NarrativeHero({ splashDone }: NarrativeHeroProps) {
   const [showMorphIntro, setShowMorphIntro] = useState(
     () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
   );
+  // The narrative paragraph stays hidden for as long as the morph intro is
+  // showing, and only floats in once the whole cinematic sequence — door
+  // through exit — has actually finished (not partway through, at its own
+  // text beat). If the intro's already been seen this session there's
+  // nothing to wait on, so this is true from the first render.
+  const heroCopyReady = !showMorphIntro;
+
+  const handleMorphComplete = useCallback(() => {
+    sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');
+    setShowMorphIntro(false);
+  }, []);
 
   // 0 when the field's top edge reaches the viewport top, 1 once its bottom
   // edge has too (i.e. how far it's scrolled past). Blur/desaturate ramps up
@@ -41,24 +52,22 @@ export function NarrativeHero({ splashDone }: NarrativeHeroProps) {
         {!showMorphIntro &&
           heroScatter.map((item, index) => <HeroScatterItem key={item.id} item={item} index={index} />)}
 
-        {showMorphIntro && splashDone && (
-          <HeroMorphIntro
-            onComplete={() => {
-              sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');
-              setShowMorphIntro(false);
-            }}
-          />
-        )}
+        {/* AnimatePresence so the morph overlay can finish its own exit fade
+            gracefully even though onComplete now fires slightly before that
+            fade is visually done (see HeroMorphIntro) — without it, this
+            conditional render would yank the overlay out mid-fade. */}
+        <AnimatePresence>
+          {showMorphIntro && splashDone && <HeroMorphIntro key="hero-morph-intro" onComplete={handleMorphComplete} />}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div
         className="hero-copy"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-20% 0px' }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={heroCopyReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
       >
-        <BlurRevealText text={heroIntro.paragraph} className="hero-copy-paragraph" />
+        <BlurRevealText text={heroIntro.paragraph} className="hero-copy-paragraph" start={heroCopyReady} />
         <p className="hero-copy-tags">{heroIntro.tags.join(' / ')}</p>
       </motion.div>
     </section>

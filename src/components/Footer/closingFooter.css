@@ -1,7 +1,9 @@
 .closing-footer {
   position: relative;
   background: var(--color-cream);
-  padding: 14vh 24px 6vh;
+  /* Extra 50px on top of the existing 18vh — more breathing room between
+     the article hub's See All button (previous section) and the clock. */
+  padding: calc(18vh + 50px) 24px 9vh;
   min-height: 70vh;
   display: flex;
   flex-direction: column;
@@ -11,7 +13,7 @@
 .closing-footer-glow {
   position: absolute;
   left: 50%;
-  top: 30%;
+  top: calc(30% + 30px);
   width: 60vw;
   max-width: 560px;
   aspect-ratio: 1;
@@ -69,7 +71,7 @@
 
 .closing-footer-narrative {
   position: absolute;
-  left: 6%;
+  left: calc(50% - 50px);
   top: 42%;
   font-family: var(--font-mono);
   font-size: 13px;
@@ -86,11 +88,12 @@
 .closing-footer-contact {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding-top: 6vh;
-  border-top: 1px solid var(--color-line);
+  gap: 10px;
+  padding-top: 8vh;
+  margin-top: 4vh;
 }
 
 .closing-footer-mail {
@@ -103,11 +106,6 @@
 
 .closing-footer-mail:hover {
   border-color: var(--color-ink);
-}
-
-.closing-footer-logo {
-  height: 12px;
-  opacity: 0.7;
 }
 
 .closing-footer-year {

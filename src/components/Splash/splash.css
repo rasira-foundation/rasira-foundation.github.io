@@ -3,7 +3,18 @@
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  background: #f6f3ed;
+  /* Same gradient as .atmosphere-band, painted directly (not relying on
+     the homepage showing through a transparent layer) so the background
+     is already correct from frame 0 — no separate curtain/reveal step is
+     needed, and there's no pale/white flash while one color hands off to
+     another. */
+  background: linear-gradient(
+    180deg,
+    var(--color-gradient-1) 0%,
+    var(--color-gradient-2) 35%,
+    var(--color-gradient-3) 65%,
+    var(--color-gradient-4) 100%
+  );
 }
 
 .splash-dot {
@@ -25,9 +36,22 @@
   color: var(--color-ink);
 }
 
+/* Invisible layoutId partner, sized to roughly the star's own footprint
+   within the logotype, so the FLIP transition has a real target rect. */
+.splash-star-anchor {
+  position: absolute;
+  top: 50%;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+}
+
 .splash-logotype-wrap {
   position: absolute;
-  width: 360px;
+  /* Width is set inline (see SplashScreen.tsx) so the star-to-glyph offset
+     math can stay in sync with the actual rendered size — this max-width
+     is just a hard safety clamp against overflow on very narrow screens. */
+  max-width: 90vw;
 }
 
 .splash-logotype {
@@ -35,13 +59,6 @@
   inset: 0;
   width: 100%;
   height: auto;
-}
-
-.splash-dawn-curtain {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  background: linear-gradient(180deg, var(--color-dawn-peach) 0%, var(--color-dawn-orange) 55%, var(--color-cream) 100%);
 }
 
 .splash-skip {

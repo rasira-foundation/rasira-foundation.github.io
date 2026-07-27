@@ -1,8 +1,15 @@
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useArticles } from './useArticles';
 import { navigateHome } from '../../hooks/useHashRoute';
 import { parseMarkdownLite } from '../../lib/markdown';
 import './articleDetail.css';
+
+const entrance = {
+  initial: { opacity: 0, y: 18, filter: 'blur(10px)' },
+  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
+};
 
 export function ArticleDetail({ slug }: { slug: string }) {
   const { articles, loading } = useArticles();
@@ -36,7 +43,10 @@ export function ArticleDetail({ slug }: { slug: string }) {
   const body = article.content ? parseMarkdownLite(article.content) : [<p key="excerpt">{article.excerpt}</p>];
 
   return (
-    <main className="article-detail">
+    // key={slug} forces a remount (and so a fresh entrance transition) even
+    // when navigating directly from one article to another, not just from
+    // the home grid.
+    <motion.main key={slug} className="article-detail" {...entrance}>
       <div className="article-detail-col">
         <button type="button" className="article-detail-back" onClick={navigateHome}>
           ← Back
@@ -58,6 +68,6 @@ export function ArticleDetail({ slug }: { slug: string }) {
       )}
 
       <div className="article-detail-col article-detail-body">{body}</div>
-    </main>
+    </motion.main>
   );
 }

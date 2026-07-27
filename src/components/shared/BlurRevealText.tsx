@@ -5,46 +5,34 @@ import './blurRevealText.css';
 interface BlurRevealTextProps {
   text: string;
   className?: string;
-  delay?: number;
-  duration?: number;
-  stagger?: number;
+  /** Plays the reveal once this flips true — gates it to a specific
+   * moment (e.g. the hero morph intro finishing) rather than firing the
+   * instant this mounts. Defaults to true for standalone use. */
+  start?: boolean;
 }
 
-/** Word-by-word blur-in reveal, triggered as the text scrolls into view. */
-export function BlurRevealText({
-  text,
-  className = '',
-  delay = 0,
-  duration = 1.2,
-  stagger = 0.04,
-}: BlurRevealTextProps) {
+const containerVariants: Variants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.035, delayChildren: 0.1 } },
+};
+
+const wordVariants: Variants = {
+  hidden: { opacity: 0.2, filter: 'blur(8px)', y: 6 },
+  visible: { opacity: 1, filter: 'blur(0px)', y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+};
+
+/** Word-by-word blur-to-clear reveal that plays on its own once `start`
+ * flips true — a scripted entrance, not something tied to scroll position
+ * or requiring the user to scroll for it to play out. */
+export function BlurRevealText({ text, className = '', start = true }: BlurRevealTextProps) {
   const words = text.split(' ');
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { delayChildren: delay, staggerChildren: stagger },
-    },
-  };
-
-  const wordVariants: Variants = {
-    hidden: { filter: 'blur(12px)', opacity: 0, y: 12 },
-    visible: {
-      filter: 'blur(0px)',
-      opacity: 1,
-      y: 0,
-      transition: { duration, ease: [0.16, 1, 0.3, 1] },
-    },
-  };
-
   return (
-    <motion.div
+    <motion.p
+      className={`blur-reveal ${className}`}
       variants={containerVariants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.25 }}
-      className={`blur-reveal ${className}`}
+      animate={start ? 'visible' : 'hidden'}
     >
       {words.map((word, index) => (
         <React.Fragment key={index}>
@@ -54,6 +42,6 @@ export function BlurRevealText({
           {index < words.length - 1 && ' '}
         </React.Fragment>
       ))}
-    </motion.div>
+    </motion.p>
   );
 }

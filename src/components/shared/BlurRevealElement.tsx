@@ -18,7 +18,7 @@ export function BlurRevealElement({
   amount = 0.25,
 }: BlurRevealElementProps) {
   const variants: Variants = {
-    hidden: { filter: 'blur(16px)', opacity: 0, y: 24 },
+    hidden: { filter: 'blur(8px)', opacity: 0, y: 24 },
     visible: {
       filter: 'blur(0px)',
       opacity: 1,
