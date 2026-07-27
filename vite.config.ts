@@ -1,10 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// Deployed from the "rasira-foundation" repo (not the special
-// "<org>.github.io" repo), so GitHub Pages serves it at a subpath:
-// https://rasira-foundation.github.io/rasira-foundation/
+// rasira-foundation.github.io is an organization root page, served at "/"
 export default defineConfig({
-  base: '/rasira-foundation/',
+  base: '/',
   plugins: [react()],
 })
