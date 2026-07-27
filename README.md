@@ -1,0 +1,87 @@
+# Rasira Foundation
+
+Landing page and article hub for Rasira Foundation, built with Vite + React
++ TypeScript, deployed to GitHub Pages at `rasira-foundation.github.io`.
+
+## Stack
+
+- Vite + React + TypeScript, no UI framework
+- `framer-motion` for scroll/entry animation
+- A tiny hand-rolled hash router (`src/hooks/useHashRoute.ts`) — no
+  `react-router` dependency, just `#/` for home and `#/article/<slug>` for
+  a detail page
+- Articles are fetched client-side from a public Google Sheet — publishing
+  a new row updates the live site on next page load, no rebuild needed
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+## Content: the Articles sheet
+
+Create a Google Sheet, publish/share it as "Anyone with the link can view",
+and add a tab (default name `Articles`) with these columns (case-insensitive
+header names, in any order):
+
+| Column      | Notes                                                                 |
+| ----------- | ---------------------------------------------------------------------- |
+| Status      | Must be exactly `published` for the row to appear. Anything else (e.g. `draft`) is filtered out. |
+| Title       | Required.                                                             |
+| Slug        | Optional — derived from Title if blank. Used in the `#/article/<slug>` URL. |
+| Category    | One of `Highlight`, `Toolkit`, `Framework`, `Article`. Defaults to `Article`. |
+| Excerpt     | Shown on the grid card.                                               |
+| CoverImage  | A Google Drive share link or any public image URL. Drive links are auto-converted to a direct-viewable URL. |
+| Author      | Defaults to "Rasira Foundation".                                      |
+| Date        | Free text, used for sort order (newest first) and the detail page byline. |
+| Content     | Long-form body. Separate paragraphs with a blank line.                |
+
+Then set the Sheet ID as an env var:
+
+```bash
+cp .env.example .env.local
+# edit .env.local — VITE_SHEET_ID is the long ID in the sheet's URL
+```
+
+Without `VITE_SHEET_ID` configured (or if the fetch fails), the site falls
+back to demo content in `src/data/mockArticles.ts` so it still runs and
+looks right locally.
+
+## Deployment
+
+`.github/workflows/deploy.yml` builds and deploys to GitHub Pages on every
+push to `main`.
+
+One-time setup on GitHub:
+
+1. In the repo, go to **Settings → Pages** and set the source to **GitHub Actions**.
+2. If you're using a live sheet, go to **Settings → Secrets and variables → Actions → Variables** and add `VITE_SHEET_ID` (and `VITE_SHEET_NAME` if not `Articles`). These are plain repo variables, not secrets — the sheet ID is already public in the client bundle either way.
+3. Push to `main`.
+
+The site is an organization root page (`rasira-foundation.github.io`), so
+`vite.config.ts` builds with `base: '/'`.
+
+## Structure
+
+```
+src/
+  components/
+    Splash/     splash screen (mark → wordmark → dawn transition)
+    Header/     sticky wordmark
+    Hero/       narrative hero — scattered photo moodboard + canvas particle depth
+    Nodes/      floating program-node network + "Collabs with us" mailto
+    Articles/   Sheet-fed grid, tabs, and article detail page
+    Footer/     live clock + closing narrative + contact
+  data/         static page copy, mock articles, layout coordinates
+  hooks/        hash router, scroll progress, realtime clock
+  lib/sheets.ts Google Sheets gviz fetch + parsing
+```
+
+## Swapping in real photography
+
+`src/data/heroScatter.ts` lays out the hero moodboard with styled
+placeholders (no real photo assets were supplied at build time). Drop real
+images into `src/assets/photos/`, import them, and swap `scatter-photo-surface`
+in `HeroScatterItem.tsx` for an `<img>`.

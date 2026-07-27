@@ -1,0 +1,42 @@
+import { motion } from 'framer-motion';
+import { useScrollProgress } from '../../hooks/useScrollProgress';
+import { heroScatter } from '../../data/heroScatter';
+import { heroIntro } from '../../data/siteContent';
+import { ParticleCanvas } from './ParticleCanvas';
+import { HeroScatterItem } from './HeroScatterItem';
+import './narrativeHero.css';
+
+export function NarrativeHero() {
+  const { ref, progress } = useScrollProgress<HTMLElement>();
+
+  // Photos hold sharp through the first ~40% of the section scrolling past,
+  // then progressively blur/desaturate as the reader scrolls toward the nodes.
+  const exitProgress = Math.min(1, Math.max(0, (progress - 0.4) / 0.6));
+
+  return (
+    <section className="narrative-hero" ref={ref}>
+      <div
+        className="hero-scatter-field"
+        style={{
+          filter: `blur(${exitProgress * 5}px) saturate(${1 - exitProgress * 0.7}) brightness(${1 - exitProgress * 0.08})`,
+        }}
+      >
+        <ParticleCanvas scrollProgress={progress} />
+        {heroScatter.map((item) => (
+          <HeroScatterItem key={item.id} item={item} />
+        ))}
+      </div>
+
+      <motion.div
+        className="hero-copy"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-20% 0px' }}
+        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <p className="hero-copy-paragraph">{heroIntro.paragraph}</p>
+        <p className="hero-copy-tags">{heroIntro.tags.join(' / ')}</p>
+      </motion.div>
+    </section>
+  );
+}
