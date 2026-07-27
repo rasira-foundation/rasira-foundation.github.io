@@ -2,6 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <!-- Cache-busting: GitHub Pages serves index.html itself with far-future
+         caching on some CDN edges, which can pin an old build's asset
+         hashes (Vite fingerprints every JS/CSS file per build) and cause an
+         intermittent blank screen once a later deploy's assets no longer
+         match what the stale index.html references. -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Rasira Foundation — a research-and-practice collective working on how young people understand themselves, imagine their futures, and build the confidence to move toward them." />
@@ -15,6 +23,20 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- This site has never registered a service worker, but if a stale one
+         from an earlier deploy (or a different tool) is still active in a
+         visitor's browser, it can keep serving a cached, now-mismatched
+         index.html/asset set indefinitely. Clearing any registration here
+         is a one-time safety net, not something this site relies on. -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          for (const registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
