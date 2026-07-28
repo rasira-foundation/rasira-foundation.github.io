@@ -29,8 +29,8 @@
 
 .node-lines line {
   stroke: var(--color-ink);
-  stroke-opacity: 0.35;
-  stroke-width: 0.12;
+  stroke-opacity: 0.4;
+  stroke-width: 0.08;
   stroke-linecap: round;
 }
 
@@ -40,8 +40,8 @@
    extra type selector regardless of source order.) */
 .node-lines line.node-line--trajectory {
   stroke: #c0503a;
-  stroke-opacity: 0.55;
-  stroke-width: 0.16;
+  stroke-opacity: 0.5;
+  stroke-width: 0.1;
 }
 
 /* Wrapper carries placement + idle float (translate); the motion child
@@ -178,16 +178,28 @@
 
 .node-measure,
 .node-design {
-  font-family: var(--font-serif);
-  font-size: 13.5px;
-  line-height: 1.55;
   color: var(--color-ink-soft);
 }
 
-.node-measure strong,
-.node-design strong {
+.node-lead {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.node-lead strong {
   color: var(--color-ink);
   font-weight: 600;
+}
+
+.node-lead-body {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.5;
 }
 
 /* Fluid glass CTA — an isolated pill button (heading only), with the

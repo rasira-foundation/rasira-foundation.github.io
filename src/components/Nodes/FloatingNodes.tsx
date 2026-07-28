@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef, useState } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { AsteriskMark } from '../Splash/AsteriskMark';
 import { BlurRevealElement } from '../shared/BlurRevealElement';
@@ -17,6 +18,28 @@ function distance(a: Point, b: Point) {
   return Math.hypot(a.left - b.left, a.top - b.top);
 }
 
+// The viewBox is 100x100 abstract units stretched non-uniformly
+// (preserveAspectRatio="none") across the field's real ~1132x720px
+// content box, so 1 viewBox unit is roughly 9px on screen (splitting the
+// difference between the ~11.3px/unit horizontal and ~7.2px/unit
+// vertical scale) — not exact for every line's angle or viewport size,
+// but close enough for a "small gap before the dot" that a fixed
+// viewBox-unit offset can't get exactly right anyway.
+const PX_PER_UNIT = 9;
+
+// Returns a point `gapPx` short of `to`, along the line from `from` to
+// `to` — used to pull a line's endpoint back before it actually reaches
+// a dot or card, instead of drawing straight into it.
+function pullBack(from: Point, to: Point, gapPx: number): Point {
+  const gap = gapPx / PX_PER_UNIT;
+  const dx = to.left - from.left;
+  const dy = to.top - from.top;
+  const length = Math.hypot(dx, dy);
+  if (length <= gap) return from;
+  const ratio = (length - gap) / length;
+  return { left: from.left + dx * ratio, top: from.top + dy * ratio };
+}
+
 const lineContainerVariants: Variants = {
   hidden: {},
   visible: { transition: { staggerChildren: LINE_STAGGER } },
@@ -34,15 +57,80 @@ function lineVariants(length: number): Variants {
   };
 }
 
+// Spoke lines stop ~15px short of the dot they'd otherwise touch.
+const DOT_GAP_PX = 15;
+
+// Extra padding (in real px) around the pill's own measured rect before
+// masking the line out — a small margin so the line stops just short of
+// the glass surface rather than exactly at its pixel edge.
+const PILL_MASK_PAD_PX = 8;
+
+interface MaskRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export function FloatingNodes() {
-  const bulletsLen = distance(spokeNodes.bullets, hubPosition);
-  const measureLen = distance(spokeNodes.measure, hubPosition);
-  const designLen = distance(spokeNodes.design, hubPosition);
+  const fieldRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLAnchorElement>(null);
+  const [pillMask, setPillMask] = useState<MaskRect | null>(null);
+
+  // Measures the pill's real rendered box and converts it into the SVG's
+  // own 0-100 coordinate space (which maps 1:1 to percentage-of-field,
+  // since the viewBox is exactly "0 0 100 100" over a 100%-sized <svg>) —
+  // an exact figure from the real DOM, not an estimate, so the line is
+  // guaranteed to clip at the pill's actual edge regardless of viewport
+  // size or how much the CTA text itself changes the pill's width.
+  //
+  // A fixed pull-back distance can't do this reliably: pulling the line's
+  // endpoint back *toward the hub* happens to move it further into the
+  // pill's footprint in this layout (the hub sits roughly in the
+  // direction the pill extends from its own anchor point), not away from
+  // it — so a distance-based approximation was clipping the wrong thing.
+  useLayoutEffect(() => {
+    function measure() {
+      const field = fieldRef.current;
+      const pill = pillRef.current;
+      if (!field || !pill) return;
+      const fieldRect = field.getBoundingClientRect();
+      const pillRect = pill.getBoundingClientRect();
+      if (fieldRect.width === 0 || fieldRect.height === 0) return;
+      setPillMask({
+        x: ((pillRect.left - fieldRect.left - PILL_MASK_PAD_PX) / fieldRect.width) * 100,
+        y: ((pillRect.top - fieldRect.top - PILL_MASK_PAD_PX) / fieldRect.height) * 100,
+        width: ((pillRect.width + PILL_MASK_PAD_PX * 2) / fieldRect.width) * 100,
+        height: ((pillRect.height + PILL_MASK_PAD_PX * 2) / fieldRect.height) * 100,
+      });
+    }
+
+    measure();
+    // The pill itself floats in via BlurRevealElement's own translateY
+    // reveal (whileInView, scroll-triggered — not necessarily right at
+    // mount), which shifts its measured rect until that settles. Re-check
+    // a few times to catch wherever it actually lands, rather than
+    // permanently locking the mask to a mid-animation position.
+    const settleTimers = [200, 600, 1200, 2200].map((delay) => window.setTimeout(measure, delay));
+    window.addEventListener('resize', measure);
+    return () => {
+      settleTimers.forEach(window.clearTimeout);
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
+  const bulletsStart = pullBack(hubPosition, spokeNodes.bullets, DOT_GAP_PX);
+  const measureStart = pullBack(hubPosition, spokeNodes.measure, DOT_GAP_PX);
+  const designStart = pullBack(hubPosition, spokeNodes.design, DOT_GAP_PX);
+
+  const bulletsLen = distance(bulletsStart, hubPosition);
+  const measureLen = distance(measureStart, hubPosition);
+  const designLen = distance(designStart, hubPosition);
   const collabLen = distance(collabPosition, hubPosition);
 
   return (
     <section className="floating-nodes">
-      <div className="floating-nodes-field">
+      <div className="floating-nodes-field" ref={fieldRef}>
         <motion.svg
           className="node-lines"
           viewBox="0 0 100 100"
@@ -53,30 +141,38 @@ export function FloatingNodes() {
           whileInView="visible"
           viewport={{ once: false, amount: 0.4 }}
         >
+          {pillMask && (
+            <defs>
+              <mask id="node-line-pill-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+                <rect x="0" y="0" width="100" height="100" fill="white" />
+                <rect x={pillMask.x} y={pillMask.y} width={pillMask.width} height={pillMask.height} fill="black" />
+              </mask>
+            </defs>
+          )}
           <motion.line
             className="node-line"
-            strokeDasharray="4 4"
+            strokeDasharray="2 4"
             variants={lineVariants(bulletsLen)}
-            x1={spokeNodes.bullets.left}
-            y1={spokeNodes.bullets.top}
+            x1={bulletsStart.left}
+            y1={bulletsStart.top}
             x2={hubPosition.left}
             y2={hubPosition.top}
           />
           <motion.line
             className="node-line"
-            strokeDasharray="4 4"
+            strokeDasharray="2 4"
             variants={lineVariants(measureLen)}
-            x1={spokeNodes.measure.left}
-            y1={spokeNodes.measure.top}
+            x1={measureStart.left}
+            y1={measureStart.top}
             x2={hubPosition.left}
             y2={hubPosition.top}
           />
           <motion.line
             className="node-line"
-            strokeDasharray="4 4"
+            strokeDasharray="2 4"
             variants={lineVariants(designLen)}
-            x1={spokeNodes.design.left}
-            y1={spokeNodes.design.top}
+            x1={designStart.left}
+            y1={designStart.top}
             x2={hubPosition.left}
             y2={hubPosition.top}
           />
@@ -86,12 +182,13 @@ export function FloatingNodes() {
               every other spoke, so all four still meet at one point. */}
           <motion.line
             className="node-line node-line--trajectory"
-            strokeDasharray="4 4"
+            strokeDasharray="2 4"
             variants={lineVariants(collabLen)}
             x1={collabPosition.left}
             y1={collabPosition.top}
             x2={hubPosition.left}
             y2={hubPosition.top}
+            mask={pillMask ? 'url(#node-line-pill-mask)' : undefined}
           />
         </motion.svg>
 
@@ -151,7 +248,7 @@ export function FloatingNodes() {
         >
           <BlurRevealElement delay={TEXT_DELAY + 0.05} once={false} amount={0.4}>
             <div className="node-content node-collab-group">
-              <a href={`mailto:${CONTACT_EMAIL}`} className="node-collab-pill">
+              <a ref={pillRef} href={`mailto:${CONTACT_EMAIL}`} className="node-collab-pill">
                 <h2>{collabPrompt.heading}</h2>
               </a>
               <p className="node-collab-sub">{collabPrompt.sub}</p>
@@ -185,6 +282,9 @@ function NodeDot({
   );
 }
 
+// Splits into a heading-sized lead line ("We measure") and a smaller
+// monospace body line for the rest — matching node-bullets' own
+// h3 + mono-ul hierarchy, rather than one uniformly-sized sentence.
 function BoldLeadText({ node }: { node: (typeof floatingNodes)[number] }) {
   const leadIndex = node.text.indexOf(node.boldLead);
   if (leadIndex === -1) return <>{node.text}</>;
@@ -193,9 +293,11 @@ function BoldLeadText({ node }: { node: (typeof floatingNodes)[number] }) {
   const after = node.text.slice(leadIndex + node.boldLead.length);
   return (
     <>
-      {before}
-      <strong>{node.boldLead}</strong>
-      {after}
+      <span className="node-lead">
+        {before}
+        <strong>{node.boldLead}</strong>
+      </span>
+      <span className="node-lead-body">{after}</span>
     </>
   );
 }
