@@ -1,0 +1,24 @@
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  /* Clips the oversized grain layer to the viewport, in case a future
+     change re-adds movement — kept even though the grain is currently
+     static, since -3%/106% below already accounts for it. */
+  overflow: hidden;
+}
+
+.noise-overlay-grain {
+  position: absolute;
+  top: -3%;
+  left: -3%;
+  width: 106%;
+  height: 106%;
+}
+
+.noise-overlay-grain svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

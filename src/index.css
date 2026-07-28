@@ -12,13 +12,16 @@
   --color-dawn-orange: #e98a52;
   --color-dawn-rose: #e4a79c;
 
-  /* Muted 4-stop wash shared by .atmosphere-band and .splash — kept
-     separate from --color-dawn-orange/-peach above since those still
-     drive vivid UI accents (category tags, footer glow) elsewhere. */
-  --color-gradient-1: #dce3e8;
-  --color-gradient-2: #e8c19f;
-  --color-gradient-3: #c2b2a3;
-  --color-gradient-4: #f6f3ed;
+  /* Section-by-section atmosphere wash — each section (hero, constellation,
+     articles) paints its own gradient rather than sharing one background
+     across multiple elements, but every section boundary uses the exact
+     same color on both sides so the scroll still reads as one continuous
+     wash. Kept separate from --color-dawn-orange/-peach above since those
+     still drive vivid UI accents (category tags, footer glow) elsewhere. */
+  --color-gradient-4: #f6f3ed; /* hero top == articles bottom == article card fill */
+  --color-atmos-haze-blue: #d8e2e9; /* hero bottom == constellation top */
+  --color-atmos-apricot: #e8c19f; /* constellation mid */
+  --color-atmos-orange: #dfaa83; /* constellation bottom == articles top */
 
   --font-serif: 'Fraunces', 'Iowan Old Style', ui-serif, Georgia, serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -80,28 +83,11 @@ button {
   color: var(--color-cream);
 }
 
-/* One continuous sky -> dawn -> off-white wash spanning the hero and node
-   sections, instead of separate per-section gradients with a seam. */
+/* Section 1 — header + hero: pale paper at the very top of the page,
+   easing into a soft atmospheric haze blue by the section's own bottom
+   edge. Section 2 (.floating-nodes) picks up at that exact blue. */
 .atmosphere-band {
-  background: linear-gradient(
-    180deg,
-    var(--color-gradient-1) 0%,
-    var(--color-gradient-2) 35%,
-    var(--color-gradient-3) 65%,
-    var(--color-gradient-4) 100%
-  );
-}
-
-/* film-grain noise overlay, sits above every section (gradients and solid
-   fills alike) for a warm, organic paper/film texture */
-.noise-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.26;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch' result='noise'/%3E%3CfeColorMatrix in='noise' type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='1.4' intercept='-0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background: linear-gradient(180deg, var(--color-gradient-4) 0%, var(--color-atmos-haze-blue) 100%);
 }
 
 .visually-hidden {

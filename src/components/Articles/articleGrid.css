@@ -1,5 +1,8 @@
+/* Section 3 — fades the constellation's closing orange back down to the
+   same warm cream the article cards themselves are filled with, so
+   legibility settles by the time there's real reading to do. */
 .article-hub {
-  background: var(--color-gradient-4);
+  background: linear-gradient(180deg, var(--color-atmos-orange) 0%, var(--color-gradient-4) 100%);
   padding: 10vh 24px 12vh;
 }
 

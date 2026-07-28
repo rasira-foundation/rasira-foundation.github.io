@@ -1,6 +1,15 @@
+/* Section 2 — picks up at the exact haze blue .atmosphere-band (Section 1)
+   ends on, warms through apricot, and settles on the muted orange that
+   .article-hub (Section 3) then continues from. */
 .floating-nodes {
   position: relative;
   padding: 8vh 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-atmos-haze-blue) 0%,
+    var(--color-atmos-apricot) 50%,
+    var(--color-atmos-orange) 100%
+  );
 }
 
 .floating-nodes-field {

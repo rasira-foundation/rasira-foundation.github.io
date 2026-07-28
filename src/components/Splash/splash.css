@@ -3,18 +3,12 @@
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  /* Same gradient as .atmosphere-band, painted directly (not relying on
-     the homepage showing through a transparent layer) so the background
-     is already correct from frame 0 — no separate curtain/reveal step is
-     needed, and there's no pale/white flash while one color hands off to
-     another. */
-  background: linear-gradient(
-    180deg,
-    var(--color-gradient-1) 0%,
-    var(--color-gradient-2) 35%,
-    var(--color-gradient-3) 65%,
-    var(--color-gradient-4) 100%
-  );
+  /* Same gradient as .atmosphere-band (Section 1 — hero), painted directly
+     (not relying on the homepage showing through a transparent layer) so
+     the background is already correct from frame 0 — no separate
+     curtain/reveal step needed, and no flash while one color hands off
+     to another. */
+  background: linear-gradient(180deg, var(--color-gradient-4) 0%, var(--color-atmos-haze-blue) 100%);
 }
 
 .splash-dot {

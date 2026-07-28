@@ -7,6 +7,7 @@ import { FloatingNodes } from './components/Nodes/FloatingNodes';
 import { ArticleGrid } from './components/Articles/ArticleGrid';
 import { ArticleDetail } from './components/Articles/ArticleDetail';
 import { ClosingFooter } from './components/Footer/ClosingFooter';
+import { NoiseOverlay } from './components/shared/NoiseOverlay';
 import { useHashRoute } from './hooks/useHashRoute';
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
@@ -30,7 +31,7 @@ function App() {
 
   return (
     <>
-      <div className="noise-overlay" />
+      <NoiseOverlay />
 
       {/* Homepage is always mounted underneath the splash. The header's own
           logo stays invisible (see visible={!showSplash} below) until the
@@ -45,12 +46,16 @@ function App() {
         <>
           {/* Header lives inside the atmosphere band so the sky gradient
               runs continuously from the very top of the viewport, with
-              no seam behind the sticky nav. */}
+              no seam behind the sticky nav. FloatingNodes is its own
+              section (Section 2) with its own gradient, picking up at
+              the exact color .atmosphere-band ends on — no shared
+              wrapper needed for that continuity, just matched color
+              stops on each side. */}
           <div className="atmosphere-band">
             <SiteHeader visible={!showSplash} />
             <NarrativeHero splashDone={!showSplash} />
-            <FloatingNodes />
           </div>
+          <FloatingNodes />
           <ArticleGrid />
           <ClosingFooter />
         </>
