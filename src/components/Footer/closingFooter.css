@@ -71,7 +71,7 @@
 
 .closing-footer-narrative {
   position: absolute;
-  left: calc(50% - 50px);
+  left: calc(50% - 90px);
   top: 42%;
   font-family: var(--font-mono);
   font-size: 13px;

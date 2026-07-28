@@ -5,8 +5,8 @@
 
 .hero-scatter-field {
   position: relative;
-  height: min(46vh, 380px);
-  max-width: var(--container-max);
+  height: 280px;
+  max-width: 550px;
   margin: 0 auto;
   transition: filter 0.2s linear;
 }
@@ -55,35 +55,47 @@
 
 .hero-copy {
   max-width: 640px;
-  margin: -10px auto 0;
+  margin: 50px auto 0;
   text-align: center;
-  padding: 3.5vh 24px 10vh;
+  padding: 3.5vh 24px 4vh;
+}
+
+.hero-narrative-copy {
+  max-width: 672px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .hero-copy-paragraph {
   font-family: var(--font-serif);
   font-size: 24px;
-  line-height: 1.55;
+  line-height: 1.625;
+  letter-spacing: -0.025em;
   color: var(--color-ink);
 }
 
+.hero-copy-word {
+  display: inline-block;
+}
+
 .hero-copy-tags {
-  margin-top: 20px;
+  margin-top: 16px;
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   color: var(--color-ink-faint);
 }
 
 @media (max-width: 720px) {
   .hero-scatter-field {
-    height: 38vh;
+    height: 220px;
   }
   .scatter-item {
     transform: scale(0.72);
     transform-origin: top left;
   }
   .hero-copy {
-    padding: 32px 16px 10vh;
+    padding: 32px 16px 4vh;
   }
 }

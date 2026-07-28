@@ -5,7 +5,7 @@ export function HeroScatterItem({ item, index }: { item: ScatterItem; index: num
   return (
     <motion.div
       className={`scatter-item scatter-${item.kind} scatter-float-${Math.round(item.depth * 3) % 3}`}
-      style={{ top: item.top, left: item.left, width: item.width }}
+      style={{ top: item.top, left: item.left, width: item.width, zIndex: item.zIndex }}
       initial={{ opacity: 0, scale: 0.8, y: 20, rotate: item.rotate - 5, filter: 'blur(16px)' }}
       whileInView={{ opacity: 1, scale: 1, y: 0, rotate: item.rotate, filter: 'blur(0px)' }}
       viewport={{ once: true, amount: 0.25 }}

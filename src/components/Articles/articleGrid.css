@@ -4,6 +4,8 @@
 .article-hub {
   background: linear-gradient(180deg, var(--color-atmos-orange) 0%, var(--color-gradient-4) 100%);
   padding: 10vh 24px 12vh;
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
 .article-hub-inner {

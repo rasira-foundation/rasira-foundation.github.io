@@ -11,14 +11,28 @@ import { NoiseOverlay } from './components/shared/NoiseOverlay';
 import { useHashRoute } from './hooks/useHashRoute';
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
+const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
 
 function App() {
   const [showSplash, setShowSplash] = useState(() => sessionStorage.getItem(SPLASH_SEEN_KEY) !== '1');
+  // Lifted up from NarrativeHero so FloatingNodes (a sibling section) can
+  // also read it — it needs to stay hidden for as long as the hero
+  // sequence is playing, regardless of scroll position, not just rely on
+  // its own scroll-triggered reveals (which would fire if someone scrolls
+  // down mid-intro).
+  const [showMorphIntro, setShowMorphIntro] = useState(
+    () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
+  );
   const route = useHashRoute();
 
   const handleSplashComplete = useCallback(() => {
     sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
     setShowSplash(false);
+  }, []);
+
+  const handleMorphComplete = useCallback(() => {
+    sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');
+    setShowMorphIntro(false);
   }, []);
 
   // Lock scroll on the homepage sitting underneath while the splash is up.
@@ -40,7 +54,7 @@ function App() {
         <>
           <SiteHeader />
           <ArticleDetail slug={route.slug} />
-          <ClosingFooter />
+          <ClosingFooter showClock={false} />
         </>
       ) : (
         <>
@@ -53,9 +67,13 @@ function App() {
               stops on each side. */}
           <div className="atmosphere-band">
             <SiteHeader visible={!showSplash} />
-            <NarrativeHero splashDone={!showSplash} />
+            <NarrativeHero
+              splashDone={!showSplash}
+              showMorphIntro={showMorphIntro}
+              onMorphComplete={handleMorphComplete}
+            />
           </div>
-          <FloatingNodes />
+          <FloatingNodes heroDone={!showMorphIntro} />
           <ArticleGrid />
           <ClosingFooter />
         </>

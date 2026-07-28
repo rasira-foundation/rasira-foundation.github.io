@@ -12,7 +12,7 @@ export const heroIntro = {
 };
 
 export const programAims = {
-  heading: 'Our programs aim to help young people',
+  heading: 'We aim to help young people',
   items: [
     'Identify strengths',
     'Practice real-world tasks before making high-stakes choices',

@@ -9,7 +9,7 @@ interface BlurRevealElementProps {
   amount?: number;
 }
 
-/** Generic blur-in reveal for containers (cards, node text, diagrams) — same language as BlurRevealText, one block at a time instead of word-by-word. */
+/** Generic blur-in reveal for containers (cards, node text, diagrams). */
 export function BlurRevealElement({
   children,
   className,
