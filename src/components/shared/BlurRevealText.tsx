@@ -13,12 +13,12 @@ interface BlurRevealTextProps {
 
 const containerVariants: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.035, delayChildren: 0.1 } },
+  visible: { transition: { staggerChildren: 0.012 } },
 };
 
 const wordVariants: Variants = {
   hidden: { opacity: 0.2, filter: 'blur(8px)', y: 6 },
-  visible: { opacity: 1, filter: 'blur(0px)', y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  visible: { opacity: 1, filter: 'blur(0px)', y: 0, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } },
 };
 
 /** Word-by-word blur-to-clear reveal that plays on its own once `start`

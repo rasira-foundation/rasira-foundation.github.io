@@ -63,9 +63,9 @@ export function NarrativeHero({ splashDone }: NarrativeHeroProps) {
 
       <motion.div
         className="hero-copy"
-        initial={{ opacity: 0, y: 30 }}
-        animate={heroCopyReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 15 }}
+        animate={heroCopyReady ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       >
         <BlurRevealText text={heroIntro.paragraph} className="hero-copy-paragraph" start={heroCopyReady} />
         <p className="hero-copy-tags">{heroIntro.tags.join(' / ')}</p>

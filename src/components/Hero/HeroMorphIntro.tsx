@@ -10,12 +10,12 @@ import './heroMorphIntro.css';
 type Stage = 'door' | 'youth' | 'newspaper' | 'resumeSdg' | 'text' | 'exit';
 
 const TIMINGS = {
-  door: 950,
-  youth: 800,
-  newspaper: 800,
-  resumeSdg: 950,
-  text: 1300,
-  exit: 550,
+  door: 400,
+  youth: 350,
+  newspaper: 350,
+  resumeSdg: 400,
+  text: 500,
+  exit: 300,
 };
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -54,10 +54,10 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
       elapsed += delay;
       return window.setTimeout(() => setStage(nextStage), elapsed);
     });
-    // Fires 200ms before the exit fade visually finishes, so the hero
+    // Fires 150ms before the exit fade visually finishes, so the hero
     // scatter items' own pop-in starts while the very tail of the text
     // fade-out is still on screen — no blank frame between the two.
-    const doneTimer = window.setTimeout(onComplete, elapsed + TIMINGS.exit - 200);
+    const doneTimer = window.setTimeout(onComplete, elapsed + TIMINGS.exit - 150);
 
     return () => {
       timers.forEach(window.clearTimeout);
@@ -98,7 +98,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               initial={{ opacity: 0, scale: 0.85, rotateY: 0 }}
               animate={{ opacity: 1, scale: 1, rotateY: 0 }}
               exit={{ rotateY: 90, opacity: 0 }}
-              transition={{ duration: 0.6, ease: EASE }}
+              transition={{ duration: 0.3, ease: EASE }}
             />
           )}
 
@@ -111,7 +111,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               initial={{ rotateY: -90, opacity: 0 }}
               animate={{ rotateY: 0, opacity: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.6, ease: EASE }}
+              transition={{ duration: 0.3, ease: EASE }}
             />
           )}
 
@@ -122,7 +122,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.25 }}
             >
               <motion.img
                 src={resume}
@@ -130,7 +130,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
                 className="hero-morph-resume-img"
                 initial={{ opacity: 0, scale: 0.7, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: EASE }}
+                transition={{ duration: 0.32, ease: EASE }}
               />
               <motion.img
                 src={sdg10Badge}
@@ -138,7 +138,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
                 className="hero-morph-sdg"
                 initial={{ opacity: 0, scale: 0.7, y: 16 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.15, ease: EASE }}
+                transition={{ duration: 0.32, delay: 0.08, ease: EASE }}
               />
             </motion.div>
           )}
@@ -150,22 +150,22 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.25 }}
             >
               <div className="hero-morph-headline">
                 <motion.span
-                  initial={{ filter: 'blur(10px)', opacity: 0, y: 12 }}
+                  initial={{ filter: 'blur(6px)', opacity: 0, y: 12 }}
                   animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, ease: EASE }}
+                  transition={{ duration: 0.4, ease: EASE }}
                 >
                   Indonesia Emas 2045?
                 </motion.span>
               </div>
               <div className="hero-morph-subline">
                 <motion.span
-                  initial={{ filter: 'blur(10px)', opacity: 0, y: 12 }}
+                  initial={{ filter: 'blur(6px)', opacity: 0, y: 12 }}
                   animate={{ filter: 'blur(0px)', opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: EASE }}
                 >
                   time is ticking..
                 </motion.span>

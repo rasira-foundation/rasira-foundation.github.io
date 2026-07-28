@@ -11,40 +11,15 @@
   background: linear-gradient(180deg, var(--color-gradient-4) 0%, var(--color-atmos-haze-blue) 100%);
 }
 
-.splash-dot {
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin: -6px 0 0 -6px;
-  border-radius: 50%;
-  background: var(--color-ink);
-}
-
-.splash-star {
-  position: absolute;
-  top: 50%;
-  width: 40px;
-  height: 40px;
-  margin: -20px 0 0 -20px;
-  color: var(--color-ink);
-}
-
-/* Invisible layoutId partner, sized to roughly the star's own footprint
-   within the logotype, so the FLIP transition has a real target rect. */
-.splash-star-anchor {
-  position: absolute;
-  top: 50%;
-  width: 30px;
-  height: 30px;
-  margin: -15px 0 0 -15px;
-}
-
 .splash-logotype-wrap {
   position: absolute;
-  /* Width is set inline (see SplashScreen.tsx) so the star-to-glyph offset
-     math can stay in sync with the actual rendered size — this max-width
-     is just a hard safety clamp against overflow on very narrow screens. */
+  left: 50%;
+  /* Horizontal centering (x: '-50%') is animated by Framer alongside y/scale
+     below — a separate static `transform` here would just get clobbered,
+     since Framer owns the whole transform string once it's animating any
+     of x/y/scale on this element. */
+  /* Width is set inline (see SplashScreen.tsx) — this max-width is a hard
+     safety clamp against overflow on very narrow screens. */
   max-width: 90vw;
 }
 

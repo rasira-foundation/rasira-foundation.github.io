@@ -9,7 +9,7 @@ export function HeroScatterItem({ item, index }: { item: ScatterItem; index: num
       initial={{ opacity: 0, scale: 0.8, y: 20, rotate: item.rotate - 5, filter: 'blur(16px)' }}
       whileInView={{ opacity: 1, scale: 1, y: 0, rotate: item.rotate, filter: 'blur(0px)' }}
       viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.45, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
     >
       {renderScatterContent(item)}
     </motion.div>
