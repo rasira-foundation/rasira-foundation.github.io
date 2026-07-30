@@ -99,3 +99,37 @@
     padding: 32px 16px 4vh;
   }
 }
+
+/* Mobile only. The collage reads as clutter at phone widths, so it's
+   hidden outright rather than shrunk — .hero-scatter-field keeps the
+   height it already has from the 720px block above, standing in as a
+   blank spacer so the page's overall rhythm (gap before the hero copy)
+   doesn't change, it's just empty instead of full of tiny images.
+   max-width: 100% on the items themselves is a defensive backstop for
+   item 1's overflow fix, in case anything renders before this rule
+   takes effect. */
+@media (max-width: 640px) {
+  .scatter-item,
+  .scatter-image {
+    max-width: 100%;
+  }
+
+  .scatter-item {
+    display: none;
+  }
+
+  .hero-copy,
+  .hero-narrative-copy,
+  .hero-copy-paragraph,
+  .hero-copy-tags {
+    text-align: left;
+  }
+
+  .hero-copy {
+    padding: 24px 16px;
+  }
+
+  .hero-copy-paragraph {
+    font-size: 20px;
+  }
+}

@@ -287,3 +287,73 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Mobile only — desktop/tablet card sizing above is untouched. The
+   image-overlay variant keeps a real aspect-ratio (its entire content is
+   absolutely positioned over the photo, so it has nothing else to size
+   the card by); the three text variants drop theirs entirely and wrap
+   tight to content instead, since a fixed 3:4 box left far too much dead
+   air once titles are only 1-2 lines on a narrow screen. */
+@media (max-width: 640px) {
+  .article-card--ascii,
+  .article-card--text-only,
+  .article-card--bottom-text {
+    aspect-ratio: auto;
+    height: auto;
+    padding: 16px;
+  }
+
+  .article-card--image-overlay {
+    aspect-ratio: 4 / 3;
+  }
+
+  .article-card-title {
+    font-size: 16px;
+    line-height: 1.3;
+    -webkit-line-clamp: 2;
+  }
+
+  .article-card-title--on-image {
+    -webkit-line-clamp: 2;
+  }
+
+  .article-card-ascii {
+    max-height: 80px;
+    font-size: 9px;
+  }
+
+  /* Auto-height cards mean .article-card--bottom-text's only flow
+     content (.article-card-bottom) now sits right at the top of the
+     card, in the same corner .article-card-arrow--top-right is pinned
+     to — moving that arrow to the bottom corner instead keeps it clear
+     of the title. Room on the right of every title/meta block so a
+     wrapped second line never runs under whichever corner the arrow
+     occupies. */
+  .article-card-top,
+  .article-card-bottom {
+    padding-right: 28px;
+  }
+
+  /* Auto-height also means .article-card-ascii now sits right up
+     against the title block above it (there's no leftover flex space
+     for its old margin-top:auto to push into) — a fixed gap keeps the
+     ascii art from crowding the title. */
+  .article-card--ascii .article-card-top {
+    margin-bottom: 24px;
+  }
+
+  .article-card-arrow--top-right {
+    top: auto;
+    bottom: 16px;
+  }
+
+  .article-card-arrow--corner,
+  .article-card-arrow--on-image {
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .article-card-arrow--mid-right {
+    right: 16px;
+  }
+}

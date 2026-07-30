@@ -20,9 +20,8 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
     <footer className="closing-footer">
       {showClock && (
         <>
-          <div className="closing-footer-glow" aria-hidden="true" />
-
           <div className="closing-footer-clock-wrap">
+            <div className="closing-footer-glow" aria-hidden="true" />
             <BlurRevealElement className="closing-footer-clock-blur">
               <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
             </BlurRevealElement>
@@ -49,6 +48,14 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
         </a>
         <span className="closing-footer-year">© {new Date().getFullYear()}</span>
       </div>
+
+      {/* Mobile-only duplicate of the digital readout above — desktop
+       * positions the original beside the clock face via
+       * .closing-footer-digital (absolute, anchored to the clock wrap).
+       * Mobile instead stacks clock -> narrative -> email -> copyright ->
+       * time in normal flow, which needs the readout as a later sibling
+       * rather than nested inside the clock wrap; see closingFooter.css. */}
+      {showClock && <span className="closing-footer-digital-mobile">{clock.digital}</span>}
     </footer>
   );
 }

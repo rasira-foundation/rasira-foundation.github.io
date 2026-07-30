@@ -193,3 +193,29 @@
     animation: none;
   }
 }
+
+/* Mobile only. The -140px pull-up on .floating-nodes-collabs-slot exists
+   to eat the field's own dead space below the convergence point on
+   desktop, where .floating-nodes-field is a tall, fixed-height box (see
+   the comment in FloatingNodes.tsx). On mobile the field above already
+   collapses to height:auto and hugs its stacked content tightly, so that
+   same -140px instead yanks the card straight up into the last text
+   block — this resets it to a normal, positive gap. */
+@media (max-width: 640px) {
+  .node-content-wrap {
+    margin-bottom: 32px;
+  }
+
+  /* 16px on both, matching .hero-copy's own mobile padding — .node-
+     content-wrap and .collabs-card (once its own horizontal padding is
+     zeroed, see collabsSection.css) then share this exact same left
+     edge, with no extra nested padding of their own to throw it off. */
+  .floating-nodes-field {
+    padding: 0 16px;
+  }
+
+  .floating-nodes-collabs-slot {
+    margin-top: 32px;
+    padding: 0 16px;
+  }
+}

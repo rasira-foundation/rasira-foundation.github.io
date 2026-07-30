@@ -10,10 +10,26 @@
   justify-content: flex-end;
 }
 
+.closing-footer-clock-wrap {
+  position: absolute;
+  left: 50%;
+  top: calc(30% + 90px);
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+}
+
+/* Nested inside .closing-footer-clock-wrap (see ClosingFooter.tsx) so it
+   always sits directly behind the clock face, wherever that ends up —
+   its own `top: 120px` is the exact pixel-for-pixel equivalent of the
+   old footer-relative `calc(30% + 120px)`: the clock-wrap's top edge
+   lands at exactly 30% of the footer's height once its own centering
+   transform is accounted for, so the wrap itself already supplies the
+   "30%" — this only needs the leftover +120px on top of that. */
 .closing-footer-glow {
   position: absolute;
   left: 50%;
-  top: calc(30% + 120px);
+  top: 120px;
   width: 60vw;
   max-width: 560px;
   aspect-ratio: 1;
@@ -22,15 +38,6 @@
   opacity: 0.55;
   filter: blur(4px);
   pointer-events: none;
-}
-
-.closing-footer-clock-wrap {
-  position: absolute;
-  left: 50%;
-  top: calc(30% + 90px);
-  transform: translate(-50%, -50%);
-  width: 180px;
-  height: 180px;
 }
 
 .closing-footer-clock-blur {
@@ -114,12 +121,84 @@
   color: var(--color-ink-faint);
 }
 
+/* Hidden by default — only ever shown inside the mobile block below,
+   where it fills in for .closing-footer-digital (which stays absolute,
+   anchored beside the clock, and doesn't work once the clock is in
+   normal flow). */
+.closing-footer-digital-mobile {
+  display: none;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* Mobile only. Absolute-positioning the clock/narrative/digital (the
+   desktop approach, all anchored off percentages of the footer's own
+   box) doesn't hold up once that box's height changes with content —
+   any fixed offset tuned for one footer height reads as a totally
+   different position, and overlapping/clipping the contact block below,
+   at another. Normal flow sidesteps that entirely: clock, narrative,
+   and contact become real flex children of .closing-footer (already a
+   flex column), stacked in document order with a shared `gap`, so
+   nothing can ever overlap regardless of how tall any piece is. The
+   digital readout can't just follow along, though — it's nested inside
+   .closing-footer-clock-wrap in the markup (see ClosingFooter.tsx), so
+   making it static would leave it stuck right under the clock face
+   rather than after copyright. It's hidden here and a duplicate
+   (.closing-footer-digital-mobile, a later sibling of .closing-footer-
+   contact) stands in for it instead. */
 @media (max-width: 640px) {
+  .closing-footer {
+    min-height: auto;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: calc(18vh + 50px) 24px 48px;
+  }
+
+  .closing-footer-clock-wrap {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 0 auto;
+    transform: none;
+  }
+
+  /* Scoped tight to the clock itself now — a halo directly behind the
+     hands, not a screen-spanning wash. Centers on the wrap's own
+     midpoint (`top: 50%`) rather than the desktop `120px` offset, which
+     assumed a wrap far taller than the 180px box actually is. */
+  .closing-footer-glow {
+    top: 50%;
+    width: 220px;
+    max-width: none;
+  }
+
+  .closing-footer-digital {
+    display: none;
+  }
+
+  .closing-footer-narrative {
+    position: static;
+    max-width: none;
+    margin: 0;
+    text-align: center;
+    font-size: 15px;
+    color: var(--color-ink);
+    opacity: 1;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .closing-footer-contact {
     flex-direction: column;
     gap: 12px;
+    padding-top: 0;
+    margin-top: 0;
   }
-  .closing-footer-narrative {
-    max-width: 70vw;
+
+  .closing-footer-digital-mobile {
+    display: block;
   }
 }

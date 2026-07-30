@@ -210,9 +210,25 @@
   background: #f0b385;
 }
 
-@media (max-width: 480px) {
+/* Mobile only — supersedes the 480px padding tweak below with the
+   fuller mobile pass (section padding, grid gap, logo centering). */
+@media (max-width: 640px) {
+  .partner-donation-section {
+    padding: 40px 16px;
+  }
+
+  .partner-donation-grid {
+    gap: 16px;
+  }
+
   .partner-card,
   .donation-card {
-    padding: 24px;
+    padding: 20px;
+  }
+
+  .partner-card-logo {
+    display: block;
+    width: 120px;
+    margin: 0 auto;
   }
 }

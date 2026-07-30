@@ -46,6 +46,8 @@
 html {
   scroll-behavior: smooth;
   background: var(--color-cream);
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -55,11 +57,14 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 #root {
   position: relative;
   min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 h1, h2, h3, p {
