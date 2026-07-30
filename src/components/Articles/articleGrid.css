@@ -3,9 +3,15 @@
    legibility settles by the time there's real reading to do. */
 .article-hub {
   background: linear-gradient(180deg, var(--color-atmos-orange) 0%, var(--color-gradient-4) 100%);
-  padding: 10vh 24px 12vh;
+  padding: 64px 24px;
   -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+}
+
+@media (min-width: 768px) {
+  .article-hub {
+    padding: 96px 24px;
+  }
 }
 
 .article-hub-inner {
@@ -75,7 +81,6 @@
   display: flex;
   aspect-ratio: 3 / 4;
   flex-direction: column;
-  justify-content: space-between;
   text-align: left;
   background-color: var(--color-gradient-4);
   border: none;
@@ -90,11 +95,14 @@
   will-change: transform, filter;
 }
 
-.article-card--ascii:hover {
+.article-card--ascii:hover,
+.article-card--text-only:hover,
+.article-card--bottom-text:hover {
   background: var(--color-cream-deep);
 }
 
-.article-card-top {
+.article-card-top,
+.article-card-bottom {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -122,18 +130,6 @@
   overflow: hidden;
 }
 
-.article-card-excerpt {
-  font-family: var(--font-editorial-serif);
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--color-neutral-600);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
 .article-card-ascii {
   font-family: var(--font-editorial-mono);
   font-size: 10px;
@@ -141,12 +137,6 @@
   color: var(--color-neutral-600);
   white-space: pre;
   overflow: hidden;
-}
-
-.article-card-footrow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
 }
 
 .article-card-meta {
@@ -163,12 +153,51 @@
   transition: transform 0.25s var(--ease-soft);
 }
 
-.article-card:hover .article-card-arrow {
+/* --- Card 1: ascii/diagram — title top-left, arrow pinned to the
+   middle-right margin, diagram anchored at the bottom. --- */
+.article-card--ascii .article-card-ascii {
+  margin-top: auto;
+}
+
+.article-card-arrow--mid-right {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.article-card:hover .article-card-arrow--mid-right {
+  transform: translate(4px, -50%);
+}
+
+/* --- Card 2: text-only — title top-left, large open whitespace, arrow
+   pinned to the bottom-right corner. --- */
+.article-card-arrow--corner {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+}
+
+/* --- Card 4: bottom-anchored — arrow pinned top-right, open middle,
+   title anchored bottom-left. --- */
+.article-card--bottom-text {
+  justify-content: flex-end;
+}
+
+.article-card-arrow--top-right {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+}
+
+.article-card:hover .article-card-arrow--corner,
+.article-card:hover .article-card-arrow--top-right,
+.article-card:hover .article-card-arrow--on-image {
   transform: translateX(4px);
 }
 
 /* Full-bleed image variant — fills the whole cell top to bottom */
-.article-card--image {
+.article-card--image-overlay {
   padding: 0;
 }
 
@@ -181,7 +210,7 @@
   transition: transform 0.5s var(--ease-soft);
 }
 
-.article-card--image:hover .article-card-image {
+.article-card--image-overlay:hover .article-card-image {
   transform: scale(1.04);
 }
 

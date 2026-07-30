@@ -30,23 +30,7 @@
   backface-visibility: hidden;
 }
 
-.hero-morph-door {
-  max-width: 55%;
-}
-
-.hero-morph-pair {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
 .hero-morph-resume-img {
   width: 110px;
-  filter: drop-shadow(0 12px 24px rgba(20, 18, 15, 0.25));
-}
-
-.hero-morph-sdg {
-  width: 80px;
   filter: drop-shadow(0 12px 24px rgba(20, 18, 15, 0.25));
 }

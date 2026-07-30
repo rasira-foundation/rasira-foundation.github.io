@@ -3,13 +3,43 @@
    .article-hub (Section 3) then continues from. */
 .floating-nodes {
   position: relative;
-  padding: 8vh 0;
+  padding: 8vh 0 calc(8vh - 30px);
   background: linear-gradient(
     180deg,
     var(--color-atmos-haze-blue) 0%,
     var(--color-atmos-apricot) 50%,
     var(--color-atmos-orange) 100%
   );
+}
+
+/* Normal flow, right after the field — pulled way up into the field's
+   own empty tail below the convergence point (nothing else renders down
+   there, so this only eats dead space, never real diagram content —
+   see the comment in FloatingNodes.tsx for why this isn't absolutely
+   positioned inside the field itself). */
+.floating-nodes-collabs-slot {
+  display: flex;
+  justify-content: center;
+  padding: 0 24px;
+  margin-top: -140px;
+}
+
+/* Wrapper carries placement + centering; framer's scale pop animates the
+   inner span, so the two transforms never fight (same split as NodeDot).
+   The extra -35% vertical bias compensates for the serif asterisk glyph
+   sitting high in its em box — visually centers the mark itself, not the
+   text box, on the convergence point. */
+.node-hub-asterisk-wrap {
+  position: absolute;
+  transform: translate(-50%, -35%);
+}
+
+.node-hub-asterisk {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--color-ink);
 }
 
 .floating-nodes-field {
@@ -145,53 +175,6 @@
   line-height: 1.5;
 }
 
-/* Fluid glass CTA — an isolated pill button (heading only), with the
-   supporting copy sitting underneath as plain text rather than crammed
-   inside the same card. */
-.node-collab-group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-.node-collab-pill {
-  display: inline-block;
-  text-decoration: none;
-  color: var(--color-ink);
-  cursor: pointer;
-  padding: 16px 30px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.16));
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 8px 30px rgba(20, 18, 15, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
-  transition: transform 0.35s var(--ease-soft), box-shadow 0.35s var(--ease-soft), background 0.35s var(--ease-soft);
-}
-
-.node-collab-pill h2 {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: clamp(18px, 1.6vw, 21px);
-  white-space: nowrap;
-}
-
-.node-collab-pill:hover {
-  transform: translateY(-3px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.26));
-  box-shadow: 0 14px 40px rgba(20, 18, 15, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.node-collab-sub {
-  margin: 0;
-  padding-left: 6px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  color: var(--color-ink-soft);
-  max-width: 230px;
-}
-
 @media (max-width: 768px) {
   .floating-nodes-field {
     height: auto;
@@ -199,7 +182,8 @@
   .node-lines {
     display: none;
   }
-  .node-dot-wrap {
+  .node-dot-wrap,
+  .node-hub-asterisk-wrap {
     display: none;
   }
   .node-content-wrap {

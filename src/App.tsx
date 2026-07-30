@@ -4,6 +4,7 @@ import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
 import { FloatingNodes } from './components/Nodes/FloatingNodes';
+import { PartnerDonationSection } from './components/PartnerDonationSection';
 import { ArticleGrid } from './components/Articles/ArticleGrid';
 import { ArticleDetail } from './components/Articles/ArticleDetail';
 import { ClosingFooter } from './components/Footer/ClosingFooter';
@@ -75,6 +76,7 @@ function App() {
           </div>
           <FloatingNodes heroDone={!showMorphIntro} />
           <ArticleGrid />
+          <PartnerDonationSection />
           <ClosingFooter />
         </>
       )}

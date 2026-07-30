@@ -2,15 +2,12 @@
 // program section. Adjust freely.
 
 export const spokeNodes = {
-  bullets: { top: 27, left: 41 },
-  measure: { top: 40, left: 55 },
-  design: { top: 57, left: 66 },
+  bullets: { top: 18, left: 43 },
+  measure: { top: 30, left: 53 },
+  design: { top: 46, left: 63 },
 } as const;
 
-export const collabPosition = { top: 68, left: 27 };
-
-// A geometry anchor only — no hub mark renders here anymore. Kept purely
-// so the single trajectory line (see FloatingNodes.tsx) still has a
-// sensible endpoint to draw toward, matching where the old convergence
-// point used to sit.
-export const hubPosition = { top: 64, left: 49 };
+// Funnel convergence point — all 3 spoke lines and the asterisk mark
+// meet here, directly above the Collabs card sitting right below the
+// field.
+export const hubPosition = { top: 78, left: 50 };

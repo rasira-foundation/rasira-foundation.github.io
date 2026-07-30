@@ -1,0 +1,68 @@
+/* Rendered inside FloatingNodes' own .floating-nodes-collabs-slot (see
+   floatingNodes.css), which handles positioning/background — this file
+   only styles the copy itself. No card frame: it sits directly on the
+   page's own background, right where the constellation lines funnel
+   into it. */
+.collabs-card {
+  width: 100%;
+  max-width: 576px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  text-align: center;
+}
+
+.collabs-heading {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--color-ink);
+  margin-bottom: 12px;
+}
+
+.collabs-body {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--color-ink-soft);
+  max-width: 440px;
+  margin: 0 auto 22px;
+}
+
+.collabs-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: var(--color-ink);
+  color: var(--color-cream);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
+}
+
+.collabs-cta:hover {
+  transform: translateY(-2px);
+  background: var(--color-dawn-orange);
+}
+
+.collabs-support {
+  display: block;
+  margin-top: 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-faint);
+  text-decoration: underline;
+}
+
+.collabs-support:hover {
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 480px) {
+  .collabs-card {
+    padding: 24px 20px 48px;
+  }
+}

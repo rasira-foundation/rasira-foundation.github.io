@@ -1,3 +1,5 @@
+import { FALLBACK_COVER_IMAGES } from '../data/fallbackCoverImages';
+
 export type ArticleCategory = 'Highlight' | 'Toolkit' | 'Framework' | 'Article';
 
 export interface Article {
@@ -93,7 +95,10 @@ function rowToArticle(row: SheetRow): Article {
     excerpt: row.excerpt?.trim() || '',
     content,
     category,
-    coverImage: resolveImageUrl(row.coverimageurl?.trim() || row.coverimage?.trim() || row.cover?.trim() || ''),
+    coverImage:
+      resolveImageUrl(row.coverimageurl?.trim() || row.coverimage?.trim() || row.cover?.trim() || '') ||
+      FALLBACK_COVER_IMAGES[slug] ||
+      null,
     author: row.author?.trim() || 'Rasira Foundation',
     date: row.publishdate?.trim() || row.date?.trim() || null,
     readTime: row.readtime?.trim() || estimateReadTime(content),

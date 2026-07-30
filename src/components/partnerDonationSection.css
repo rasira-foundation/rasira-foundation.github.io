@@ -1,0 +1,218 @@
+/* No fill of its own — sits transparent over the body's own cream, the
+   same canvas .article-hub fades into above and .closing-footer sits on
+   below, so its warm glow can bleed straight through with no seam. */
+.partner-donation-section {
+  position: relative;
+  background: transparent;
+  padding: 64px 24px;
+}
+
+@media (min-width: 768px) {
+  .partner-donation-section {
+    padding: 96px 24px;
+  }
+}
+
+.partner-donation-header {
+  max-width: var(--container-max);
+  margin: 0 auto 40px;
+  display: flex;
+  gap: 24px;
+  padding-top: 24px;
+}
+
+.partner-donation-header span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-faint);
+}
+
+@media (min-width: 1024px) {
+  .partner-donation-header span:first-child {
+    flex: 7;
+  }
+  .partner-donation-header span:last-child {
+    flex: 5;
+  }
+}
+
+.partner-donation-grid {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+@media (min-width: 1024px) {
+  .partner-donation-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 32px;
+  }
+  .partner-card {
+    grid-column: span 7;
+  }
+  .donation-card {
+    grid-column: span 5;
+  }
+}
+
+/* Light glass — frosted enough to read as a card against the transparent
+   canvas behind it, without the heavier saturate() the old flat-orange
+   fill needed. */
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 1px 2px rgba(20, 18, 15, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.partner-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink-soft);
+  margin-bottom: 20px;
+}
+
+.partner-card-topbar a {
+  color: var(--color-ink);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.partner-card-topbar a:hover {
+  color: var(--color-dawn-orange);
+}
+
+.partner-card-heading {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--color-ink);
+}
+
+.partner-card-logo {
+  width: 140px;
+  height: auto;
+  object-fit: contain;
+}
+
+.partner-card-body {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: rgba(20, 18, 15, 0.75);
+}
+
+/* Dark glass, the deliberate contrast note in the pair. */
+.donation-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  border-radius: 16px;
+  background: rgba(20, 18, 15, 0.85);
+  border: 1px solid rgba(115, 115, 115, 0.4);
+  box-shadow: 0 20px 25px rgba(20, 18, 15, 0.25);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  color: var(--color-gradient-4);
+  overflow: hidden;
+}
+
+.donation-card-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.donation-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  gap: 24px;
+}
+
+.donation-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 20px;
+}
+
+.donation-card-topbar span:first-child {
+  color: var(--color-dawn-orange);
+}
+
+.donation-card-topbar span:last-child {
+  color: rgba(246, 243, 237, 0.5);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.donation-card-heading {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  color: rgba(246, 243, 237, 0.92);
+}
+
+.donation-card-body {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: rgba(246, 243, 237, 0.6);
+  margin-top: 12px;
+}
+
+.donation-cta {
+  align-self: flex-start;
+  margin-top: 8px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--color-dawn-orange);
+  color: #1c2226;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
+}
+
+.donation-cta:hover {
+  transform: translateY(-2px);
+  background: #f0b385;
+}
+
+@media (max-width: 480px) {
+  .partner-card,
+  .donation-card {
+    padding: 24px;
+  }
+}

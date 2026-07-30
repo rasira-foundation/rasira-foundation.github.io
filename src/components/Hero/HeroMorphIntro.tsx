@@ -1,21 +1,20 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import resume from '../../assets/photos/resume.png';
-import openDoor from '../../assets/photos/open-door.png';
+import thankYou from '../../assets/photos/thank-you.png';
 import youthGroup from '../../assets/photos/youth.jpg';
 import archivalCutout from '../../assets/photos/Graduate.jpg';
-import sdg10Badge from '../../assets/photos/sdg10-badge.png';
 import './heroMorphIntro.css';
 
-type Stage = 'door' | 'youth' | 'newspaper' | 'resumeSdg';
+type Stage = 'thankYou' | 'youth' | 'newspaper' | 'resume';
 
 // Now the second (and last) leg of the intro sequence — HeroPaperStrips
 // plays first and alone, then hands off to this. Plays through once
-// (~1.9s), holds briefly on resumeSdg, then calls onComplete itself
+// (~1.9s), holds briefly on resume, then calls onComplete itself
 // (there's no HeroPaperStrips running alongside anymore to signal
 // completion) so the parent can morph across into the real hero collage.
 const TIMINGS = {
-  door: 700,
+  thankYou: 700,
   youth: 600,
   newspaper: 600,
   resumeHold: 700,
@@ -29,23 +28,23 @@ interface HeroMorphIntroProps {
 }
 
 /**
- * A cinematic, sequential reveal of the hero's own asset set — door,
- * youth photo, graduate portrait, resume + SDG badge — settling on the
- * resume/badge pair and holding there briefly, before handing off (via
+ * A cinematic, sequential reveal of the hero's own asset set —
+ * thank-you note, youth photo, graduate portrait, resume — settling on
+ * the resume and holding there briefly, before handing off (via
  * onComplete, fired a little ahead of its own exit fade finishing so the
  * incoming hero collage starts appearing while this is still dissolving —
  * a cross-fade "morph" rather than a hard cut) to the real scattered hero
  * collage underneath.
  */
 export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
-  const [stage, setStage] = useState<Stage>('door');
+  const [stage, setStage] = useState<Stage>('thankYou');
 
   useEffect(() => {
     let elapsed = 0;
     const schedule: [Stage, number][] = [
-      ['youth', TIMINGS.door],
+      ['youth', TIMINGS.thankYou],
       ['newspaper', TIMINGS.youth],
-      ['resumeSdg', TIMINGS.newspaper],
+      ['resume', TIMINGS.newspaper],
     ];
 
     const timers = schedule.map(([nextStage, delay]) => {
@@ -75,15 +74,16 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
     >
       <div className="hero-morph-stage">
         <AnimatePresence>
-          {stage === 'door' && (
+          {stage === 'thankYou' && (
             <motion.img
-              key="door"
-              src={openDoor}
+              key="thank-you"
+              src={thankYou}
               alt=""
-              className="hero-morph-image hero-morph-door"
-              initial={{ scale: 1, opacity: 1 }}
-              animate={{ scale: 4, opacity: 0 }}
-              transition={{ duration: TIMINGS.door / 1000, ease: [0.6, 0, 0.9, 0.2] }}
+              className="hero-morph-image"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.4, ease: EASE }}
             />
           )}
 
@@ -113,32 +113,17 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
             />
           )}
 
-          {stage === 'resumeSdg' && (
-            <motion.div
-              key="resumeSdg"
-              className="hero-morph-pair"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+          {stage === 'resume' && (
+            <motion.img
+              key="resume"
+              src={resume}
+              alt=""
+              className="hero-morph-image hero-morph-resume-img"
+              initial={{ opacity: 0, scale: 0.7, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.45 }}
-            >
-              <motion.img
-                src={resume}
-                alt=""
-                className="hero-morph-resume-img"
-                initial={{ opacity: 0, scale: 0.7, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.55, ease: EASE }}
-              />
-              <motion.img
-                src={sdg10Badge}
-                alt=""
-                className="hero-morph-sdg"
-                initial={{ opacity: 0, scale: 0.7, y: 16 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: 0.14, ease: EASE }}
-              />
-            </motion.div>
+              transition={{ duration: 0.55, ease: EASE }}
+            />
           )}
         </AnimatePresence>
       </div>

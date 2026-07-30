@@ -1,7 +1,7 @@
 import resume from '../assets/photos/resume.png';
 import youthGroup from '../assets/photos/youth.jpg';
 import archivalCutout from '../assets/photos/Graduate.jpg';
-import openDoor from '../assets/photos/open-door.png';
+import thankYou from '../assets/photos/thank-you.png';
 import sdg10Badge from '../assets/photos/sdg10-badge.png';
 import mission from '../assets/photos/mission.png';
 
@@ -26,9 +26,9 @@ export interface ScatterItem {
 // order doubles as the DOM stacking fallback, but zIndex is what
 // actually controls the layering described alongside each item below.
 export const heroScatter: ScatterItem[] = [
-  // Open door — top-left, peeking out from behind the photos.
+  // Rejection note — top-left, peeking out from behind the photos.
   {
-    id: 'open-door',
+    id: 'thank-you',
     kind: 'image',
     top: '0%',
     left: '8%',
@@ -36,8 +36,8 @@ export const heroScatter: ScatterItem[] = [
     depth: 0.4,
     zIndex: 2,
     width: '85px',
-    src: openDoor,
-    alt: 'Open door revealing sky',
+    src: thankYou,
+    alt: 'A "thank you" rejection note',
   },
   // Graduate portrait — upper-middle, sits behind the torn note.
   {
@@ -52,12 +52,12 @@ export const heroScatter: ScatterItem[] = [
     src: archivalCutout,
     alt: 'Graduation portrait',
   },
-  // Resume — far left, angled down and in front of the door.
+  // Resume — sits directly below the thank-you note, angled down.
   {
     id: 'resume',
     kind: 'image',
-    top: '20%',
-    left: '0%',
+    top: '34%',
+    left: '5%',
     rotate: -8,
     depth: 0.6,
     zIndex: 8,

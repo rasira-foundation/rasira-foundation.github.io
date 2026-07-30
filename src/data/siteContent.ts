@@ -34,9 +34,31 @@ export const floatingNodes = [
   },
 ];
 
-export const collabPrompt = {
-  heading: 'Collabs with us?',
-  sub: 'to build that missing layer, with communities, in the field, and with evidence.',
+export const collabsSection = {
+  heading: 'You might be working on the same problem.',
+  body: "Whether you run programs, fund research, or design tools — if you're working on what young Indonesians believe is possible for them, we want to know you.",
+  ctaLabel: 'Reach out →',
+  ctaMailto: `mailto:${CONTACT_EMAIL}`,
+  supportPrompt: 'Or support our field work directly ↓',
+};
+
+export const partnerSection = {
+  partner: {
+    role: 'Implementation Partner',
+    lead: 'Where Rasira studies the psychological layer, Spring builds the tools young people use to act on it.',
+    body: 'Career preparation platform for Indonesian youth (CV review, job simulation, personality assessment). Together: the research that informs the practice, and the practice that generates the research.',
+    url: 'https://springtalents.com',
+    urlLabel: 'springtalents.com ↗',
+  },
+};
+
+export const donationSection = {
+  eyebrow: 'Direct Support',
+  eyebrowSub: 'Independent Research',
+  lead: "Rasira doesn't run ads. We don't have a government grant yet. What we have is field time, careful questions, and the conviction that the psychological layer of human capital matters.",
+  body: 'Every donation keeps a researcher in the field, a facilitator in a community, and a finding on its way to the people who can use it.',
+  ctaLabel: 'Support Our Fieldwork →',
+  ctaMailto: `mailto:${CONTACT_EMAIL}?subject=Supporting%20Rasira%27s%20Fieldwork`,
 };
 
 export const closingNarrative = {

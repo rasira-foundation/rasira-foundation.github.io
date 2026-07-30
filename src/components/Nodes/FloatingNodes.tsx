@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { BlurRevealElement } from '../shared/BlurRevealElement';
-import { CONTACT_EMAIL, programAims, floatingNodes, collabPrompt } from '../../data/siteContent';
-import { spokeNodes, collabPosition, hubPosition } from '../../data/floatingNodesLayout';
+import { CollabsSection } from '../CollabsSection';
+import { programAims, floatingNodes } from '../../data/siteContent';
+import { spokeNodes, hubPosition } from '../../data/floatingNodesLayout';
 import './floatingNodes.css';
 
 const TEXT_DELAY = 0.9;
@@ -137,9 +138,30 @@ export function FloatingNodes({ heroDone }: FloatingNodesProps) {
         <NodeDot position={spokeNodes.measure} floatClass="node-float-1" delay={0.43} />
         <NodeDot position={spokeNodes.design} floatClass="node-float-2" delay={0.51} />
 
+        {/* Origin mark at the exact point the three dashed trails
+            converge — same wrapper-carries-placement pattern as NodeDot,
+            so framer's scale pop on the inner span never fights the
+            wrapper's centering transform. Delayed until the lines have
+            mostly finished drawing into it. */}
+        <span
+          className="node-hub-asterisk-wrap"
+          style={{ top: `${hubPosition.top}%`, left: `${hubPosition.left}%` }}
+          aria-hidden="true"
+        >
+          <motion.span
+            className="node-hub-asterisk"
+            initial={{ scale: 0, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+          >
+            *
+          </motion.span>
+        </span>
+
         <div
           className="node-content-wrap node-drift-0"
-          style={{ top: `${spokeNodes.bullets.top - 12}%`, left: `${spokeNodes.bullets.left - 24}%` }}
+          style={{ top: `calc(${spokeNodes.bullets.top - 12}% + 70px)`, left: `${spokeNodes.bullets.left - 24}%` }}
         >
           <BlurRevealElement delay={TEXT_DELAY} amount={0.4}>
             <div className="node-content node-bullets">
@@ -174,21 +196,18 @@ export function FloatingNodes({ heroDone }: FloatingNodesProps) {
             </p>
           </BlurRevealElement>
         </div>
-
-        <div
-          className="node-content-wrap node-drift-0"
-          style={{ top: `${collabPosition.top - 3}%`, left: `${collabPosition.left + 2}%` }}
-        >
-          <BlurRevealElement delay={TEXT_DELAY + 0.05} amount={0.4}>
-            <div className="node-content node-collab-group">
-              <a href={`mailto:${CONTACT_EMAIL}`} className="node-collab-pill">
-                <h2>{collabPrompt.heading}</h2>
-              </a>
-              <p className="node-collab-sub">{collabPrompt.sub}</p>
-            </div>
-          </BlurRevealElement>
-        </div>
       </motion.div>
+
+      {/* Collabs card — normal document flow, not part of the field's
+          fixed-height percentage system above. It used to be positioned
+          absolutely at hubPosition.top% + 70px, but that field is capped
+          at 800px tall and the card itself runs ~300-340px, so anchoring
+          it that far down the field pushed its bottom edge past the
+          field's own box — overlapping whatever section came next. Normal
+          flow with a fixed margin-top can never do that. */}
+      <div className="floating-nodes-collabs-slot">
+        <CollabsSection />
+      </div>
     </section>
   );
 }

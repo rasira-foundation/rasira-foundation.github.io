@@ -11,22 +11,26 @@ interface Frame {
   lines: FrameLine[];
 }
 
-// Only the one frame — the intro overlay needs to stay punchy (well under
-// 5s total), not a slow 3-question read. The other two questions no
-// longer fit anywhere in the cinematic intro; they were cut, not moved.
+// Only the one frame — the human-capital question, not the Indonesia
+// Emas one. It's the more substantive of the two, so it gets the full
+// intro slot rather than being cut for pace like the other questions
+// were.
 const FRAMES: Frame[] = [
   {
     lines: [
-      { text: 'Indonesia Emas promises a future', angle: -2 },
-      { text: 'built for everyone...', angle: 1.5 },
-      { text: '"...but is it?"', angle: -1 },
+      { text: "What if human capital isn't", angle: -1.5 },
+      { text: 'just about what they can do,', angle: 1 },
+      { text: 'but what they believe is possible?', angle: -2 },
     ],
   },
 ];
 
 const WORD_DELAY_MS = 150;
 const LINE_DELAY_MS = 100;
-const FRAME_HOLD_MS = 1200;
+// Longer hold than a short one-liner would need — this frame is 3 full
+// lines, so it needs real time to sit and be read once fully typed, not
+// just a punchy beat.
+const FRAME_HOLD_MS = 1800;
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
