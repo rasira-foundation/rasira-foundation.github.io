@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import resume from '../../assets/photos/resume.png';
+import mission from '../../assets/photos/mission.png';
 import thankYou from '../../assets/photos/thank-you.png';
 import youthGroup from '../../assets/photos/youth.jpg';
 import archivalCutout from '../../assets/photos/Graduate.jpg';
 import './heroMorphIntro.css';
 
-type Stage = 'thankYou' | 'youth' | 'newspaper' | 'resume';
+type Stage = 'thankYou' | 'youth' | 'newspaper' | 'mission';
 
 // Now the second (and last) leg of the intro sequence — HeroPaperStrips
 // plays first and alone, then hands off to this. Plays through once
-// (~1.9s), holds briefly on resume, then calls onComplete itself
+// (~1.9s), holds briefly on mission, then calls onComplete itself
 // (there's no HeroPaperStrips running alongside anymore to signal
 // completion) so the parent can morph across into the real hero collage.
 const TIMINGS = {
   thankYou: 700,
   youth: 600,
   newspaper: 600,
-  resumeHold: 700,
+  missionHold: 700,
   exit: 550,
 };
 
@@ -29,8 +29,8 @@ interface HeroMorphIntroProps {
 
 /**
  * A cinematic, sequential reveal of the hero's own asset set —
- * thank-you note, youth photo, graduate portrait, resume — settling on
- * the resume and holding there briefly, before handing off (via
+ * thank-you note, youth photo, graduate portrait, mission note — settling
+ * on the mission note and holding there briefly, before handing off (via
  * onComplete, fired a little ahead of its own exit fade finishing so the
  * incoming hero collage starts appearing while this is still dissolving —
  * a cross-fade "morph" rather than a hard cut) to the real scattered hero
@@ -44,7 +44,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
     const schedule: [Stage, number][] = [
       ['youth', TIMINGS.thankYou],
       ['newspaper', TIMINGS.youth],
-      ['resume', TIMINGS.newspaper],
+      ['mission', TIMINGS.newspaper],
     ];
 
     const timers = schedule.map(([nextStage, delay]) => {
@@ -52,7 +52,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
       return window.setTimeout(() => setStage(nextStage), elapsed);
     });
 
-    elapsed += TIMINGS.resumeHold;
+    elapsed += TIMINGS.missionHold;
     // Fires ~200ms before the exit fade below visually finishes, so the
     // hero collage's own pop-in starts while the tail of this fade is
     // still on screen — no blank frame between the two.
@@ -113,12 +113,12 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
             />
           )}
 
-          {stage === 'resume' && (
+          {stage === 'mission' && (
             <motion.img
-              key="resume"
-              src={resume}
+              key="mission"
+              src={mission}
               alt=""
-              className="hero-morph-image hero-morph-resume-img"
+              className="hero-morph-image hero-morph-mission-img"
               initial={{ opacity: 0, scale: 0.7, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0 }}

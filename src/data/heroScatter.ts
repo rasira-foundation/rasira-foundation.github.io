@@ -35,7 +35,7 @@ export const heroScatter: ScatterItem[] = [
     rotate: -1,
     depth: 0.4,
     zIndex: 2,
-    width: '85px',
+    width: '130px',
     src: thankYou,
     alt: 'A "thank you" rejection note',
   },
