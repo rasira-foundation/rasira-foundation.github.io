@@ -4,8 +4,6 @@
 export const CONTACT_EMAIL = 'hello@rasirafoundation.org';
 
 export const heroIntro = {
-  quote: '"Not for people like me."',
-  question: 'Indonesia Emas 2045?',
   paragraph:
     'We are a research-and-practice collective working on the behavioural and psychological layer — how young people understand themselves, imagine their futures, and build the confidence to move toward them.',
   tags: ['anthropology', 'workforce development', 'field-based program design'],

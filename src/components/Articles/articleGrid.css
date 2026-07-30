@@ -251,7 +251,7 @@
   font-size: 18px;
 }
 
-/* Same fluid-glass pill treatment as .node-collab-pill, so the two primary
+/* Same fluid-glass pill treatment as .collabs-cta, so the two primary
    CTAs on the page read as one consistent button language. */
 .article-hub-see-all {
   margin-top: 56px;

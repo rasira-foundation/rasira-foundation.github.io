@@ -6,18 +6,14 @@
   --color-ink-faint: rgba(20, 18, 15, 0.38);
   --color-line: rgba(20, 18, 15, 0.14);
 
-  --color-sky: #c9d3dd;
-  --color-sky-soft: #dbe2e6;
-  --color-dawn-peach: #f2c39a;
   --color-dawn-orange: #e98a52;
-  --color-dawn-rose: #e4a79c;
 
   /* Section-by-section atmosphere wash — each section (hero, constellation,
      articles) paints its own gradient rather than sharing one background
      across multiple elements, but every section boundary uses the exact
      same color on both sides so the scroll still reads as one continuous
-     wash. Kept separate from --color-dawn-orange/-peach above since those
-     still drive vivid UI accents (category tags, footer glow) elsewhere. */
+     wash. Kept separate from --color-dawn-orange above since that one
+     still drives vivid UI accents (category tags, footer glow) elsewhere. */
   --color-gradient-4: #f6f3ed; /* hero top == articles bottom == article card fill */
   --color-atmos-haze-blue: #d8e2e9; /* hero bottom == constellation top */
   --color-atmos-apricot: #e8c19f; /* constellation mid */
@@ -88,15 +84,6 @@ button {
    edge. Section 2 (.floating-nodes) picks up at that exact blue. */
 .atmosphere-band {
   background: linear-gradient(180deg, var(--color-gradient-4) 0%, var(--color-atmos-haze-blue) 100%);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {
