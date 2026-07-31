@@ -2,22 +2,22 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import mission from '../../assets/photos/mission.png';
 import thankYou from '../../assets/photos/thank-you.png';
-import youthGroup from '../../assets/photos/youth.jpg';
 import archivalCutout from '../../assets/photos/Graduate.jpg';
 import './heroMorphIntro.css';
 
-type Stage = 'thankYou' | 'youth' | 'newspaper' | 'mission';
+type Stage = 'thankYou' | 'newspaper' | 'mission';
 
 // Now the second (and last) leg of the intro sequence — HeroPaperStrips
-// plays first and alone, then hands off to this. Plays through once
-// (~1.9s), holds briefly on mission, then calls onComplete itself
-// (there's no HeroPaperStrips running alongside anymore to signal
-// completion) so the parent can morph across into the real hero collage.
+// plays first and alone, then hands off to this. Holds briefly on
+// mission, then calls onComplete itself (there's no HeroPaperStrips
+// running alongside anymore to signal completion) so the parent can
+// morph across into the real hero collage. thankYou and missionHold are
+// both longer than the other stages — those two carry actual text to
+// read, so they get real time on screen instead of just flashing by.
 const TIMINGS = {
-  thankYou: 700,
-  youth: 600,
+  thankYou: 1100,
   newspaper: 600,
-  missionHold: 700,
+  missionHold: 1200,
   exit: 550,
 };
 
@@ -29,8 +29,8 @@ interface HeroMorphIntroProps {
 
 /**
  * A cinematic, sequential reveal of the hero's own asset set —
- * thank-you note, youth photo, graduate portrait, mission note — settling
- * on the mission note and holding there briefly, before handing off (via
+ * thank-you note, graduate portrait, mission note — settling on the
+ * mission note and holding there briefly, before handing off (via
  * onComplete, fired a little ahead of its own exit fade finishing so the
  * incoming hero collage starts appearing while this is still dissolving —
  * a cross-fade "morph" rather than a hard cut) to the real scattered hero
@@ -42,8 +42,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
   useEffect(() => {
     let elapsed = 0;
     const schedule: [Stage, number][] = [
-      ['youth', TIMINGS.thankYou],
-      ['newspaper', TIMINGS.youth],
+      ['newspaper', TIMINGS.thankYou],
       ['mission', TIMINGS.newspaper],
     ];
 
@@ -87,19 +86,6 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
             />
           )}
 
-          {stage === 'youth' && (
-            <motion.img
-              key="youth"
-              src={youthGroup}
-              alt=""
-              className="hero-morph-image"
-              initial={{ opacity: 0, scale: 0.85, rotateY: 0 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              exit={{ rotateY: 90, opacity: 0 }}
-              transition={{ duration: 0.5, ease: EASE }}
-            />
-          )}
-
           {stage === 'newspaper' && (
             <motion.img
               key="newspaper"
@@ -118,7 +104,7 @@ export function HeroMorphIntro({ onComplete }: HeroMorphIntroProps) {
               key="mission"
               src={mission}
               alt=""
-              className="hero-morph-image hero-morph-mission-img"
+              className="hero-morph-image"
               initial={{ opacity: 0, scale: 0.7, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0 }}
