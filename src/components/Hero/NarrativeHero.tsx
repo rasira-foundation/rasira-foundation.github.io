@@ -61,6 +61,10 @@ export function NarrativeHero({ splashDone, showMorphIntro, onMorphComplete }: N
 
   return (
     <section className="narrative-hero">
+      {/* The full-bleed background photo used to live here, but now
+          renders in App.tsx (see HeroBackground.tsx) as a sibling of
+          SiteHeader instead of a descendant of this section — see that
+          file's comment for why. */}
       <motion.div ref={fieldRef} className="hero-scatter-field" style={{ filter: fieldFilter }}>
         {/* Scattered layout stays hidden until the whole intro sequence has
             actually finished. */}

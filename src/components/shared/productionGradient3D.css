@@ -1,0 +1,104 @@
+/* Clips the oversized blurred orbs below so their soft falloff doesn't
+   register as horizontal overflow (html/body already carry their own
+   overflow-x:hidden as a second line of defense, see index.css).
+   Absolute, not fixed — see the comment in ProductionGradient3D.tsx for
+   why: this needs to span the full document, not just the viewport, so
+   different parts of the gradient line up with the section actually on
+   screen as the page scrolls.
+
+   No z-index (stays auto) — deliberately. A negative z-index here was
+   tried first and it was a real bug, not just an unnecessary layer:
+   neither html nor body establishes its own stacking context (they have
+   no z-index of their own, just a background-color), so a negative
+   z-index on this element let it escape the normal parent-paints-first
+   order and slot in BEHIND body's own background fill instead of just
+   behind body's children — body's cream background then painted over
+   the entire gradient, which is exactly the "flat cream, no gradient"
+   bug this had shipped. With z-index left at auto, this can never paint
+   behind an ancestor's own background (a child always paints on top of
+   its parent's fill); it only needs to sit behind the actual page
+   sections, which it does for free — it's the first thing App.tsx
+   renders, and same-stacking-level boxes paint in DOM order, so every
+   section after it (.atmosphere-band, FloatingNodes, etc.) naturally
+   layers on top without any z-index tug-of-war. (noise-overlay sits at
+   z-index:60, well above all of this either way.) */
+.production-gradient-3d {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Same colors the old per-section gradients used (--color-gradient-4,
+   --color-atmos-haze-blue, --color-atmos-apricot, --color-atmos-orange,
+   --color-cream in index.css) — hero cream -> cool blue -> warm apricot
+   -> terracotta -> cream -> the partners/footer cream, painted once
+   instead of matched by hand at each section boundary.
+
+   Stop positions are recalibrated to where sections actually fall as a
+   % of total document height (measured live: hero 0-20.7%, constellation
+   20.7-46.2%, article hub 46.2-67.5%). The original 18/32/42/58 stops
+   were tuned for a much taller hero (full photo collage + a multi-stage
+   cinematic intro); as that content was trimmed down over several
+   rounds, the page got shorter and those fixed percentages drifted out
+   of alignment with the sections they were meant to mark — most visibly,
+   the article hub had drifted past the 58% "back to cream" stop
+   entirely, leaving most of it flat with no gradient at all. Re-measure
+   and update these if the hero/constellation content changes
+   significantly again. */
+.production-gradient-3d-base {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #f6f3ed 0%,
+    #d8e2e9 20.7%,
+    #e8c19f 33.5%,
+    #dfaa83 46.2%,
+    #f6f3ed 67.5%,
+    #f6f1e7 100%
+  );
+}
+
+.production-gradient-3d-orb {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.production-gradient-3d-orb--terracotta {
+  top: 30%;
+  left: 10%;
+  width: min(900px, 80vw);
+  height: min(900px, 60vw);
+  background: #d99b73;
+  opacity: 0.7;
+  filter: blur(120px);
+}
+
+.production-gradient-3d-orb--blue {
+  top: -5%;
+  right: -5%;
+  width: min(700px, 60vw);
+  height: min(700px, 50vw);
+  background: #cddbe5;
+  opacity: 0.6;
+  filter: blur(100px);
+}
+
+/* Same position/color as the existing .closing-footer-glow (centered
+   behind the clock) — a second, larger, more diffuse echo of it sitting
+   in this shared background layer, not a replacement; the footer keeps
+   its own tighter glow around the clock face itself. */
+.production-gradient-3d-footer-glow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  opacity: 0.8;
+  filter: blur(90px);
+  background: radial-gradient(circle, rgba(233, 138, 82, 0.8) 0%, rgba(246, 241, 231, 0) 70%);
+}

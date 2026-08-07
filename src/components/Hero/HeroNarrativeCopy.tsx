@@ -20,10 +20,16 @@ export function HeroNarrativeCopy() {
   const words = heroIntro.paragraph.split(' ');
 
   return (
+    // Opacity-only (no y slide) — .hero-copy-word below relies on
+    // background-attachment: fixed to read one continuous gradient across
+    // the wrapped paragraph, which only works with a true viewport
+    // reference frame. A transform on this wrapper (or any ancestor
+    // between here and the viewport) would re-scope "fixed" to this
+    // element's own box instead, breaking the sweep.
     <motion.div
       className="hero-narrative-copy"
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
       <motion.p className="hero-copy-paragraph" variants={containerVariants} initial="hidden" animate="visible">

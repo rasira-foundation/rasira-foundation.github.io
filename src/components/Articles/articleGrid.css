@@ -1,11 +1,12 @@
-/* Section 3 — fades the constellation's closing orange back down to the
-   same warm cream the article cards themselves are filled with, so
-   legibility settles by the time there's real reading to do. */
+/* Transparent — see the comment on .atmosphere-band in index.css;
+   ProductionGradient3D now owns this section's color. The old bottom-
+   edge fade mask is gone too: that existed to blend this section's own
+   fill into the next one's, which a single continuous background layer
+   no longer needs — and masking to transparent here would now fade the
+   article cards themselves out, which was never the intent. */
 .article-hub {
-  background: linear-gradient(180deg, var(--color-atmos-orange) 0%, var(--color-gradient-4) 100%);
+  background: transparent;
   padding: 64px 24px;
-  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
 @media (min-width: 768px) {

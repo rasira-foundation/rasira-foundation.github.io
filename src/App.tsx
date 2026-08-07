@@ -9,6 +9,7 @@ import { ArticleGrid } from './components/Articles/ArticleGrid';
 import { ArticleDetail } from './components/Articles/ArticleDetail';
 import { ClosingFooter } from './components/Footer/ClosingFooter';
 import { NoiseOverlay } from './components/shared/NoiseOverlay';
+import { ProductionGradient3D } from './components/shared/ProductionGradient3D';
 import { useHashRoute } from './hooks/useHashRoute';
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
@@ -59,13 +60,21 @@ function App() {
         </>
       ) : (
         <>
-          {/* Header lives inside the atmosphere band so the sky gradient
-              runs continuously from the very top of the viewport, with
-              no seam behind the sticky nav. FloatingNodes is its own
-              section (Section 2) with its own gradient, picking up at
-              the exact color .atmosphere-band ends on — no shared
-              wrapper needed for that continuity, just matched color
-              stops on each side. */}
+          {/* Depth background — see ProductionGradient3D.tsx. Every
+              section below is transparent now; this single layer is
+              what actually paints the page's color and floating orbs
+              as it scrolls. */}
+          <ProductionGradient3D />
+
+          {/* Header lives inside the atmosphere band, which is
+              transparent — ProductionGradient3D owns the color, this
+              wrapper is just layout. A separate hero-only gradient
+              overlay used to live here too, but it was a second gradient
+              blended on top of ProductionGradient3D's own continuous one,
+              capped at a fixed 100vh — since that boundary never lined up
+              with ProductionGradient3D's own percentage-based stops, it
+              left a visible seam where the overlay cut off. Removed; this
+              band now just shows ProductionGradient3D straight through. */}
           <div className="atmosphere-band">
             <SiteHeader visible={!showSplash} />
             <NarrativeHero

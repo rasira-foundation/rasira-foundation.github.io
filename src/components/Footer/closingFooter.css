@@ -1,6 +1,12 @@
+/* Transparent on the homepage — ProductionGradient3D owns the color
+   there (see the comment on .atmosphere-band in index.css). This same
+   component also renders on the article-detail page (no
+   ProductionGradient3D there), where body's own --color-cream — nearly
+   identical to what this used to paint directly — shows through
+   instead, so that page looks unchanged. */
 .closing-footer {
   position: relative;
-  background: var(--color-cream);
+  background: transparent;
   /* Extra 50px on top of the existing 18vh — more breathing room between
      the article hub's See All button (previous section) and the clock. */
   padding: calc(18vh + 50px) 24px 9vh;

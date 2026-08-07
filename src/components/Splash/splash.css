@@ -11,25 +11,6 @@
   background: linear-gradient(180deg, var(--color-gradient-4) 0%, var(--color-atmos-haze-blue) 100%);
 }
 
-.splash-logotype-wrap {
-  position: absolute;
-  left: 50%;
-  /* Horizontal centering (x: '-50%') is animated by Framer alongside y/scale
-     below — a separate static `transform` here would just get clobbered,
-     since Framer owns the whole transform string once it's animating any
-     of x/y/scale on this element. */
-  /* Width is set inline (see SplashScreen.tsx) — this max-width is a hard
-     safety clamp against overflow on very narrow screens. */
-  max-width: 90vw;
-}
-
-.splash-logotype {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: auto;
-}
-
 .splash-skip {
   position: absolute;
   bottom: 28px;

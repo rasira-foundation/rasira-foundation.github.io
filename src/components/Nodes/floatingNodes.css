@@ -1,15 +1,9 @@
-/* Section 2 — picks up at the exact haze blue .atmosphere-band (Section 1)
-   ends on, warms through apricot, and settles on the muted orange that
-   .article-hub (Section 3) then continues from. */
+/* Transparent — see the comment on .atmosphere-band in index.css;
+   ProductionGradient3D now owns this section's color. */
 .floating-nodes {
   position: relative;
   padding: 8vh 0 calc(8vh - 30px);
-  background: linear-gradient(
-    180deg,
-    var(--color-atmos-haze-blue) 0%,
-    var(--color-atmos-apricot) 50%,
-    var(--color-atmos-orange) 100%
-  );
+  background: transparent;
 }
 
 /* Normal flow, right after the field — pulled way up into the field's
