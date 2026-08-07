@@ -23,28 +23,51 @@
   align-items: center;
 }
 
+/* position:relative + a real z-index is a defensive belt-and-braces
+   addition — nothing in this section actually has a competing z-index
+   that would obscure this (verified), but it costs nothing and rules
+   out a whole class of stacking bugs outright. */
 .article-tabs {
+  position: relative;
+  z-index: 20;
+  opacity: 1;
+  pointer-events: auto;
   display: flex;
-  gap: 28px;
-  margin-bottom: 28px;
-  font-family: var(--font-editorial-sans);
-  font-size: 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 32px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.12em;
+}
+
+@media (min-width: 768px) {
+  .article-tabs {
+    gap: 32px;
+  }
 }
 
 .article-tab {
   background: none;
   border: none;
-  color: var(--color-ink-faint);
+  border-bottom: 2px solid transparent;
+  color: #777777;
   cursor: pointer;
-  padding: 4px 2px;
+  padding: 4px 2px 6px;
   font-family: inherit;
+  transition: color 0.2s var(--ease-soft);
+}
+
+.article-tab:hover {
+  color: #14120f;
 }
 
 .article-tab.active {
-  color: var(--color-ink);
-  font-weight: 600;
+  color: #111111;
+  font-weight: 700;
+  border-bottom-color: #111111;
 }
 
 .article-hub-notice {
