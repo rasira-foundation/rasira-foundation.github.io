@@ -19,21 +19,19 @@
 }
 
 /* Wrapper carries placement + centering; framer's scale pop animates the
-   inner span, so the two transforms never fight (same split as NodeDot).
-   The extra -35% vertical bias compensates for the serif asterisk glyph
-   sitting high in its em box — visually centers the mark itself, not the
-   text box, on the convergence point. */
-.node-hub-asterisk-wrap {
+   inner span, so the two transforms never fight (same split as
+   NodeMarker). A plain -50%/-50% centers it since the sparkle icon is
+   symmetric — unlike the old serif asterisk glyph this replaced, it has
+   no baseline bias to compensate for. */
+.node-hub-mark-wrap {
   position: absolute;
-  transform: translate(-50%, -35%);
+  transform: translate(-50%, -50%);
 }
 
-.node-hub-asterisk {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 22px;
-  line-height: 1;
+.node-hub-mark {
+  display: flex;
   color: var(--color-ink);
+  filter: drop-shadow(0 0 6px rgba(28, 25, 23, 0.22));
 }
 
 .floating-nodes-field {
@@ -44,6 +42,53 @@
   padding: 0 24px;
 }
 
+/* Real star-catalog artwork (see the comment on Starfield in
+   FloatingNodes.tsx) behind the spoke lines and content. First in DOM
+   order is what keeps it behind everything else; no z-index needed
+   since nothing here uses one.
+
+   The mask is the readability fix: fully transparent through the
+   middle 40% (where all three text columns and the hub sit) fading
+   to fully opaque by 78%, so the sky only actually renders in the
+   empty margin around the text rather than fighting with it. inset:-12%
+   on the wrapper (rather than 0) gives the two parallax layers room to
+   drift on scroll without exposing a hard edge. */
+.node-starfield {
+  position: absolute;
+  inset: -12%;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 0%, transparent 40%, #000 78%);
+  mask-image: radial-gradient(ellipse 62% 58% at 50% 46%, transparent 0%, transparent 40%, #000 78%);
+}
+
+/* background-size: contain (not a >100% zoom) is what keeps the star
+   map's own round disc shape fully visible instead of the corners
+   cropping off outside the box. Depth still comes from scale() on the
+   element itself, which contain respects — it just fits the same full,
+   uncropped circle into whatever box size results. */
+.node-starfield-layer {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Smaller/dimmer/blurrier reads as farther away; the near layer below is
+   bigger, sharper, and moves more on scroll (see farY/nearY in
+   FloatingNodes.tsx) — that differential parallax rate, not the blur
+   alone, is what actually sells depth rather than two flat layers. */
+.node-starfield-layer--far {
+  opacity: 0.26;
+  filter: blur(2px);
+}
+
+.node-starfield-layer--near {
+  opacity: 0.42;
+  filter: blur(0.5px);
+}
+
 .node-lines {
   position: absolute;
   inset: 0;
@@ -52,34 +97,32 @@
 }
 
 .node-lines line {
-  /* Was var(--color-ink) at stroke-opacity:0.4 (effectively ~0.4 alpha
-     black) — bumped to a slightly denser, warmer charcoal so the
-     connectors read clearly against the section's blue-to-apricot
-     gradient band, not just the lightest part of it. */
-  stroke: rgba(28, 25, 23, 0.45);
-  stroke-width: 0.08;
+  /* Solid, thin, low-opacity — vectorEffect="non-scaling-stroke" (set on
+     the element in FloatingNodes.tsx) keeps this a true 1px stroke on
+     screen regardless of the viewBox's non-uniform stretch across the
+     field's real box. */
+  stroke: rgba(28, 25, 23, 0.35);
+  stroke-width: 1;
   stroke-linecap: round;
 }
 
 /* Wrapper carries placement + idle float (translate); the motion child
    inside handles the scroll-triggered pop-in (scale), so the two
    transforms never fight on the same element. */
-.node-dot-wrap {
+.node-marker-wrap {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
 }
 
-.node-dot {
-  display: block;
+.node-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
-  background: var(--color-ink);
-  box-shadow:
-    0 0 0 1px rgba(20, 18, 15, 0.16),
-    0 0 0 6px rgba(20, 18, 15, 0.06);
+  color: var(--color-ink);
 }
 
 @keyframes node-float-0 {
@@ -108,14 +151,13 @@
 }
 
 /* The bullets column sits close to its own connector line's start point
-   (the line runs from ~(43%,18%) down to the hub at (50%,78%)) — at the
-   shared 400px width its right edge reached past the line, so the dashes
-   visibly crossed through the list text. Its box only has ~285px of
-   clearance before the line here, so it stays narrower than the other
-   two columns, which grow away from their own lines instead of toward
-   them and don't have this problem. */
+   (the line runs from ~(43%,18%) down to the hub at (50%,78%)) — wide
+   enough to bring "Practice real-world tasks..." and "Build confidence
+   through evidence" down to one/two lines each instead of three, while
+   still measured (see FloatingNodes.tsx) to clear the line's start
+   point rather than crossing through the list text again. */
 .node-content-wrap--bullets {
-  max-width: 260px;
+  max-width: 360px;
 }
 
 @keyframes node-drift-0 {
@@ -191,11 +233,12 @@
   .floating-nodes-field {
     height: auto;
   }
-  .node-lines {
+  .node-lines,
+  .node-starfield {
     display: none;
   }
-  .node-dot-wrap,
-  .node-hub-asterisk-wrap {
+  .node-marker-wrap,
+  .node-hub-mark-wrap {
     display: none;
   }
   .node-content-wrap {
