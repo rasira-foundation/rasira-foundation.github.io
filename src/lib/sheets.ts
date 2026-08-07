@@ -12,6 +12,12 @@ export interface Article {
   author: string;
   date: string | null;
   readTime: string;
+  /** Set from a "Substack URL" / "External URL" / "Link" column. When
+   * present, the card links straight out to the original post instead of
+   * our own detail page — lets a row point at something already
+   * published on Substack without needing its full content pasted in
+   * too. */
+  externalUrl: string | null;
 }
 
 const CATEGORIES: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
@@ -102,11 +108,14 @@ function rowToArticle(row: SheetRow): Article {
     author: row.author?.trim() || 'Rasira Foundation',
     date: row.publishdate?.trim() || row.date?.trim() || null,
     readTime: row.readtime?.trim() || estimateReadTime(content),
+    externalUrl: row.substackurl?.trim() || row.externalurl?.trim() || row.link?.trim() || row.url?.trim() || null,
   };
 }
 
-/** Turns a Google Drive share link into a directly-embeddable image URL. */
-function resolveImageUrl(url: string): string | null {
+/** Turns a Google Drive share link into a directly-embeddable image URL.
+ * Exported so markdown.tsx can apply the same handling to inline images
+ * pasted into article content, not just the Cover Image column. */
+export function resolveImageUrl(url: string): string | null {
   if (!url) return null;
   const driveMatch = url.match(/\/d\/([\w-]+)/) ?? url.match(/[?&]id=([\w-]+)/);
   if (driveMatch) {

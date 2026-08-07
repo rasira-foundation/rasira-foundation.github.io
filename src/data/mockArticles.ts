@@ -18,6 +18,7 @@ export const mockArticles: Article[] = [
     author: 'Rasira Foundation',
     date: '2026-05-12',
     readTime: '3 min read',
+    externalUrl: null,
   },
   {
     slug: 'real-adoption',
@@ -30,6 +31,7 @@ export const mockArticles: Article[] = [
     author: 'Rasira Foundation',
     date: '2026-04-30',
     readTime: '2 min read',
+    externalUrl: null,
   },
   {
     slug: 'frugal-innovation',
@@ -55,6 +57,7 @@ That reframing changed what we budget for, and it is the one line item partners 
     author: 'Rasira Foundation',
     date: '2026-06-02',
     readTime: '4 min read',
+    externalUrl: null,
   },
   {
     slug: 'fieldwork-notes',
@@ -67,5 +70,6 @@ That reframing changed what we budget for, and it is the one line item partners 
     author: 'Rasira Foundation',
     date: '2026-03-18',
     readTime: '3 min read',
+    externalUrl: null,
   },
 ];

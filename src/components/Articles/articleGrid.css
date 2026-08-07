@@ -77,12 +77,19 @@
   border-top: 1px solid var(--color-border-neutral);
 }
 
+/* Shared by both the internal-nav <button> and the external-link <a>
+   variant (see ArticleCard.tsx) — text-decoration/color resets below are
+   no-ops for the button but needed for the anchor, which otherwise
+   defaults to an underline + link-blue that would show through the
+   title/category text inside. */
 .article-card {
   position: relative;
   display: flex;
   aspect-ratio: 3 / 4;
   flex-direction: column;
   text-align: left;
+  text-decoration: none;
+  color: inherit;
   background-color: var(--color-gradient-4);
   border: none;
   border-right: 1px solid var(--color-border-neutral);

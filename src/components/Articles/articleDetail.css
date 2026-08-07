@@ -93,6 +93,12 @@
   margin-top: 8px;
 }
 
+.article-detail-inline-image {
+  width: 100%;
+  display: block;
+  border-radius: 2px;
+}
+
 .article-detail-body blockquote {
   margin: 0;
   padding-left: 22px;

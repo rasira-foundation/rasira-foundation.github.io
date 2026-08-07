@@ -1,10 +1,16 @@
 import type { ReactNode } from 'react';
+import { resolveImageUrl } from './sheets';
+
+// Standalone `![alt](url)` on its own line — same Drive-link handling as
+// the Cover Image column (see resolveImageUrl in sheets.ts), so a Drive
+// share link pasted here works exactly the same way.
+const IMAGE_LINE = /^!\[([^\]]*)\]\((\S+)\)$/;
 
 /**
  * Deliberately small markdown subset for article bodies: `#`/`##` headers,
- * `> ` blockquotes, `- `/`* ` lists, and blank-line-separated paragraphs.
- * No inline formatting, no external dependency — content from the Sheet is
- * plain enough that this covers it.
+ * `> ` blockquotes, `- `/`* ` lists, `![alt](url)` images, and blank-line-
+ * separated paragraphs. No inline formatting, no external dependency —
+ * content from the Sheet is plain enough that this covers it.
  */
 export function parseMarkdownLite(content: string): ReactNode[] {
   const lines = content.replace(/\r\n/g, '\n').split('\n');
@@ -14,12 +20,27 @@ export function parseMarkdownLite(content: string): ReactNode[] {
 
   const isListLine = (line: string) => line.startsWith('- ') || line.startsWith('* ');
   const isSpecialLine = (line: string) =>
-    line.trim() === '' || line.startsWith('# ') || line.startsWith('## ') || line.startsWith('> ') || isListLine(line);
+    line.trim() === '' ||
+    line.startsWith('# ') ||
+    line.startsWith('## ') ||
+    line.startsWith('> ') ||
+    isListLine(line) ||
+    IMAGE_LINE.test(line.trim());
 
   while (i < lines.length) {
     const line = lines[i];
 
     if (line.trim() === '') {
+      i++;
+      continue;
+    }
+
+    const imageMatch = line.trim().match(IMAGE_LINE);
+    if (imageMatch) {
+      const [, alt, url] = imageMatch;
+      blocks.push(
+        <img key={key++} className="article-detail-inline-image" src={resolveImageUrl(url) ?? url} alt={alt} loading="lazy" />,
+      );
       i++;
       continue;
     }

@@ -24,16 +24,8 @@ function getVariant(article: Article, index: number): CardVariant {
 export function ArticleCard({ article, index }: ArticleCardProps) {
   const variant = getVariant(article, index);
 
-  return (
-    <motion.button
-      type="button"
-      className={`article-card article-card--${variant}`}
-      onClick={() => navigateToArticle(article.slug)}
-      initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
-      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: (index % 4) * 0.06 }}
-    >
+  const content = (
+    <>
       {variant === 'image-overlay' && (
         <>
           <img className="article-card-image" src={article.coverImage!} alt="" loading="lazy" />
@@ -94,6 +86,33 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
           </div>
         </>
       )}
+    </>
+  );
+
+  const motionProps = {
+    className: `article-card article-card--${variant}`,
+    initial: { opacity: 0, y: 20, filter: 'blur(8px)' },
+    whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    viewport: { once: true, amount: 0.3 },
+    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as const, delay: (index % 4) * 0.06 },
+  };
+
+  // Rows with a Substack/external URL link straight out to the original
+  // post — no need to also paste the full content in for those to show
+  // up here. Same visual card either way, just a different element/href
+  // under the hood (a real anchor for the external case, so browser
+  // affordances like "open in new tab" and the status-bar preview work).
+  if (article.externalUrl) {
+    return (
+      <motion.a href={article.externalUrl} target="_blank" rel="noopener noreferrer" {...motionProps}>
+        {content}
+      </motion.a>
+    );
+  }
+
+  return (
+    <motion.button type="button" onClick={() => navigateToArticle(article.slug)} {...motionProps}>
+      {content}
     </motion.button>
   );
 }
