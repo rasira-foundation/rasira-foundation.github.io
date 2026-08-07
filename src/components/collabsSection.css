@@ -13,8 +13,8 @@
 
 .collabs-heading {
   font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: 20px;
+  font-weight: 500;
+  font-size: 22px;
   line-height: 1.35;
   color: var(--color-ink);
   margin-bottom: 12px;
@@ -22,9 +22,10 @@
 
 .collabs-body {
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-weight: 400;
+  font-size: 11px;
   line-height: 1.6;
-  color: var(--color-ink-soft);
+  color: rgba(36, 32, 30, 0.9);
   max-width: 440px;
   margin: 0 auto 22px;
 }
@@ -39,7 +40,7 @@
   color: var(--color-cream);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
@@ -52,13 +53,14 @@
   display: block;
   margin-top: 16px;
   font-family: var(--font-mono);
+  font-weight: 500;
   font-size: 11px;
-  color: var(--color-ink-faint);
+  color: #24201e;
   text-decoration: underline;
 }
 
 .collabs-support:hover {
-  color: var(--color-ink-soft);
+  color: #000000;
 }
 
 /* Horizontal padding zeroed — .floating-nodes-collabs-slot's own 16px

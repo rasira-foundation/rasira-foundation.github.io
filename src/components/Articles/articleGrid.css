@@ -38,7 +38,7 @@
   gap: 24px;
   margin-bottom: 32px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 16px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -53,21 +53,22 @@
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #777777;
+  color: #4a4440;
   cursor: pointer;
   padding: 4px 2px 6px;
   font-family: inherit;
+  font-size: inherit;
   transition: color 0.2s var(--ease-soft);
 }
 
 .article-tab:hover {
-  color: #14120f;
+  color: #000000;
 }
 
 .article-tab.active {
-  color: #111111;
+  color: #1c1917;
   font-weight: 700;
-  border-bottom-color: #111111;
+  border-bottom-color: #1c1917;
 }
 
 .article-hub-notice {
@@ -80,7 +81,7 @@
 
 .article-hub-loading {
   font-family: var(--font-editorial-mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-ink-faint);
   padding: 40px 0;
 }
@@ -139,19 +140,22 @@
   gap: 8px;
 }
 
+/* Was var(--color-dawn-orange) (#e98a52) — only 2.3:1 against the card's
+   cream fill, well under the 4.5:1 AA floor for this size/weight. This
+   darker orange clears 4.72:1 while staying clearly "orange," not brown. */
 .article-card-category {
   font-family: var(--font-editorial-sans);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--color-dawn-orange);
+  color: #b44d18;
 }
 
 .article-card-title {
   font-family: var(--font-editorial-serif);
   font-weight: 700;
-  font-size: 19px;
+  font-size: 22px;
   line-height: 1.22;
   color: var(--color-ink);
   margin: 0;
@@ -163,7 +167,7 @@
 
 .article-card-ascii {
   font-family: var(--font-editorial-mono);
-  font-size: 10px;
+  font-size: 11px;
   line-height: 1.4;
   color: var(--color-neutral-600);
   white-space: pre;
@@ -172,7 +176,7 @@
 
 .article-card-meta {
   font-family: var(--font-editorial-mono);
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-ink-faint);
@@ -279,32 +283,35 @@
   right: 18px;
   bottom: 18px;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
 }
 
-/* Same fluid-glass pill treatment as .collabs-cta, so the two primary
-   CTAs on the page read as one consistent button language. */
+/* Solid dark fill at all times, not conditional on hover — this button
+   can land anywhere from cream to warm peach depending on how many rows
+   are showing (ProductionGradient3D is a continuous gradient, not fixed
+   per section), and a light fill can never have real contrast against a
+   light backdrop no matter how opaque it is (checked: solid white
+   against the peachiest part of this gradient is still only ~1.4:1). A
+   permanent #1c1917 fill sidesteps that entirely instead of relying on
+   an outline or a hover-triggered swap. */
 .article-hub-see-all {
   margin-top: 56px;
   padding: 10px 26px;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.16));
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  box-shadow: 0 8px 30px rgba(20, 18, 15, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  background: #1c1917;
+  border: none;
+  box-shadow: 0 1px 3px rgba(20, 18, 15, 0.08);
   font-family: var(--font-editorial-sans);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--color-ink);
+  color: #ffffff;
   cursor: pointer;
-  transition: transform 0.35s var(--ease-soft), box-shadow 0.35s var(--ease-soft), background 0.35s var(--ease-soft);
+  transition: background 0.25s var(--ease-soft), transform 0.25s var(--ease-soft);
 }
 
 .article-hub-see-all:hover {
   transform: translateY(-3px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.26));
-  box-shadow: 0 14px 40px rgba(20, 18, 15, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  background: #3a3530;
 }
 
 @media (max-width: 860px) {
@@ -350,7 +357,7 @@
 
   .article-card-ascii {
     max-height: 80px;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   /* Auto-height cards mean .article-card--bottom-text's only flow

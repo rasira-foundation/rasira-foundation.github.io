@@ -11,16 +11,15 @@ const PER_ROW = 4;
 export function ArticleGrid() {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
-  const [visibleRows, setVisibleRows] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const filtered = useMemo(
     () => (activeTab === 'Highlight' ? articles : articles.filter((a) => a.category === activeTab)),
     [articles, activeTab],
   );
 
-  const visibleCount = visibleRows * PER_ROW;
-  const visible = filtered.slice(0, visibleCount);
-  const hasMore = filtered.length > visibleCount;
+  const visible = isExpanded ? filtered : filtered.slice(0, PER_ROW);
+  const canExpand = filtered.length > PER_ROW;
 
   return (
     <section className="article-hub">
@@ -33,7 +32,7 @@ export function ArticleGrid() {
               className={tab === activeTab ? 'article-tab active' : 'article-tab'}
               onClick={() => {
                 setActiveTab(tab);
-                setVisibleRows(1);
+                setIsExpanded(false);
               }}
             >
               {tab}
@@ -59,9 +58,9 @@ export function ArticleGrid() {
           </motion.div>
         )}
 
-        {hasMore && (
-          <button type="button" className="article-hub-see-all" onClick={() => setVisibleRows((r) => r + 1)}>
-            See All
+        {canExpand && (
+          <button type="button" className="article-hub-see-all" onClick={() => setIsExpanded((v) => !v)}>
+            {isExpanded ? 'Show Less' : 'See All'}
           </button>
         )}
       </div>

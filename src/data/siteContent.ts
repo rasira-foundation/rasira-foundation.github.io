@@ -4,8 +4,11 @@
 export const CONTACT_EMAIL = 'hello@rasirafoundation.org';
 
 export const heroIntro = {
+  // No "Rasira" in the title itself — the header logo right above it
+  // already carries the name, so repeating it here would just be noise.
+  title: 'Helping young people imagine who they could become',
   paragraph:
-    'We are a research-and-practice collective working on the behavioural and psychological layer — how young people understand themselves, imagine their futures, and build the confidence to move toward them.',
+    'A research-and-practice collective working on how young people understand themselves, imagine their futures, and build the confidence to move toward them.',
   tags: ['anthropology', 'workforce development', 'field-based program design'],
 };
 

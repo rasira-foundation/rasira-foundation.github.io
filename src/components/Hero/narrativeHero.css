@@ -43,7 +43,7 @@
 .scatter-quote,
 .scatter-label {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--color-ink-faint);
   max-width: 240px;
 }
@@ -68,42 +68,33 @@
   text-align: left;
 }
 
-.hero-copy-paragraph {
+/* Large serif statement, not the description — that's .hero-copy-paragraph
+   below. Constrained well short of .hero-copy's own 1180px container so
+   it wraps across a few deliberate lines instead of running edge to edge. */
+.hero-title {
   font-family: var(--font-serif);
-  font-size: 48px;
-  line-height: 1.1;
+  font-weight: 400;
+  font-size: clamp(34px, 5vw + 12px, 72px);
+  line-height: 1.08;
   letter-spacing: -0.025em;
+  color: #1c1917;
+  max-width: 900px;
+  margin: 0 0 40px;
 }
 
-/* Knockout/cutout fill — the same sky-to-clay sweep as .hero-bg-gradient
-   (see index.css for the token stops), clipped to each word's own
-   glyphs so the hero photo's gradient wash reads as if it's showing
-   *through* the letterforms rather than sitting behind a solid color.
-   background-size/position are in true viewport units via
-   background-attachment: fixed, which lets every word — regardless of
-   which line it wraps to — sample the correct slice of one continuous
-   gradient canvas instead of each repeating its own tiny copy of it.
-   That trick only holds if no ancestor between here and the viewport
-   has its own transform/filter (either would re-scope "fixed" to that
-   ancestor's box instead) — see the comment on .hero-narrative-copy in
-   HeroNarrativeCopy.tsx for why its slide-in animation was trimmed to
-   opacity-only to keep this working. */
+/* Secondary description, not the hero statement — mono, small, and in a
+   much narrower column than .hero-title above, matching how supporting
+   copy reads everywhere else on the site (tags line, node body text). */
+.hero-copy-paragraph {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 600px;
+}
+
 .hero-copy-word {
   display: inline-block;
-  background-image: linear-gradient(
-    180deg,
-    var(--color-gradient-4) 0%,
-    var(--color-atmos-haze-blue) 25%,
-    var(--color-atmos-orange) 60%,
-    var(--color-dawn-orange) 100%
-  );
-  background-size: 100vw 100vh;
-  background-attachment: fixed;
-  background-position: 0 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
+  color: #2b2826;
 }
 
 .hero-copy-tags {
@@ -112,10 +103,6 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  /* Was var(--color-ink-faint) — a 38%-opacity near-black, which reads
-     fine on the light gradient sections elsewhere but was nearly
-     invisible against the hero's own darkened photo (see .hero-bg-photo
-     in heroBackground.css). A solid dark grey stays visible there. */
   color: #4a4a4a;
 }
 
@@ -161,8 +148,12 @@
     padding: 24px 16px;
   }
 
+  .hero-title {
+    margin-bottom: 24px;
+  }
+
   .hero-copy-paragraph {
-    font-size: 32px;
-    line-height: 1.15;
+    font-size: 16px;
+    max-width: 100%;
   }
 }

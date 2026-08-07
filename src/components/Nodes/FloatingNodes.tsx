@@ -160,7 +160,7 @@ export function FloatingNodes({ heroDone }: FloatingNodesProps) {
         </span>
 
         <div
-          className="node-content-wrap node-drift-0"
+          className="node-content-wrap node-content-wrap--bullets node-drift-0"
           style={{ top: `calc(${spokeNodes.bullets.top - 12}% + 70px)`, left: `${spokeNodes.bullets.left - 24}%` }}
         >
           <BlurRevealElement delay={TEXT_DELAY} amount={0.4}>

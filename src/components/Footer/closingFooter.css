@@ -14,32 +14,79 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  gap: 40px;
+}
+
+/* Homepage-only dramatic finale. First stop is an exact match to
+   --color-cream — the color ProductionGradient3D itself has already
+   settled into by this point in the page — so there's no visible seam
+   where this section's own background takes over; everything after
+   that is a deliberately gradual, multi-step warm-to-charcoal blend
+   rather than a couple of wide jumps. */
+.closing-footer--dark {
+  background: linear-gradient(
+    180deg,
+    #f6f1e7 0%,
+    #ecd2ba 10%,
+    #dba073 28%,
+    #8a6552 48%,
+    #3a322d 68%,
+    #1c1917 88%,
+    #1c1917 100%
+  );
+  color: #ffffff;
+}
+
+/* Real grid instead of the old percentage-of-footer-height absolute
+   positioning — that broke as soon as the giant wordmark below inflated
+   the footer's total height, since every offset had been tuned for a
+   much shorter box. This holds up regardless of how tall the footer
+   gets, and the three columns can never overlap each other. */
+.closing-footer-meta {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  max-width: var(--container-max);
+  width: 100%;
+  margin: 0 auto;
+}
+
+.closing-footer-meta-left,
+.closing-footer-meta-right {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: #a1a1aa;
+}
+
+.closing-footer-meta-left p:last-child,
+.closing-footer-meta-right {
+  opacity: 0.75;
+}
+
+.closing-footer-meta-right {
+  text-align: right;
+  letter-spacing: 0.04em;
+}
+
+.closing-footer-meta-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .closing-footer-clock-wrap {
-  position: absolute;
-  left: 50%;
-  top: calc(30% + 90px);
-  transform: translate(-50%, -50%);
-  width: 180px;
-  height: 180px;
+  position: relative;
+  width: 96px;
+  height: 96px;
 }
 
-/* Nested inside .closing-footer-clock-wrap (see ClosingFooter.tsx) so it
-   always sits directly behind the clock face, wherever that ends up —
-   its own `top: 120px` is the exact pixel-for-pixel equivalent of the
-   old footer-relative `calc(30% + 120px)`: the clock-wrap's top edge
-   lands at exactly 30% of the footer's height once its own centering
-   transform is accounted for, so the wrap itself already supplies the
-   "30%" — this only needs the leftover +120px on top of that. */
 .closing-footer-glow {
   position: absolute;
-  left: 50%;
-  top: 120px;
-  width: 60vw;
-  max-width: 560px;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
+  inset: -40px;
+  border-radius: 50%;
   background: radial-gradient(circle, var(--color-dawn-orange) 0%, rgba(233, 138, 82, 0) 70%);
   opacity: 0.55;
   filter: blur(4px);
@@ -57,8 +104,12 @@
   overflow: visible;
 }
 
+/* Only ever rendered inside .closing-footer--dark (the clock is gated on
+   showClock, same as the dark modifier) — safe to make this unconditionally
+   light rather than scoping it, since it never appears on the light
+   article-detail footer. */
 .analog-clock-hand {
-  stroke: var(--color-ink);
+  stroke: #ffffff;
   stroke-linecap: round;
 }
 
@@ -72,32 +123,6 @@
   stroke-opacity: 0.65;
 }
 
-.closing-footer-digital {
-  position: absolute;
-  top: -8px;
-  left: calc(100% + 10px);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--color-ink-soft);
-  white-space: nowrap;
-}
-
-.closing-footer-narrative {
-  position: absolute;
-  left: calc(50% - 190px);
-  top: 42%;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--color-ink-faint);
-  max-width: 260px;
-  opacity: 0.75;
-  -webkit-mask-image: linear-gradient(180deg, black 55%, transparent 100%);
-  mask-image: linear-gradient(180deg, black 55%, transparent 100%);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
-
 .closing-footer-contact {
   position: relative;
   display: flex;
@@ -105,13 +130,11 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding-top: 8vh;
-  margin-top: 4vh;
 }
 
 .closing-footer-mail {
   font-family: var(--font-sans);
-  font-size: 13px;
+  font-size: 11px;
   color: var(--color-ink);
   text-decoration: none;
   border-bottom: 1px solid var(--color-ink-faint);
@@ -127,84 +150,82 @@
   color: var(--color-ink-faint);
 }
 
-/* Hidden by default — only ever shown inside the mobile block below,
-   where it fills in for .closing-footer-digital (which stays absolute,
-   anchored beside the clock, and doesn't work once the clock is in
-   normal flow). */
-.closing-footer-digital-mobile {
-  display: none;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--color-ink);
+/* Scoped, unlike the clock/meta colors above — .closing-footer-mail also
+   renders on the light article-detail footer (showClock=false, no
+   --dark modifier), so it can't just flip to light text unconditionally. */
+.closing-footer--dark .closing-footer-mail {
+  color: #ffffff;
+  border-bottom-color: rgba(255, 255, 255, 0.4);
 }
 
-/* Mobile only. Absolute-positioning the clock/narrative/digital (the
-   desktop approach, all anchored off percentages of the footer's own
-   box) doesn't hold up once that box's height changes with content —
-   any fixed offset tuned for one footer height reads as a totally
-   different position, and overlapping/clipping the contact block below,
-   at another. Normal flow sidesteps that entirely: clock, narrative,
-   and contact become real flex children of .closing-footer (already a
-   flex column), stacked in document order with a shared `gap`, so
-   nothing can ever overlap regardless of how tall any piece is. The
-   digital readout can't just follow along, though — it's nested inside
-   .closing-footer-clock-wrap in the markup (see ClosingFooter.tsx), so
-   making it static would leave it stuck right under the clock face
-   rather than after copyright. It's hidden here and a duplicate
-   (.closing-footer-digital-mobile, a later sibling of .closing-footer-
-   contact) stands in for it instead. */
+.closing-footer--dark .closing-footer-mail:hover {
+  border-color: #ffffff;
+}
+
+.closing-footer-year--homepage {
+  align-self: center;
+  color: #a1a1aa;
+}
+
+/* Giant closing wordmark — the real rasira-2lines.svg logo (see
+   ClosingFooter.tsx for why this is the actual asset, not a text
+   recreation), forced to pure white: brightness(0) first crushes
+   whatever color the source art uses down to solid black regardless of
+   its original palette, then invert(1) flips that to solid white — more
+   reliable than trying to match the exact source color with a filter
+   built for a specific hue. */
+.closing-footer-brand {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closing-footer-brand-asterisk {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 5vw, 56px);
+  line-height: 1;
+  color: #ffffff;
+  margin-bottom: 0.2em;
+}
+
+.closing-footer-brand-logo {
+  width: min(88vw, 900px);
+  height: auto;
+  filter: brightness(0) invert(1);
+}
+
+@media (max-width: 768px) {
+  .closing-footer-meta {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 32px;
+  }
+
+  .closing-footer-meta-left,
+  .closing-footer-meta-right {
+    text-align: center;
+  }
+}
+
 @media (max-width: 640px) {
   .closing-footer {
     min-height: auto;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 32px;
     padding: calc(18vh + 50px) 24px 48px;
   }
 
-  .closing-footer-clock-wrap {
-    position: relative;
-    left: auto;
-    top: auto;
-    margin: 0 auto;
-    transform: none;
-  }
-
-  /* Scoped tight to the clock itself now — a halo directly behind the
-     hands, not a screen-spanning wash. Centers on the wrap's own
-     midpoint (`top: 50%`) rather than the desktop `120px` offset, which
-     assumed a wrap far taller than the 180px box actually is. */
-  .closing-footer-glow {
-    top: 50%;
-    width: 220px;
-    max-width: none;
-  }
-
-  .closing-footer-digital {
-    display: none;
-  }
-
-  .closing-footer-narrative {
-    position: static;
-    max-width: none;
-    margin: 0;
-    text-align: center;
-    font-size: 15px;
-    color: var(--color-ink);
-    opacity: 1;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .closing-footer-contact {
+  .closing-footer-brand {
     flex-direction: column;
+    align-items: flex-start;
     gap: 12px;
-    padding-top: 0;
-    margin-top: 0;
+    padding-top: 24px;
   }
 
-  .closing-footer-digital-mobile {
-    display: block;
+  .closing-footer-brand-logo {
+    width: min(92vw, 480px);
   }
 }
