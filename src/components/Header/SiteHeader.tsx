@@ -4,8 +4,8 @@ import { navigateHome } from '../../hooks/useHashRoute';
 import './siteHeader.css';
 
 interface SiteHeaderProps {
-  /** Stays invisible until the splash has actually cleared, then fades in
-   * on its own — no shared-element handoff with the splash anymore, it
+  /** Stays invisible until the splash gradient itself has cleared, then
+   * fades in on its own — no shared-element handoff with the splash, it
    * doesn't show a copy of this logo at all. */
   visible?: boolean;
 }

@@ -3,7 +3,9 @@ import { AnimatePresence } from 'framer-motion';
 import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
-import { FloatingNodes } from './components/Nodes/FloatingNodes';
+import { PillarsSection } from './components/Framework/PillarsSection';
+import { SystemFramework } from './components/Framework/SystemFramework';
+import { CollabsSection } from './components/CollabsSection';
 import { PartnerDonationSection } from './components/PartnerDonationSection';
 import { ArticleGrid } from './components/Articles/ArticleGrid';
 import { ArticleDetail } from './components/Articles/ArticleDetail';
@@ -17,11 +19,6 @@ const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
 
 function App() {
   const [showSplash, setShowSplash] = useState(() => sessionStorage.getItem(SPLASH_SEEN_KEY) !== '1');
-  // Lifted up from NarrativeHero so FloatingNodes (a sibling section) can
-  // also read it — it needs to stay hidden for as long as the hero
-  // sequence is playing, regardless of scroll position, not just rely on
-  // its own scroll-triggered reveals (which would fire if someone scrolls
-  // down mid-intro).
   const [showMorphIntro, setShowMorphIntro] = useState(
     () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
   );
@@ -51,7 +48,9 @@ function App() {
 
       {/* Homepage is always mounted underneath the splash. The header's own
           logo stays invisible (see visible={!showSplash} below) until the
-          splash's copy hands off to it via a shared layoutId. */}
+          splash gradient itself clears, then fades in — visible again
+          through the paper-strip typing and cinematic hero morph that
+          follow it. */}
       {route.view === 'article' ? (
         <>
           <SiteHeader />
@@ -83,8 +82,12 @@ function App() {
               onMorphComplete={handleMorphComplete}
             />
           </div>
-          <FloatingNodes heroDone={!showMorphIntro} />
-          <ArticleGrid />
+          <ArticleGrid heroDone={!showMorphIntro} />
+          <PillarsSection heroDone={!showMorphIntro} />
+          <SystemFramework heroDone={!showMorphIntro} />
+          <div className="collabs-slot">
+            <CollabsSection heroDone={!showMorphIntro} />
+          </div>
           <PartnerDonationSection />
           <ClosingFooter />
         </>

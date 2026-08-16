@@ -8,7 +8,15 @@ import './articleGrid.css';
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
 const PER_ROW = 4;
 
-export function ArticleGrid() {
+interface ArticleGridProps {
+  /** Stays hidden until the splash + hero intro sequence has fully
+   * finished, regardless of scroll position — see PillarsSection. Also
+   * passed down to each ArticleCard so their own reveal doesn't rely on
+   * whileInView (see the comment on that prop in ArticleCard.tsx). */
+  heroDone: boolean;
+}
+
+export function ArticleGrid({ heroDone }: ArticleGridProps) {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -22,7 +30,12 @@ export function ArticleGrid() {
   const canExpand = filtered.length > PER_ROW;
 
   return (
-    <section className="article-hub">
+    <motion.section
+      className="article-hub"
+      animate={{ opacity: heroDone ? 1 : 0 }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
+    >
       <div className="article-hub-inner">
         <nav className="article-tabs">
           {TABS.map((tab) => (
@@ -53,7 +66,7 @@ export function ArticleGrid() {
         ) : (
           <motion.div className="article-grid" layout>
             {visible.map((article, i) => (
-              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} />
+              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} heroDone={heroDone} />
             ))}
           </motion.div>
         )}
@@ -64,6 +77,6 @@ export function ArticleGrid() {
           </button>
         )}
       </div>
-    </section>
+    </motion.section>
   );
 }

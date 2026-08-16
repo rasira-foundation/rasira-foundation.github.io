@@ -1,0 +1,211 @@
+/* Transparent — see the comment on .atmosphere-band in index.css;
+   ProductionGradient3D owns this section's color. */
+.system-framework {
+  background: transparent;
+  padding: 0 24px 64px;
+}
+
+.framework-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.framework-card {
+  margin-bottom: 24px;
+}
+
+/* ── DIAGRAM ── */
+/* One continuous sand-colored block, not four detached floating cards —
+   the columns are separated by thin inner rules (drawn per-box below as
+   a left border, with the first box's suppressed) rather than by gaps,
+   so the whole diagram reads as a single unified panel. Near-rectangle
+   radius (4px) and no outer outline; the paper grain comes from the
+   ::after overlay, the same feTurbulence technique the splash's paper
+   strips use. */
+.framework-diagram {
+  position: relative;
+  display: grid;
+  /* minmax(0, 1fr), not a bare 1fr — a bare 1fr floors at auto (content
+     width), so a long unbroken item like "Agency & Adaptability" pushes
+     its own column wider than the others. */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  margin-bottom: 40px;
+  background: #e7e1d5;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.framework-diagram::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.framework-box {
+  min-height: 380px;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+  border-left: 1px solid rgba(20, 18, 15, 0.14);
+}
+
+.framework-box:first-child {
+  border-left: none;
+}
+
+.framework-box-body {
+  padding: 24px 22px 32px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* min-height reserves two lines' worth of space (2 x the 1.3 line-height)
+   whether the title actually wraps or not, so the single-line titles
+   (Person Profile / Evidence in Action / Outcomes) push their tagline
+   rows to the same baseline as the two-line one (Decisions &
+   Development). Doing it structurally beats hand-tuning a different
+   margin per card — it stays aligned if any title's length changes. */
+.framework-box-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.3;
+  min-height: 2.6em;
+  color: var(--color-ink);
+  margin-bottom: 16px;
+}
+
+.framework-box-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #2b2623;
+}
+
+.framework-box-divider {
+  position: relative;
+  height: 1px;
+  margin: 14px 0;
+  background: rgba(20, 18, 15, 0.15);
+}
+
+.framework-box-divider-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2b2623;
+  transform: translate(-1px, -50%);
+}
+
+/* The body copy the earlier "font is white / invisible" complaint was
+   about — explicit dark grey at 16px on every variant (matching the
+   same #2b2623 body-text color used elsewhere on the homepage, e.g.
+   .pillar-body), not a color that only worked against one specific
+   background. One item per line, each ending in a "/" separator (final
+   one a "."), so the card reads as a stacked list rather than a single
+   run-on sentence. */
+.framework-box-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.65;
+  color: #2b2623;
+}
+
+/* The variant classes still exist (they're what the data's `variant`
+   field maps to) but no longer set a color — .framework-diagram's own
+   sand fill now shows through every column, so all four read as one
+   continuous panel. Every card therefore keeps the same dark-grey text
+   set on .framework-box-title / -meta / -items above; there's no
+   light-on-dark case left to special-case. */
+.framework-box--dark,
+.framework-box--neutral,
+.framework-box--accent,
+.framework-box--cool {
+  background: transparent;
+}
+
+/* ── FEEDBACK LOOP ── */
+.framework-feedback {
+  margin-bottom: 32px;
+}
+
+/* Now that .framework-card no longer gives this a guaranteed-light
+   backdrop, the drop-shadow halo (echoed on the label below via
+   text-shadow) is what keeps the dashed curve/arrow legible whether it's
+   sitting on the light top of this section or the much darker bottom of
+   it, courtesy of ProductionGradient3D's scroll-linked ambient overlay —
+   a soft light glow reads as separation against either. */
+.framework-feedback-svg {
+  width: 100%;
+  height: 48px;
+  display: block;
+  filter: drop-shadow(0 0 3px rgba(246, 241, 231, 0.85));
+}
+
+.framework-feedback-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-ink);
+  text-align: center;
+  margin-top: -8px;
+  text-shadow:
+    0 0 6px rgba(246, 241, 231, 0.9),
+    0 0 3px rgba(246, 241, 231, 0.9);
+}
+
+/* ── DISCLAIMER ── */
+/* A small self-contained callout tint, not the diagram-wide card that
+   was removed above — this sits lower in the section than the feedback
+   label, deeper into where the scroll-linked ambient overlay darkens
+   things, so its own background needs to carry real contrast rather
+   than the near-invisible 6%-alpha tint it had before. */
+.framework-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: #2b2623;
+  padding: 16px 20px;
+  border-left: 2px solid var(--color-dawn-orange);
+  background: rgba(246, 241, 231, 0.85);
+  border-radius: 0 6px 6px 0;
+  max-width: 640px;
+}
+
+/* ── MOBILE ── */
+@media (max-width: 860px) {
+  .framework-diagram {
+    flex-direction: column;
+  }
+
+  .framework-arrow {
+    padding: 8px 0;
+    align-self: center;
+  }
+
+  .framework-arrow-line {
+    transform: rotate(90deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .system-framework {
+    padding: 0 16px 48px;
+  }
+}

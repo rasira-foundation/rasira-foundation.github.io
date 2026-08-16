@@ -115,7 +115,7 @@
 
 .partner-card-body {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.6;
   color: #383330;
 }
@@ -190,17 +190,19 @@
    past AAA, since this line was the faintest text on the whole page. */
 .donation-card-body {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.6;
   color: #d6d3d1;
   margin-top: 12px;
 }
 
+/* 6px, matching .collabs-cta and .article-hub-see-all — all CTAs share
+   one near-rectangular radius rather than the old full pill. */
 .donation-cta {
   align-self: flex-start;
   margin-top: 8px;
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--color-dawn-orange);
   color: #1c1917;
   font-weight: 700;
@@ -210,9 +212,13 @@
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
+/* Background-only, same reasoning as .article-hub-see-all:hover. */
 .donation-cta:hover {
-  transform: translateY(-2px);
   background: #f0b385;
+}
+
+.donation-cta:active {
+  transform: scale(0.97);
 }
 
 /* Mobile only — supersedes the 480px padding tweak below with the

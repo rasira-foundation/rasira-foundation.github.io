@@ -12,8 +12,6 @@ interface NarrativeHeroProps {
    * this component is mounted (hidden behind the splash) from page load, so
    * starting on mount would let the whole sequence run out unseen. */
   splashDone: boolean;
-  /** Lifted up to App.tsx so the sibling FloatingNodes section can also
-   * read it (see App.tsx for why). */
   showMorphIntro: boolean;
   onMorphComplete: () => void;
 }
@@ -26,8 +24,7 @@ export function NarrativeHero({ splashDone, showMorphIntro, onMorphComplete }: N
   // and alone, then hands off to the cinematic photo overlay, which in
   // turn hands off (via the onMorphComplete prop) to the real hero
   // collage. showMorphIntro is the coarse "is the sequence still running
-  // at all" flag the sibling FloatingNodes section also reads; this is
-  // just which half of it is currently on screen.
+  // at all" flag; this is just which half of it is currently on screen.
   const [introStage, setIntroStage] = useState<IntroStage>('paperStrips');
 
   const handlePaperStripsDone = useCallback(() => setIntroStage('cinematic'), []);

@@ -4,14 +4,24 @@
    fill into the next one's, which a single continuous background layer
    no longer needs — and masking to transparent here would now fade the
    article cards themselves out, which was never the intent. */
+/* Top padding carries an extra 300px over the previous 72/88px to push
+   the card row further clear of the hero above it.
+
+   z-index 10 sits BELOW .pillars-section's 30 on purpose: the classroom
+   image below has a negative top margin that pulls it up over this
+   section's tail, and it's meant to cover these cards as it scrolls in.
+   That image carries pointer-events:none so the See All button
+   underneath stays clickable even while covered. */
 .article-hub {
+  position: relative;
+  z-index: 10;
   background: transparent;
-  padding: 64px 24px;
+  padding: 372px 24px 48px;
 }
 
 @media (min-width: 768px) {
   .article-hub {
-    padding: 96px 24px;
+    padding: 388px 24px 56px;
   }
 }
 
@@ -23,24 +33,12 @@
   align-items: center;
 }
 
-/* position:relative + a real z-index is a defensive belt-and-braces
-   addition — nothing in this section actually has a competing z-index
-   that would obscure this (verified), but it costs nothing and rules
-   out a whole class of stacking bugs outright. */
+/* Hidden — the grid always shows the default 'Highlight' category now,
+   with no way to switch. Kept in the DOM (ArticleGrid.tsx still renders
+   the nav) rather than removed from the markup, so it's a one-line
+   revert if the filter comes back later. */
 .article-tabs {
-  position: relative;
-  z-index: 20;
-  opacity: 1;
-  pointer-events: auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 32px;
-  font-family: var(--font-mono);
-  font-size: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
+  display: none;
 }
 
 @media (min-width: 768px) {
@@ -294,24 +292,40 @@
    against the peachiest part of this gradient is still only ~1.4:1). A
    permanent #1c1917 fill sidesteps that entirely instead of relying on
    an outline or a hover-triggered swap. */
+/* min-width keeps the box a fixed size across the "See All" <-> "Show
+   Less" swap, so toggling doesn't reflow the row underneath it. */
 .article-hub-see-all {
   margin-top: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 104px;
   padding: 10px 26px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: #1c1917;
-  border: none;
+  border: 1px solid rgba(245, 242, 235, 0.18);
   box-shadow: 0 1px 3px rgba(20, 18, 15, 0.08);
   font-family: var(--font-editorial-sans);
   font-size: 11px;
   font-weight: 600;
-  color: #ffffff;
+  color: #f5f2eb;
   cursor: pointer;
-  transition: background 0.25s var(--ease-soft), transform 0.25s var(--ease-soft);
+  transition: background 0.2s var(--ease-soft);
 }
 
+/* Background-only on hover — deliberately NOT a translate. A transform
+   here moved the button out from under the cursor, which dropped the
+   hover state, which moved it back: a feedback loop that reads as the
+   cursor and button flickering. Colour changes can't retrigger hit
+   testing, so they're safe. */
 .article-hub-see-all:hover {
-  transform: translateY(-3px);
-  background: #3a3530;
+  background: #332f2c;
+}
+
+/* Safe on :active because a press is momentary and can't oscillate the
+   way a sustained hover can. */
+.article-hub-see-all:active {
+  transform: scale(0.97);
 }
 
 @media (max-width: 860px) {

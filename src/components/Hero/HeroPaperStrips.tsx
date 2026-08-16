@@ -25,8 +25,8 @@ const FRAMES: Frame[] = [
   },
 ];
 
-const WORD_DELAY_MS = 150;
-const LINE_DELAY_MS = 100;
+const WORD_DELAY_MS = 95;
+const LINE_DELAY_MS = 60;
 // Longer hold than a short one-liner would need — this frame is 3 full
 // lines, so it needs real time to sit and be read once fully typed, not
 // just a punchy beat.

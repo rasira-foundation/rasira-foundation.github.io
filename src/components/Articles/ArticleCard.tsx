@@ -8,6 +8,15 @@ type CardVariant = 'ascii' | 'text-only' | 'image-overlay' | 'bottom-text';
 interface ArticleCardProps {
   article: Article;
   index: number;
+  /** Stays hidden until the splash + hero intro sequence has fully
+   * finished — driven here rather than via whileInView, which could
+   * fire (and permanently spend its once:true trigger) while still
+   * hidden behind the splash overlay, or simply never fire reliably;
+   * see the SystemFramework fix earlier this session for the exact
+   * failure mode this replaced. Cards near the top of the page (this
+   * grid is now the second section, right after the hero) are the ones
+   * most exposed to that risk. */
+  heroDone: boolean;
 }
 
 // Cards with a real cover image always get the photo treatment; the rest
@@ -21,7 +30,7 @@ function getVariant(article: Article, index: number): CardVariant {
   return TEXT_VARIANTS[index % TEXT_VARIANTS.length];
 }
 
-export function ArticleCard({ article, index }: ArticleCardProps) {
+export function ArticleCard({ article, index, heroDone }: ArticleCardProps) {
   const variant = getVariant(article, index);
 
   const content = (
@@ -91,10 +100,14 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
 
   const motionProps = {
     className: `article-card article-card--${variant}`,
-    initial: { opacity: 0, y: 20, filter: 'blur(8px)' },
-    whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
-    viewport: { once: true, amount: 0.3 },
-    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as const, delay: (index % 4) * 0.06 },
+    animate: heroDone
+      ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+      : { opacity: 0, y: 20, filter: 'blur(8px)' },
+    transition: {
+      duration: 1,
+      ease: [0.16, 1, 0.3, 1] as const,
+      delay: heroDone ? (index % 4) * 0.06 : 0,
+    },
   };
 
   // Rows with a Substack/external URL link straight out to the original

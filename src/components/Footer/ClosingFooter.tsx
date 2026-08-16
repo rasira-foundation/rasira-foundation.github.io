@@ -1,4 +1,5 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useLocalClock } from '../../hooks/useLocalClock';
 import { CONTACT_EMAIL, closingNarrative } from '../../data/siteContent';
 import { AnalogClock } from './AnalogClock';
@@ -16,6 +17,24 @@ interface ClosingFooterProps {
 
 export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
   const clock = useLocalClock();
+  const footerRef = useRef<HTMLElement>(null);
+
+  // Tied to this footer's own progress through the viewport rather than
+  // the page-wide scrollYProgress — a global [0.75, 0.95] window drifts
+  // out of alignment every time page height changes, which it has
+  // repeatedly here. offset start/end means: 0 when the footer's top
+  // first enters the bottom of the viewport, 1 once its top reaches the
+  // top of the viewport.
+  const { scrollYProgress } = useScroll({
+    target: footerRef,
+    offset: ['start end', 'start start'],
+  });
+  // Starts at 0.4 rather than 0 on purpose: a scroll-derived value only
+  // advances when scroll/rAF actually run, and when that stalls it stays
+  // pinned at its FIRST entry — so a [0, 1] range would leave the glow
+  // permanently absent. Starting part-way means the worst case is a
+  // dimmer glow, while a normal scroll resolves it to full strength.
+  const glowOpacity = useTransform(scrollYProgress, [0, 0.6], [0.4, 1]);
 
   if (!showClock) {
     return (
@@ -31,7 +50,19 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
   }
 
   return (
-    <footer className="closing-footer closing-footer--dark">
+    <footer className="closing-footer closing-footer--dark" ref={footerRef}>
+      {/* The sunset wash itself is plain CSS at full strength — see
+          .closing-footer-sunset for why fading the whole layer breaks
+          the seam and the opaque bottom. Only the ambient glow is
+          scroll-linked, which is safe in a way the gradient isn't: if
+          scrollYProgress stalls (a real failure mode noted in
+          ProductionGradient3D.tsx — a scroll-derived value only advances
+          when scroll/rAF actually run), the worst case is a slightly
+          dimmer glow, never an unreadable footer. */}
+      <div className="closing-footer-sunset" aria-hidden="true">
+        <motion.div className="closing-footer-sunset-glow" style={{ opacity: glowOpacity }} />
+      </div>
+
       {/* A real 3-column grid — the old approach positioned everything by
           percentage of the footer's own height, which broke the moment
           the giant wordmark below inflated that height: every offset had

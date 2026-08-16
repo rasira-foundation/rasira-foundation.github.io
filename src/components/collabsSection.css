@@ -1,8 +1,12 @@
-/* Rendered inside FloatingNodes' own .floating-nodes-collabs-slot (see
-   floatingNodes.css), which handles positioning/background — this file
-   only styles the copy itself. No card frame: it sits directly on the
-   page's own background, right where the constellation lines funnel
-   into it. */
+/* .collabs-slot (rendered by App.tsx) just centers this with page-
+   standard horizontal padding — no card frame, it sits directly on the
+   page's own background. */
+.collabs-slot {
+  display: flex;
+  justify-content: center;
+  padding: 24px 24px 64px;
+}
+
 .collabs-card {
   width: 100%;
   max-width: 576px;
@@ -23,7 +27,7 @@
 .collabs-body {
   font-family: var(--font-mono);
   font-weight: 400;
-  font-size: 11px;
+  font-size: 16px;
   line-height: 1.6;
   color: rgba(36, 32, 30, 0.9);
   max-width: 440px;
@@ -35,7 +39,7 @@
   align-items: center;
   gap: 6px;
   padding: 12px 24px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: var(--color-ink);
   color: var(--color-cream);
   text-decoration: none;
@@ -44,9 +48,14 @@
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
+/* Background-only, same reasoning as .article-hub-see-all:hover — a
+   translate on hover can move the button off the cursor and oscillate. */
 .collabs-cta:hover {
-  transform: translateY(-2px);
   background: var(--color-dawn-orange);
+}
+
+.collabs-cta:active {
+  transform: scale(0.97);
 }
 
 .collabs-support {
@@ -63,11 +72,11 @@
   color: #000000;
 }
 
-/* Horizontal padding zeroed — .floating-nodes-collabs-slot's own 16px
-   (see floatingNodes.css) is the single source of the left edge here,
-   matching .hero-copy and .floating-nodes-field's mobile padding
-   exactly, rather than stacking a second nested padding on top of it. */
 @media (max-width: 640px) {
+  .collabs-slot {
+    padding: 16px 16px 48px;
+  }
+
   .collabs-card {
     text-align: left;
     padding-left: 0;

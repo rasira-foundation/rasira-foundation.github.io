@@ -3,13 +3,19 @@ import { motion } from 'framer-motion';
 import { collabsSection } from '../data/siteContent';
 import './collabsSection.css';
 
-/** Glass card closing the constellation — rendered by FloatingNodes
- * inside .floating-nodes-collabs-slot, which anchors it centered below
- * the diagram's convergence point (that wrapper owns positioning; the
- * scroll-reveal motion here only animates opacity/blur/y, so the two
- * never fight). Its secondary link scrolls to PartnerDonationSection's
+interface CollabsSectionProps {
+  /** Stays hidden until the splash + hero intro sequence has fully
+   * finished — see the comment on the same prop in ArticleCard.tsx for
+   * why this isn't a whileInView reveal. */
+  heroDone: boolean;
+}
+
+/** Closing CTA card, rendered by App.tsx inside .collabs-slot (see
+ * collabsSection.css), which just centers it with page-standard padding —
+ * the scroll-reveal motion here only animates opacity/blur/y, so the two
+ * never fight. Its secondary link scrolls to PartnerDonationSection's
  * #donate anchor; the only thing coupling them. */
-export function CollabsSection() {
+export function CollabsSection({ heroDone }: CollabsSectionProps) {
   const handleSupportClick = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
     document.getElementById('donate')?.scrollIntoView({ behavior: 'smooth' });
@@ -18,9 +24,9 @@ export function CollabsSection() {
   return (
     <motion.div
       className="collabs-card"
-      initial={{ opacity: 0, filter: 'blur(10px)', y: 30 }}
-      whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
+      animate={
+        heroDone ? { opacity: 1, filter: 'blur(0px)', y: 0 } : { opacity: 0, filter: 'blur(10px)', y: 30 }
+      }
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     >
       <h2 className="collabs-heading">{collabsSection.heading}</h2>
