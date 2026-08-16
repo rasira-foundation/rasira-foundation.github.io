@@ -14,6 +14,5 @@ export interface ScatterItem {
 
 // Empty — the resting hero view is just the full-bleed photo background
 // (see .hero-bg-canvas in narrativeHero.css) and the knockout title text,
-// no paper-cutout collage on top of it. mission.png still appears
-// earlier, in HeroMorphIntro's cinematic hold.
+// no paper-cutout collage on top of it.
 export const heroScatter: ScatterItem[] = [];

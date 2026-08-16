@@ -37,16 +37,26 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
       className="pillars-section"
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
+      /* Always none on the SECTION. Its box is dragged upward by the
+         image's negative top margin, so it physically overlaps the
+         article cards above — and a section with pointer-events:auto
+         swallows clicks across its whole border box even where it paints
+         nothing, which is what made the See All button unclickable.
+         The interactive gating moves down to .pillars-grid below. */
+      style={{ pointerEvents: 'none' }}
     >
       {/* Torn-paper edge is baked into the PNG itself (transparent, jagged
           bottom) — no card frame or border needed, it just bleeds
           straight into the grid below. */}
       <div className="pillars-image-wrap" ref={imageWrapRef}>
-        <motion.img src={pillarsImage} alt="" className="pillars-image" style={{ y: imageY }} />
+        {/* scale lives in the motion style alongside y, not in CSS: once
+            Framer drives any transform value on an element it writes the
+            whole `transform` property itself each frame, so a separate
+            CSS `transform: scale()` would just be overwritten. */}
+        <motion.img src={pillarsImage} alt="" className="pillars-image" style={{ y: imageY, scale: 1.1 }} />
       </div>
 
-      <div className="pillars-grid">
+      <div className="pillars-grid" style={{ pointerEvents: heroDone ? 'auto' : 'none' }}>
         {pillars.map((pillar, index) => (
           <motion.div
             key={pillar.label}

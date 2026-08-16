@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
@@ -23,6 +23,19 @@ function App() {
     () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
   );
   const route = useHashRoute();
+
+  // Progress has to be measured on the WRAPPER, not on .article-hub
+  // itself: that element is position:sticky, so while it's pinned its own
+  // bounding rect stays parked at top:0 and would report a constant
+  // value. The wrapper keeps moving, so it's the only reliable driver for
+  // the article's recede-into-depth effect.
+  const layeredRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: layeredProgress } = useScroll({
+    target: layeredRef,
+    offset: ['start start', 'end start'],
+  });
+  const articleDepthScale = useTransform(layeredProgress, [0, 0.6], [1, 0.94]);
+  const articleDepthOpacity = useTransform(layeredProgress, [0, 0.6], [1, 0.6]);
 
   const handleSplashComplete = useCallback(() => {
     sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
@@ -82,8 +95,21 @@ function App() {
               onMorphComplete={handleMorphComplete}
             />
           </div>
-          <ArticleGrid heroDone={!showMorphIntro} />
-          <PillarsSection heroDone={!showMorphIntro} />
+          {/* This wrapper is what bounds the sticky pin. .article-hub is
+              position:sticky, and a sticky element only stays pinned
+              while its PARENT is still on screen — without a wrapper its
+              parent would be the page root and it would stay stuck all
+              the way to the footer. Ending the wrapper after
+              PillarsSection releases it exactly once the classroom photo
+              and the copy panel have finished sliding over it. */}
+          <div className="layered-scroll" ref={layeredRef}>
+            <ArticleGrid
+              heroDone={!showMorphIntro}
+              depthScale={articleDepthScale}
+              depthOpacity={articleDepthOpacity}
+            />
+            <PillarsSection heroDone={!showMorphIntro} />
+          </div>
           <SystemFramework heroDone={!showMorphIntro} />
           <div className="collabs-slot">
             <CollabsSection heroDone={!showMorphIntro} />

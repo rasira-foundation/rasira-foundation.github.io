@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionTemplate } from 'framer-motion';
 import { heroScatter } from '../../data/heroScatter';
 import { HeroScatterItem } from './HeroScatterItem';
-import { HeroMorphIntro } from './HeroMorphIntro';
 import { HeroPaperStrips } from './HeroPaperStrips';
 import { HeroNarrativeCopy } from './HeroNarrativeCopy';
 import './narrativeHero.css';
@@ -16,18 +15,8 @@ interface NarrativeHeroProps {
   onMorphComplete: () => void;
 }
 
-type IntroStage = 'paperStrips' | 'cinematic';
-
 export function NarrativeHero({ splashDone, showMorphIntro, onMorphComplete }: NarrativeHeroProps) {
   const fieldRef = useRef<HTMLDivElement>(null);
-  // Local to the two-step sequence itself — HeroPaperStrips plays first
-  // and alone, then hands off to the cinematic photo overlay, which in
-  // turn hands off (via the onMorphComplete prop) to the real hero
-  // collage. showMorphIntro is the coarse "is the sequence still running
-  // at all" flag; this is just which half of it is currently on screen.
-  const [introStage, setIntroStage] = useState<IntroStage>('paperStrips');
-
-  const handlePaperStripsDone = useCallback(() => setIntroStage('cinematic'), []);
 
   // The narrative paragraph stays hidden for as long as the morph intro is
   // showing, and only floats in once the whole sequence — paper strips
@@ -73,20 +62,17 @@ export function NarrativeHero({ splashDone, showMorphIntro, onMorphComplete }: N
           that field carries a live `filter` — CSS establishes a new
           containing block for `position: fixed` descendants under filter,
           which would otherwise trap these to the field's own small box
-          instead of the real viewport. AnimatePresence lets each stage's
-          exit fade play out before it unmounts. The two stages are
-          mutually exclusive and sequential: HeroPaperStrips plays alone
-          first and calls handlePaperStripsDone when its one question has
-          held on screen, which swaps in HeroMorphIntro; that in turn
-          calls onMorphComplete a little ahead of its own exit fade
-          finishing, so the hero collage starts appearing while it's still
-          dissolving — a cross-fade "morph," not a jump cut. */}
+          instead of the real viewport.
+
+          The intro is now a single stage: the paper strips type out the
+          question, then hand straight off to the hero copy. The
+          mission-note beat (HeroMorphIntro) that used to sit between them
+          is gone. AnimatePresence keeps the strips mounted through their
+          own exit fade while HeroNarrativeCopy is already fading in, so
+          the two cross-dissolve rather than cutting. */}
       <AnimatePresence>
-        {showMorphIntro && splashDone && introStage === 'paperStrips' && (
-          <HeroPaperStrips key="hero-paper-strips" onCycleComplete={handlePaperStripsDone} />
-        )}
-        {showMorphIntro && splashDone && introStage === 'cinematic' && (
-          <HeroMorphIntro key="hero-morph-intro" onComplete={onMorphComplete} />
+        {showMorphIntro && splashDone && (
+          <HeroPaperStrips key="hero-paper-strips" onCycleComplete={onMorphComplete} />
         )}
       </AnimatePresence>
 

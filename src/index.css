@@ -43,10 +43,16 @@
   box-sizing: border-box;
 }
 
+/* overflow-x: clip, NOT hidden. Both clip horizontal overflow the same
+   way, but `hidden` forces the computed overflow-y to `auto`, which
+   turns html/body into scroll containers — and that silently disables
+   position:sticky for every descendant (it's what stopped .article-hub
+   pinning). `clip` does no such thing: it clips without ever creating a
+   scroll container, so sticky keeps working. */
 html {
   scroll-behavior: smooth;
   background: var(--color-cream);
-  overflow-x: hidden;
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -56,7 +62,8 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  /* clip, not hidden — see the note on html above. */
+  overflow-x: clip;
   max-width: 100%;
 }
 
@@ -96,6 +103,13 @@ button {
    replacing the section-by-section gradient this used to carry. */
 .atmosphere-band {
   background: transparent;
+}
+
+/* Bounds the sticky pin on .article-hub — see the comment in App.tsx.
+   No overflow property here on purpose: any value other than `visible`
+   on an ancestor silently disables position:sticky on its descendants. */
+.layered-scroll {
+  position: relative;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,8 +1,13 @@
 /* Transparent — see the comment on .atmosphere-band in index.css;
    ProductionGradient3D owns this section's color. */
+/* Bottom padding trimmed hard (was 64px) to pull the collabs block
+   ("You might be working on the same problem") up. It's one of four
+   stacked spacers that were compounding into a large dead gap there —
+   the others being .framework-feedback's margin-bottom, .collabs-slot's
+   padding-top and .collabs-card's padding-top. */
 .system-framework {
   background: transparent;
-  padding: 0 24px 64px;
+  padding: 0 24px 8px;
 }
 
 .framework-inner {
@@ -142,8 +147,10 @@
 }
 
 /* ── FEEDBACK LOOP ── */
+/* Tightened from 32px — this sits inside the run-up to the collabs
+   block, which was reading as dead space. */
 .framework-feedback {
-  margin-bottom: 32px;
+  margin-bottom: 12px;
 }
 
 /* Now that .framework-card no longer gives this a guaranteed-light

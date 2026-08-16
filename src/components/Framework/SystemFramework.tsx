@@ -63,12 +63,18 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
 
           <div className="framework-feedback">
             <svg className="framework-feedback-svg" viewBox="0 0 1004 64" fill="none" aria-hidden="true">
+              {/* Orthogonal, not a bezier: down the right side, straight
+                  across, then up into the first card. Square corners
+                  (miter joins) match the rectangular language of the
+                  cards above rather than softening it with a curve. */}
               <path
-                d="M 980 8 C 980 40, 20 40, 20 8"
+                d="M 980 8 L 980 46 L 20 46 L 20 8"
                 stroke="#1c1917"
                 strokeWidth="1"
                 strokeDasharray="4 4"
                 fill="none"
+                strokeLinecap="square"
+                strokeLinejoin="miter"
                 opacity="0.55"
                 markerEnd="url(#framework-feedback-arrow)"
               />

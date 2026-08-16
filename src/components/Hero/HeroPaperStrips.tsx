@@ -45,10 +45,9 @@ interface HeroPaperStripsProps {
   onCycleComplete: () => void;
 }
 
-/** Hand-typed "paper strip" lines — plays as a short overlay on top of the
- * cinematic hero intro (HeroMorphIntro), starting the instant it's mounted
- * and typing out FRAMES' single question before handing off (via
- * onCycleComplete) to the restored hero copy. */
+/** Hand-typed "paper strip" lines — the whole intro overlay. Starts the
+ * instant it's mounted, types out FRAMES' single question, then hands off
+ * (via onCycleComplete) straight to the hero copy. */
 export function HeroPaperStrips({ onCycleComplete }: HeroPaperStripsProps) {
   const [frameIndex, setFrameIndex] = useState(0);
   const [renderedLines, setRenderedLines] = useState<RenderedLine[]>([]);

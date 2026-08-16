@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type MotionValue } from 'framer-motion';
 import type { ArticleCategory } from '../../lib/sheets';
 import { useArticles } from './useArticles';
 import { ArticleCard } from './ArticleCard';
@@ -14,9 +14,15 @@ interface ArticleGridProps {
    * passed down to each ArticleCard so their own reveal doesn't rely on
    * whileInView (see the comment on that prop in ArticleCard.tsx). */
   heroDone: boolean;
+  /** Scroll-driven "recede into depth" as the classroom curtain slides
+   * over this section. Applied to the inner wrapper rather than the
+   * <section> itself, because the section already animates opacity for
+   * the heroDone gate and the two would fight over the same property. */
+  depthScale?: MotionValue<number>;
+  depthOpacity?: MotionValue<number>;
 }
 
-export function ArticleGrid({ heroDone }: ArticleGridProps) {
+export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridProps) {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -36,7 +42,7 @@ export function ArticleGrid({ heroDone }: ArticleGridProps) {
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
     >
-      <div className="article-hub-inner">
+      <motion.div className="article-hub-inner" style={{ scale: depthScale, opacity: depthOpacity }}>
         <nav className="article-tabs">
           {TABS.map((tab) => (
             <button
@@ -76,7 +82,7 @@ export function ArticleGrid({ heroDone }: ArticleGridProps) {
             {isExpanded ? 'Show Less' : 'See All'}
           </button>
         )}
-      </div>
+      </motion.div>
     </motion.section>
   );
 }

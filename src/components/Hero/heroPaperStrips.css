@@ -1,5 +1,5 @@
-/* Fixed to the real viewport, dead-center — this plays first and alone,
-   before HeroMorphIntro's cinematic photos ever mount (see NarrativeHero). */
+/* Fixed to the real viewport, dead-center — this is the whole intro
+   now, handing straight off to the hero copy (see NarrativeHero). */
 .paper-strips {
   position: fixed;
   inset: 0;

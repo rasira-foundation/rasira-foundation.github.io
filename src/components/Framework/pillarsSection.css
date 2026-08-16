@@ -8,10 +8,41 @@
    stacking context, so no child of it can ever out-rank a sibling
    section on its own. Raising the section is what actually lets the
    classroom photo ride over the article cards. */
+/* width:100vw + the negative left margin break this out of any inherited
+   max-width so the photo spans edge to edge with no side gaps.
+   (html/body are overflow-x:clip, so the 100vw-vs-scrollbar discrepancy
+   can't produce a horizontal scrollbar.)
+
+   The background is transparent down to 22%, then solid beige. The two
+   halves need opposite things: the strip ABOVE the photo must stay
+   see-through (a full solid fill showed there as an ugly beige band,
+   since the parallax translate offsets the image inside its wrapper),
+   while everything BELOW the torn edge must be opaque or the pinned
+   article shows through the PNG's transparent tail.
+
+   22% comes from sampling the PNG's actual alpha channel, not from
+   eyeballing it: the first transparent pixel below opaque photo is at
+   y=386 of 714, i.e. the tear really begins at 54% of the image — not
+   the ~78% it looks like, because the tear's notches cut much higher
+   than its visual "waterline". With the image's parallax travel that
+   puts the tear's top edge between 29% (image at its highest) and 59%
+   (its lowest) of this section, and the image's own top edge between
+   -15% and 15%. So the fill has to start inside 15%..29% — below the
+   photo's top edge so the hard stop is always hidden behind opaque
+   photo, and above the tear's highest point so no transparent gap is
+   ever left. An earlier 40% sat below that window and leaked. */
 .pillars-section {
   position: relative;
   z-index: 30;
-  background: transparent;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 242, 235, 0) 0%,
+    rgba(245, 242, 235, 0) 22%,
+    #f5f2eb 22%,
+    #f5f2eb 100%
+  );
   padding: 0 0 48px;
 }
 
@@ -31,7 +62,12 @@
   position: relative;
   z-index: 0;
   width: 100%;
-  margin-top: -30vh;
+  /* The +100px offsets the 100px that came off .article-hub's top
+     padding. Without it, shortening that padding would drag this image
+     — and everything below it — up by the same amount; adding it back
+     here keeps the classroom pinned to the exact document position it
+     had while only the article above actually moves. */
+  margin-top: calc(-30vh + 100px);
   pointer-events: none;
   user-select: none;
 }
@@ -45,18 +81,27 @@
   will-change: transform;
 }
 
-/* The copy panel. Negative top margin pulls it up under the torn edge so
-   the tear bleeds down over the panel's top — that overlap is the whole
-   look, and it's why the panel needs its own background rather than
-   inheriting the page's. */
+/* The panel that slides UP OVER the classroom image. Two things make
+   that work, and both are required:
+
+   1. A SOLID background, not the translucent wash this used to have.
+      A transparent panel can't occlude anything — the image just showed
+      straight through it, which is why the two appeared to scroll as one
+      block. #f5f2eb matches the page gradient's beige, so the panel
+      reads as the page itself rising over the photo.
+   2. A heavy negative top margin (-160px) so it physically overlaps the
+      image's lower portion rather than sitting after it.
+
+   z-index 2 beats .pillars-image-wrap's 0 within this section, so the
+   panel wins that overlap. */
 .pillars-grid {
   position: relative;
   z-index: 2;
   max-width: var(--container-max);
-  margin: -110px auto 0;
-  padding: 48px 40px;
-  background: rgba(255, 255, 255, 0.28);
-  border-radius: 4px;
+  margin: -160px auto 0;
+  padding: 56px 40px 48px;
+  background: #f5f2eb;
+  border-radius: 16px 16px 0 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 40px;
@@ -140,6 +185,6 @@ ul.pillar-body {
 
   .pillars-grid {
     margin: -60px 16px 0;
-    padding: 28px 20px;
+    padding: 32px 20px 28px;
   }
 }

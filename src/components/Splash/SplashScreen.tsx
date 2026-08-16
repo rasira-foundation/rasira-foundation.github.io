@@ -12,10 +12,9 @@ interface SplashScreenProps {
 }
 
 /** Just the gradient canvas, held briefly, then handing off — no logo, no
- * mission.png here. The intro sequence's own text motion (HeroPaperStrips)
- * and mission-image beat (HeroMorphIntro) already follow right after this
- * unmounts (see NarrativeHero.tsx); putting mission.png here too made it
- * appear twice before the real hero ever showed. The header's own logo
+ * mission note here. The intro sequence's own text motion
+ * (HeroPaperStrips) follows right after this unmounts (see
+ * NarrativeHero.tsx). The header's own logo
  * fades in independently once splashDone flips (see SiteHeader's `visible`
  * prop) — no shared-element handoff with anything here. */
 export function SplashScreen({ onComplete }: SplashScreenProps) {

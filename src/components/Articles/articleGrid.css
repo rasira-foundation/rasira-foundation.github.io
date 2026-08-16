@@ -4,24 +4,30 @@
    fill into the next one's, which a single continuous background layer
    no longer needs — and masking to transparent here would now fade the
    article cards themselves out, which was never the intent. */
-/* Top padding carries an extra 300px over the previous 72/88px to push
-   the card row further clear of the hero above it.
+/* Top padding carries an extra 50px over the original 72/88px to push
+   the card row clear of the hero above it.
 
    z-index 10 sits BELOW .pillars-section's 30 on purpose: the classroom
    image below has a negative top margin that pulls it up over this
    section's tail, and it's meant to cover these cards as it scrolls in.
    That image carries pointer-events:none so the See All button
    underneath stays clickable even while covered. */
+/* Pinned bottom layer: this holds still at the top of the viewport while
+   the classroom photo (z-index 30) slides up over it, which is what
+   produces the layered reveal. Bounded by .layered-scroll — see App.tsx.
+   Measured at 679px against a 900px viewport, so it fits without its
+   See All button being cut off while pinned. */
 .article-hub {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 10;
   background: transparent;
-  padding: 372px 24px 48px;
+  padding: 122px 24px 122px;
 }
 
 @media (min-width: 768px) {
   .article-hub {
-    padding: 388px 24px 56px;
+    padding: 138px 24px 138px;
   }
 }
 
@@ -294,7 +300,11 @@
    an outline or a hover-triggered swap. */
 /* min-width keeps the box a fixed size across the "See All" <-> "Show
    Less" swap, so toggling doesn't reflow the row underneath it. */
+/* align-self overrides .article-hub-inner's `align-items: center` for
+   this one child, so the button lines up with the card grid's right
+   edge (the grid is width:100%, so its right edge IS the container's). */
 .article-hub-see-all {
+  align-self: flex-end;
   margin-top: 56px;
   display: inline-flex;
   align-items: center;

@@ -19,7 +19,6 @@ export const pillars: Array<{ label: string; items?: string[]; body?: string }> 
       'Identify strengths',
       'Practice real-world tasks before making high-stakes choices',
       'Build confidence through evidence',
-      'Choose their own path',
     ],
   },
   {

@@ -4,14 +4,14 @@
 .collabs-slot {
   display: flex;
   justify-content: center;
-  padding: 24px 24px 64px;
+  padding: 0 24px 64px;
 }
 
 .collabs-card {
   width: 100%;
   max-width: 576px;
   margin: 0 auto;
-  padding: 32px 24px 64px;
+  padding: 8px 24px 64px;
   text-align: center;
 }
 
