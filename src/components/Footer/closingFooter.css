@@ -7,8 +7,10 @@
 .closing-footer {
   position: relative;
   background: transparent;
-  /* Extra 50px on top of the existing 18vh — more breathing room between
-     the article hub's See All button (previous section) and the clock. */
+  /* These apply to the LIGHT article-detail variant only — the homepage
+     footer resets them below and lets its sky/base children own all
+     spacing, so the two full-bleed blocks can meet with no gap between
+     them for the page's beige to show through. */
   padding: calc(18vh + 50px) 24px 9vh;
   min-height: 70vh;
   display: flex;
@@ -33,6 +35,39 @@
   position: relative;
   background: transparent;
   color: #f5f2eb;
+  /* Reset the light variant's box — .closing-footer-sky and
+     .closing-footer-base carry their own padding, and any gap here would
+     open a strip of page beige between the two backgrounds. */
+  padding: 0;
+  gap: 0;
+  min-height: 0;
+}
+
+/* Deliberately large top padding: the reference gives the clock a lot of
+   empty sky above it, and this is also what separates the footer from the
+   Spring partner card in the section above. The bottom padding is the
+   breathing room before the wordmark. */
+.closing-footer-sky {
+  position: relative;
+  padding: calc(30vh + 90px) 24px clamp(72px, 14vh, 160px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* Flat charcoal — the exact color .closing-footer-sunset(-warm) resolve
+   to at their 100% stop, so the boundary between sky and base is
+   invisible no matter how tall either block ends up. Solid rather than
+   part of the gradient means the wordmark is guaranteed to sit on a
+   ~11:1 contrast ground regardless of scroll state. */
+.closing-footer-base {
+  position: relative;
+  z-index: 1;
+  background: #3a3a38;
+  padding: 0 24px 9vh;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
 }
 
 /* Always fully opaque as a LAYER — the fade now lives in the gradient's
@@ -43,6 +78,13 @@
    (rather than transparent-black, which browsers interpolate through
    grey and would leave a dirty band) keeps the blend into the page's
    beige clean. */
+/* BASE layer — never scroll-linked, so it is the guarantee that the
+   bottom of the footer is always dark enough for the white wordmark and
+   meta text, no matter what the scroll-driven layer above it is doing.
+   It contributes no color of its own at the top: it starts at the page's
+   own beige at ZERO alpha, which is what makes the boundary seamless.
+   (Interpolating from `transparent` instead would ramp through grey and
+   leave a dirty band — hence the explicit beige-hue-at-alpha-0 stop.) */
 .closing-footer-sunset {
   position: absolute;
   inset: 0;
@@ -50,14 +92,48 @@
   z-index: 0;
   background: linear-gradient(
     180deg,
-    rgba(226, 130, 89, 0) 0%,
-    rgba(226, 130, 89, 0.55) 12%,
-    rgba(226, 130, 89, 0.95) 22%,
-    #d87349 32%,
-    #7c3f28 48%,
-    #3a322d 64%,
-    #23201e 80%,
-    #23201e 100%
+    rgba(245, 242, 235, 0) 0%,
+    rgba(245, 242, 235, 0) 30%,
+    rgba(58, 58, 56, 0.5) 66%,
+    #3a3a38 100%
+  );
+}
+
+/* WARM layer — the actual sunset, faded in by scroll on top of the
+   page's beige (see the opacity motion value in ClosingFooter.tsx).
+
+   Hexes are exactly the Figma stop list, in its own order:
+   #FFFFFF -> #DBE4EA -> #FBAB6C -> #845A39 @87% -> #000000 @77%.
+   Figma lists them bottom-up (its 0% is the black end), so they are
+   reversed here for a top-to-bottom CSS gradient. The POSITIONS are
+   taken from the rendered mockup rather than straight from that list —
+   a literal 100-minus-Figma mapping puts the orange at 20%, but both
+   reference renders show it near mid-height, because the Figma handle
+   doesn't span the same box as this footer.
+
+   Two deliberate departures from the mockup:
+
+   1. White ramps up from alpha 0 across the first 18% instead of starting
+      solid. Solid white at 0% met the beige section above as a hard
+      horizontal line — that was the visible seam.
+   2. The final black is written as opaque #3a3a38 rather than
+      #000000 @77%. Those are near-identical in appearance (77% black over
+      the page beige composites to about rgb(56,56,54)), but only the
+      opaque form is guaranteed to match .closing-footer-base exactly at
+      every scroll opacity — an alpha stop would shift as this layer fades
+      and reopen the seam it was meant to close. */
+.closing-footer-sunset-warm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 1) 18%,
+    #dbe4ea 34%,
+    #fbab6c 62%,
+    #845a39 82%,
+    #3a3a38 100%
   );
 }
 
@@ -66,7 +142,10 @@
    swamping narrow viewports. */
 .closing-footer-sunset-glow {
   position: absolute;
-  top: 26%;
+  /* Sits on the gradient's orange band (52%) rather than up in the pale
+     blue, so it reads as the sun inside the sunset rather than a stray
+     orange smudge in the sky. */
+  top: 50%;
   left: 50%;
   width: min(42vmin, 420px);
   height: min(42vmin, 420px);
@@ -81,13 +160,18 @@
    the footer's total height, since every offset had been tuned for a
    much shorter box. This holds up regardless of how tall the footer
    gets, and the three columns can never overlap each other. */
+/* Flex-centered cluster, NOT the old `1fr auto 1fr` grid. That grid
+   pinned the two text blocks to the far edges of the container, but the
+   reference keeps them gathered around the clock — so the three items are
+   centered as a group and the gap alone controls how far apart they sit,
+   independent of how wide the viewport gets. */
 .closing-footer-meta {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: clamp(40px, 7vw, 130px);
   max-width: var(--container-max);
   width: 100%;
   margin: 0 auto;
@@ -98,17 +182,21 @@
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
-  color: #a1a1aa;
+  color: #4a4642;
 }
 
-.closing-footer-meta-left p:last-child,
-.closing-footer-meta-right {
-  opacity: 0.75;
-}
+/* No opacity dimming on these any more — the whole point of a single
+   grey is that both lines read as one even tone, and knocking the second
+   line and the timestamp back to 0.75 split them into two greys. */
 
+/* Lifted clear of the clock's vertical centre, matching the staggered
+   placement in the reference — the timestamp sits noticeably higher than
+   the "time is ticking.." block on the other side. */
 .closing-footer-meta-right {
   text-align: right;
   letter-spacing: 0.04em;
+  align-self: center;
+  margin-bottom: 96px;
 }
 
 .closing-footer-meta-center {
@@ -118,10 +206,15 @@
   gap: 16px;
 }
 
+/* Much larger than the old 96px — in the reference the hands are a
+   full-height gesture, not a small icon. The AnalogClock SVG uses a
+   0 0 100 100 viewBox, so scaling this box scales the hands and their
+   stroke weight together and they stay hairline-thin at this size. */
 .closing-footer-clock-wrap {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: clamp(180px, 20vw, 280px);
+  aspect-ratio: 1;
+  flex-shrink: 0;
 }
 
 .closing-footer-glow {
@@ -203,10 +296,18 @@
   border-color: #ffffff;
 }
 
-.closing-footer-year--homepage {
+/* Sign-off under the wordmark: year on top, email beneath it. */
+.closing-footer-signoff {
   position: relative;
   z-index: 1;
   align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.closing-footer-year--homepage {
   color: #a1a1aa;
 }
 
@@ -217,40 +318,32 @@
    its original palette, then invert(1) flips that to solid white — more
    reliable than trying to match the exact source color with a filter
    built for a specific hue. */
-/* Full-bleed: negative margins cancel .closing-footer's own 24px side
-   padding so the wordmark can actually reach both viewport edges. */
+/* No longer full-bleed. It used to break out of the padding with
+   `margin: 0 -24px` and a 100vw logo; the reference instead insets the
+   lockup so it occupies roughly 78% of the frame with clear dark margins
+   either side, which is what the width below reproduces.
+   No border-top any more either — it used to divide the wordmark from the
+   meta row, but it now falls exactly on the sky/base join and would draw
+   a hairline across the one boundary that has to stay invisible. */
 .closing-footer-brand {
   position: relative;
   z-index: 1;
   display: flex;
   align-items: flex-end;
-  margin: 0 -24px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Sits in the wordmark's own left margin rather than adding width to it,
-   so restoring the asterisk doesn't push the full-bleed logo off-screen. */
-.closing-footer-brand-asterisk {
-  position: absolute;
-  left: 24px;
-  bottom: 62%;
-  font-family: var(--font-serif);
-  font-size: clamp(28px, 4vw, 52px);
-  line-height: 1;
-  color: #f5f2eb;
+  justify-content: center;
+  padding-top: 40px;
 }
 
 .closing-footer-brand-logo {
-  width: 100vw;
+  width: 78%;
+  max-width: 1500px;
   height: auto;
   filter: brightness(0) invert(1);
 }
 
 @media (max-width: 768px) {
   .closing-footer-meta {
-    grid-template-columns: 1fr;
-    justify-items: center;
+    flex-direction: column;
     text-align: center;
     gap: 32px;
   }
@@ -259,14 +352,32 @@
   .closing-footer-meta-right {
     text-align: center;
   }
+
+  /* The stagger only makes sense side by side; stacked it would just
+     open a dead 96px hole in the column. */
+  .closing-footer-meta-right {
+    margin-bottom: 0;
+  }
 }
 
 @media (max-width: 640px) {
-  .closing-footer {
+  /* Scoped to the light article-detail footer. Left unscoped it would
+     re-apply padding and gap to .closing-footer--dark — it sits later in
+     the file at equal specificity, so it would win over the reset up
+     there and reopen a beige strip between the sky and base blocks. */
+  .closing-footer:not(.closing-footer--dark) {
     min-height: auto;
     justify-content: flex-start;
     gap: 32px;
     padding: calc(18vh + 50px) 24px 48px;
+  }
+
+  .closing-footer-sky {
+    padding: calc(20vh + 60px) 24px 72px;
+  }
+
+  .closing-footer-base {
+    padding: 0 24px 48px;
   }
 
   .closing-footer-brand {

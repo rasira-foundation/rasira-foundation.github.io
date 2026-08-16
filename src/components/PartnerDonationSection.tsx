@@ -1,3 +1,4 @@
+import { BlurRevealElement } from './shared/BlurRevealElement';
 import springLogo from '../assets/photos/spring-bw.png';
 import { partnerSection, donationSection } from '../data/siteContent';
 import './partnerDonationSection.css';
@@ -15,7 +16,7 @@ export function PartnerDonationSection() {
         <span>03 / Direct Support</span>
       </div>
       <div className="partner-donation-grid">
-        <div className="partner-card">
+        <BlurRevealElement className="partner-card">
           <div>
             <div className="partner-card-topbar">
               <span>{partner.role}</span>
@@ -27,9 +28,10 @@ export function PartnerDonationSection() {
           </div>
           <img className="partner-card-logo" src={springLogo} alt="Spring" />
           <p className="partner-card-body">{partner.body}</p>
-        </div>
+        </BlurRevealElement>
 
-        <div id="donate" className="donation-card">
+        <BlurRevealElement className="donation-card" delay={0.1}>
+          <span id="donate" />
           <div className="donation-card-grain" aria-hidden="true" />
           <div className="donation-card-content">
             <div>
@@ -44,7 +46,7 @@ export function PartnerDonationSection() {
               {donationSection.ctaLabel}
             </a>
           </div>
-        </div>
+        </BlurRevealElement>
       </div>
     </section>
   );

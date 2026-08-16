@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, useMotionTemplate, useScroll, useTransform } from 'framer-motion';
 import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
@@ -36,6 +36,13 @@ function App() {
   });
   const articleDepthScale = useTransform(layeredProgress, [0, 0.6], [1, 0.94]);
   const articleDepthOpacity = useTransform(layeredProgress, [0, 0.6], [1, 0.6]);
+  // Progressive defocus as the classroom curtain rises over the articles:
+  // the further through the layered section you scroll, the blurrier they
+  // get, so they read as receding behind the photo rather than just
+  // sliding under it. useMotionTemplate because `filter` needs a string,
+  // and a raw MotionValue<number> can't be interpolated into one.
+  const articleDepthBlurPx = useTransform(layeredProgress, [0, 0.6], [0, 12]);
+  const articleDepthFilter = useMotionTemplate`blur(${articleDepthBlurPx}px)`;
 
   const handleSplashComplete = useCallback(() => {
     sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
@@ -107,12 +114,13 @@ function App() {
               heroDone={!showMorphIntro}
               depthScale={articleDepthScale}
               depthOpacity={articleDepthOpacity}
+              depthFilter={articleDepthFilter}
             />
             <PillarsSection heroDone={!showMorphIntro} />
           </div>
           <SystemFramework heroDone={!showMorphIntro} />
           <div className="collabs-slot">
-            <CollabsSection heroDone={!showMorphIntro} />
+            <CollabsSection />
           </div>
           <PartnerDonationSection />
           <ClosingFooter />

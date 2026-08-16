@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { BlurRevealText } from '../shared/BlurRevealElement';
 import { pillars } from '../../data/siteContent';
 import pillarsImage from '../../assets/photos/pillars-torn-classroom.png';
 import './pillarsSection.css';
@@ -61,23 +62,29 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
           <motion.div
             key={pillar.label}
             className="pillar-block"
-            initial={{ opacity: 0, y: 16, filter: 'blur(8px)' }}
+            initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: true, amount: 0.4 }}
+            viewport={{ once: false, amount: 0.25 }}
             transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
           >
             <h3 className="pillar-label">
               <span className="pillar-marker" aria-hidden="true" />
-              {pillar.label}
+              <BlurRevealText as="span" delay={index * 0.08}>
+                {pillar.label}
+              </BlurRevealText>
             </h3>
             {pillar.items ? (
               <ul className="pillar-body">
-                {pillar.items.map((item) => (
-                  <li key={item}>{item}</li>
+                {pillar.items.map((item, itemIndex) => (
+                  <BlurRevealText as="li" key={item} delay={index * 0.08 + itemIndex * 0.06}>
+                    {item}
+                  </BlurRevealText>
                 ))}
               </ul>
             ) : (
-              <p className="pillar-body">{pillar.body}</p>
+              <BlurRevealText className="pillar-body" delay={index * 0.08}>
+                {pillar.body ?? ''}
+              </BlurRevealText>
             )}
           </motion.div>
         ))}

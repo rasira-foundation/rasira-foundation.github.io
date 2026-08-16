@@ -20,9 +20,11 @@ interface ArticleGridProps {
    * the heroDone gate and the two would fight over the same property. */
   depthScale?: MotionValue<number>;
   depthOpacity?: MotionValue<number>;
+  /** Scroll-driven blur string, e.g. `blur(6px)`. */
+  depthFilter?: MotionValue<string>;
 }
 
-export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridProps) {
+export function ArticleGrid({ heroDone, depthScale, depthOpacity, depthFilter }: ArticleGridProps) {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,12 +39,26 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
 
   return (
     <motion.section
-      className="article-hub"
+      className={isExpanded ? 'article-hub article-hub--expanded' : 'article-hub'}
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
     >
-      <motion.div className="article-hub-inner" style={{ scale: depthScale, opacity: depthOpacity }}>
+      {/* The depth treatment (blur / scale / fade) only makes sense while
+          the classroom curtain is actually riding over these cards. Once
+          expanded, the sticky pin is released and the curtain is pushed
+          down past the full list, so there's nothing overlapping to
+          recede behind — the scroll-linked values are swapped for static
+          neutral ones rather than left running against a curtain that
+          isn't there. */}
+      <motion.div
+        className="article-hub-inner"
+        style={
+          isExpanded
+            ? { scale: 1, opacity: 1, filter: 'blur(0px)' }
+            : { scale: depthScale, opacity: depthOpacity, filter: depthFilter }
+        }
+      >
         <nav className="article-tabs">
           {TABS.map((tab) => (
             <button
@@ -72,7 +88,7 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
         ) : (
           <motion.div className="article-grid" layout>
             {visible.map((article, i) => (
-              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} heroDone={heroDone} />
+              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} />
             ))}
           </motion.div>
         )}

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { BlurRevealText } from '../shared/BlurRevealElement';
 import { systemFramework } from '../../data/siteContent';
 import './systemFramework.css';
 
@@ -36,11 +37,13 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
               <motion.div
                 key={box.title}
                 className={`framework-box framework-box--${box.variant}`}
-                animate={{ opacity: heroDone ? 1 : 0, y: heroDone ? 0 : 16 }}
-                transition={{ duration: 0.5, delay: heroDone ? index * 0.1 : 0, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                viewport={{ once: false, amount: 0.25 }}
+                transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
               >
                 <div className="framework-box-body">
-                  <h3 className="framework-box-title">{box.title}</h3>
+                  <BlurRevealText as="h3" className="framework-box-title" delay={index * 0.1}>{box.title}</BlurRevealText>
                   <div className="framework-box-meta">
                     <span className="framework-box-tag">[{box.tag}]</span>
                     <span className="framework-box-step">{`0${index + 1} / 0${systemFramework.boxes.length}`}</span>
@@ -50,10 +53,9 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
                   </div>
                   <ul className="framework-box-items">
                     {box.items.map((item, itemIndex) => (
-                      <li key={item}>
-                        {item}
-                        {itemIndex < box.items.length - 1 ? '/' : '.'}
-                      </li>
+                      <BlurRevealText as="li" key={item} delay={index * 0.1 + itemIndex * 0.06}>
+                        {`${item}${itemIndex < box.items.length - 1 ? '/' : '.'}`}
+                      </BlurRevealText>
                     ))}
                   </ul>
                 </div>

@@ -17,18 +17,34 @@
    produces the layered reveal. Bounded by .layered-scroll — see App.tsx.
    Measured at 679px against a 900px viewport, so it fits without its
    See All button being cut off while pinned. */
+/* Bottom padding TRACKS the curtain's overlap instead of being a fixed
+   number. .pillars-image-wrap pulls itself up by calc(30vh - 100px), so
+   that's exactly how far the classroom photo rises into this section's
+   tail. Reserving that same amount + 48px guarantees the See All button
+   always clears the curtain — at any viewport height, collapsed or
+   expanded. A fixed 138px used to be less than the 170px overlap at a
+   900px viewport, which is why the button sat 32px underneath it. */
 .article-hub {
   position: sticky;
   top: 0;
   z-index: 10;
   background: transparent;
-  padding: 122px 24px 122px;
+  padding: 122px 24px calc(30vh - 52px);
 }
 
 @media (min-width: 768px) {
   .article-hub {
-    padding: 138px 24px 138px;
+    padding: 138px 24px calc(30vh - 52px);
   }
+}
+
+/* Expanding to the full card list makes this section taller than the
+   viewport, and a sticky element that doesn't fit pins its top at 0 and
+   leaves its bottom permanently below the fold — the Show Less button
+   becomes unreachable. Releasing the pin while expanded lets the section
+   scroll normally; it re-pins on collapse. */
+.article-hub--expanded {
+  position: relative;
 }
 
 .article-hub-inner {

@@ -8,15 +8,6 @@ type CardVariant = 'ascii' | 'text-only' | 'image-overlay' | 'bottom-text';
 interface ArticleCardProps {
   article: Article;
   index: number;
-  /** Stays hidden until the splash + hero intro sequence has fully
-   * finished — driven here rather than via whileInView, which could
-   * fire (and permanently spend its once:true trigger) while still
-   * hidden behind the splash overlay, or simply never fire reliably;
-   * see the SystemFramework fix earlier this session for the exact
-   * failure mode this replaced. Cards near the top of the page (this
-   * grid is now the second section, right after the hero) are the ones
-   * most exposed to that risk. */
-  heroDone: boolean;
 }
 
 // Cards with a real cover image always get the photo treatment; the rest
@@ -30,7 +21,7 @@ function getVariant(article: Article, index: number): CardVariant {
   return TEXT_VARIANTS[index % TEXT_VARIANTS.length];
 }
 
-export function ArticleCard({ article, index, heroDone }: ArticleCardProps) {
+export function ArticleCard({ article, index }: ArticleCardProps) {
   const variant = getVariant(article, index);
 
   const content = (
@@ -98,15 +89,18 @@ export function ArticleCard({ article, index, heroDone }: ArticleCardProps) {
     </>
   );
 
+  // Scroll-driven blur reveal that replays in both directions. The
+  // heroDone gate lives on the parent section's own opacity, so these
+  // stay invisible during the intro regardless of what the observer does.
   const motionProps = {
     className: `article-card article-card--${variant}`,
-    animate: heroDone
-      ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-      : { opacity: 0, y: 20, filter: 'blur(8px)' },
+    initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
+    whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    viewport: { once: false, amount: 0.25 },
     transition: {
       duration: 1,
       ease: [0.16, 1, 0.3, 1] as const,
-      delay: heroDone ? (index % 4) * 0.06 : 0,
+      delay: (index % 4) * 0.06,
     },
   };
 

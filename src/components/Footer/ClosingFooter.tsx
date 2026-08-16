@@ -35,6 +35,14 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
   // permanently absent. Starting part-way means the worst case is a
   // dimmer glow, while a normal scroll resolves it to full strength.
   const glowOpacity = useTransform(scrollYProgress, [0, 0.6], [0.4, 1]);
+  // The sunset itself washes in over the page's beige as you scroll into
+  // the footer. Same fail-safe reasoning as the glow: it starts at 0.35
+  // rather than 0, so a stalled scroll leaves a muted sunset rather than
+  // no sunset at all. Fading THIS layer is safe in a way fading the whole
+  // wash wasn't — the base .closing-footer-sunset underneath is not
+  // scroll-linked and keeps the bottom dark, so the white wordmark can
+  // never end up sitting on bare beige.
+  const sunsetOpacity = useTransform(scrollYProgress, [0.05, 0.75], [0.35, 1]);
 
   if (!showClock) {
     return (
@@ -51,71 +59,83 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
 
   return (
     <footer className="closing-footer closing-footer--dark" ref={footerRef}>
-      {/* The sunset wash itself is plain CSS at full strength — see
-          .closing-footer-sunset for why fading the whole layer breaks
-          the seam and the opaque bottom. Only the ambient glow is
-          scroll-linked, which is safe in a way the gradient isn't: if
-          scrollYProgress stalls (a real failure mode noted in
-          ProductionGradient3D.tsx — a scroll-derived value only advances
-          when scroll/rAF actually run), the worst case is a slightly
-          dimmer glow, never an unreadable footer. */}
-      <div className="closing-footer-sunset" aria-hidden="true">
-        <motion.div className="closing-footer-sunset-glow" style={{ opacity: glowOpacity }} />
-      </div>
-
-      {/* A real 3-column grid — the old approach positioned everything by
-          percentage of the footer's own height, which broke the moment
-          the giant wordmark below inflated that height: every offset had
-          been tuned for a much shorter box. A grid holds up regardless
-          of how tall the footer gets. */}
-      <motion.div
-        className="closing-footer-meta"
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-10% 0px' }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="closing-footer-meta-col closing-footer-meta-left">
-          <p>{closingNarrative.line1}</p>
-          <p>{closingNarrative.line2}</p>
+      {/* SKY — everything the sunset happens in. Splitting the footer into
+          sky + base is what guarantees the wordmark below sits on flat
+          charcoal like the reference, WITHOUT having to guess at what
+          percentage of the footer the wordmark starts. The sky's gradient
+          resolves to exactly #3a3a38 at its own 100%, and the base block
+          is that same flat #3a3a38 — so the join is seamless by
+          construction and survives any change to the wordmark's height. */}
+      <div className="closing-footer-sky">
+        {/* Two stacked layers, on purpose. The base is plain CSS at full
+            strength and contributes nothing at the top but lands on the
+            same charcoal at the bottom — that's what makes it safe to
+            scroll-fade the warm layer on top of it. Fading a SINGLE
+            combined wash (the earlier approach) also faded its opaque
+            bottom, letting the page's beige show through behind white
+            text; and if scrollYProgress stalls — a real failure mode noted
+            in ProductionGradient3D.tsx, since a scroll-derived value only
+            advances when scroll/rAF actually run — the worst case here is
+            a muted sunset rather than an unreadable footer. */}
+        <div className="closing-footer-sunset" aria-hidden="true">
+          <motion.div className="closing-footer-sunset-warm" style={{ opacity: sunsetOpacity }} />
+          <motion.div className="closing-footer-sunset-glow" style={{ opacity: glowOpacity }} />
         </div>
 
-        <div className="closing-footer-meta-col closing-footer-meta-center">
+        <motion.div
+          className="closing-footer-meta"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: '-10% 0px' }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="closing-footer-meta-col closing-footer-meta-left">
+            <p>{closingNarrative.line1}</p>
+            <p>{closingNarrative.line2}</p>
+          </div>
+
+          <div className="closing-footer-meta-col closing-footer-meta-center">
+            <div className="closing-footer-clock-wrap">
+              <div className="closing-footer-glow" aria-hidden="true" />
+              <BlurRevealElement className="closing-footer-clock-blur">
+                <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
+              </BlurRevealElement>
+            </div>
+          </div>
+
+          <div className="closing-footer-meta-col closing-footer-meta-right">
+            <p>{clock.digital}</p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* BASE — flat charcoal, the exact color the sky's gradient ends on. */}
+      <div className="closing-footer-base">
+        {/* Giant closing wordmark — the real two-line logo asset (not a
+         * text recreation), forced white via filter since an <img> can't
+         * be recolored with CSS `color`. Using the actual SVG rather than
+         * approximating the letterforms means the "Foundati●n" dot styling
+         * already baked into the asset just comes along for free. */}
+        <motion.div
+          className="closing-footer-brand"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: false, margin: '-10% 0px' }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <img src={twoLineLogo} alt="Rasira Foundation" className="closing-footer-brand-logo" />
+        </motion.div>
+
+        {/* Year first, then the email UNDER it — the email used to sit in
+            the meta row above the clock, which the reference doesn't show
+            at all; it belongs down here in the sign-off. */}
+        <div className="closing-footer-signoff">
+          <span className="closing-footer-year closing-footer-year--homepage">© {new Date().getFullYear()}</span>
           <a href={`mailto:${CONTACT_EMAIL}`} className="closing-footer-mail">
             {CONTACT_EMAIL}
           </a>
-          <div className="closing-footer-clock-wrap">
-            <div className="closing-footer-glow" aria-hidden="true" />
-            <BlurRevealElement className="closing-footer-clock-blur">
-              <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
-            </BlurRevealElement>
-          </div>
         </div>
-
-        <div className="closing-footer-meta-col closing-footer-meta-right">
-          <p>{clock.digital}</p>
-        </div>
-      </motion.div>
-
-      {/* Giant closing wordmark — the real two-line logo asset (not a
-       * text recreation), forced white via filter since an <img> can't
-       * be recolored with CSS `color`. Using the actual SVG rather than
-       * approximating the letterforms means the "Foundati●n" dot styling
-       * already baked into the asset just comes along for free. */}
-      <motion.div
-        className="closing-footer-brand"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-10% 0px' }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <span className="closing-footer-brand-asterisk" aria-hidden="true">
-          *
-        </span>
-        <img src={twoLineLogo} alt="Rasira Foundation" className="closing-footer-brand-logo" />
-      </motion.div>
-
-      <span className="closing-footer-year closing-footer-year--homepage">© {new Date().getFullYear()}</span>
+      </div>
     </footer>
   );
 }
