@@ -17,7 +17,7 @@ import './productionGradient3D.css';
  * scroll; position:fixed would pin the same visible band to the
  * viewport forever, which was tried and explicitly ruled out.
  *
- * .production-gradient-3d-base's own colors are NOT scroll-linked, and
+ * This layer's own colors are NOT scroll-linked, and
  * that's deliberate: a scroll-linked version of this whole layer (colors
  * interpolated off scrollYProgress) was built once already and shipped a
  * real bug — a scroll-derived motion value only ever updates when a real
@@ -63,7 +63,7 @@ export function ProductionGradient3D() {
   // the page still reads correctly off the static base gradient below.
   const vignetteOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
   // The cool-grey/blue hero sky. This used to be baked into
-  // .production-gradient-3d-base as a hard #cdd6de band across the top
+  // the page ground as a hard #cdd6de band across the top
   // 13% of the document; it's now its own viewport-pinned layer that
   // fades out as you scroll past the hero, leaving the flat beige base.
   const heroSkyOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
@@ -78,7 +78,11 @@ export function ProductionGradient3D() {
           and article hub are themselves positioned and come later in
           App.tsx.) */}
       <div className="production-gradient-3d" aria-hidden="true">
-        <div className="production-gradient-3d-base" />
+        {/* The flat ground that used to live here moved to PageBackground,
+            which crossfades between values with stacked layers instead of
+            transitioning background-color — the only approach that works
+            once a section wants a gradient rather than a solid colour.
+            This element keeps only the orbs and the footer glow. */}
 
         <motion.div
           className="production-gradient-3d-orb production-gradient-3d-orb--terracotta"

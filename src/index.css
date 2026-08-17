@@ -123,6 +123,39 @@ button {
   position: relative;
 }
 
+/* ── LOADING SKELETON PRIMITIVE ──
+   Shared by the article detail page and the article grid, which is why it
+   lives here rather than in either component's own file. Each consumer
+   supplies its own size variants; this only defines what a placeholder
+   block looks like and how it pulses. */
+.skeleton-block {
+  display: block;
+  border-radius: 4px;
+  background: rgba(20, 18, 15, 0.09);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* The global reduced-motion block below collapses animation-duration to
+   0.01ms, which would leave these frozen at whichever keyframe they
+   landed on — possibly the 0.45 dip. `none` holds them at full opacity
+   instead. Declared before that block, but specificity is equal and this
+   is the more specific selector, so order does not decide it. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+  }
+}
+
 /* ── MOBILE TYPOGRAPHY (Apple HIG) ──
    Kept together here rather than as six separate media queries scattered
    across component files: this is one cross-cutting rule about handheld

@@ -3,6 +3,7 @@ import { motion, type MotionValue } from 'framer-motion';
 import type { ArticleCategory } from '../../lib/sheets';
 import { useArticles } from './useArticles';
 import { ArticleCard } from './ArticleCard';
+import { useDelayedFlag } from '../../hooks/useDelayedFlag';
 import './articleGrid.css';
 
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
@@ -28,8 +29,28 @@ interface ArticleGridProps {
   depthOpacity?: MotionValue<number>;
 }
 
+/** One row of placeholder cards, built on the same .article-grid so it
+ * inherits the real border-collapse layout and 3:4 card ratio — the row
+ * that arrives is the same size as the row that was standing in for it,
+ * so nothing reflows underneath. aria-hidden with the region announced
+ * once via role/aria-busy, rather than four empty boxes read out. */
+function ArticleGridSkeleton() {
+  return (
+    <div className="article-grid" role="status" aria-busy="true" aria-label="Loading articles">
+      {Array.from({ length: PER_ROW }, (_, i) => (
+        <div className="article-card article-card--skeleton" key={i} aria-hidden="true">
+          <span className="skeleton-block skeleton-card-category" />
+          <span className="skeleton-block skeleton-card-title" />
+          <span className="skeleton-block skeleton-card-title skeleton-card-title--short" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridProps) {
   const { articles, loading, isFallback } = useArticles();
+  const showSkeleton = useDelayedFlag(loading);
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -128,7 +149,12 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
         )}
 
         {loading ? (
-          <p className="article-hub-loading">Loading articles…</p>
+          /* Nothing at all until the fetch has been slow enough to be
+             worth acknowledging (see useDelayedFlag). This is the state
+             you land in coming Back from an article, where the articles
+             are usually already in memory — so in the common case no
+             placeholder is rendered and there is nothing to flash. */
+          showSkeleton && <ArticleGridSkeleton />
         ) : visible.length === 0 ? (
           <p className="article-hub-loading">Nothing published in this category yet.</p>
         ) : (

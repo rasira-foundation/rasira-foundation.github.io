@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useArticles } from './useArticles';
+import { useDelayedFlag } from '../../hooks/useDelayedFlag';
 import { navigateHome } from '../../hooks/useHashRoute';
 import { parseMarkdownLite } from '../../lib/markdown';
 import './articleDetail.css';
@@ -39,33 +40,10 @@ export function ArticleDetailSkeleton() {
   );
 }
 
-/** Goes true only if `active` has stayed true for `delay` ms. Used to hold
- * the loading skeleton back: when the articles are already cached or the
- * response is quick, the flag never flips and no skeleton is ever rendered. */
-function useDelayedFlag(active: boolean, delay: number) {
-  const [flag, setFlag] = useState(false);
-
-  useEffect(() => {
-    if (!active) {
-      setFlag(false);
-      return;
-    }
-    const id = window.setTimeout(() => setFlag(true), delay);
-    return () => window.clearTimeout(id);
-  }, [active, delay]);
-
-  return flag;
-}
-
-/** Below this, a load is fast enough that showing anything would be a
- * flicker rather than feedback. Roughly the threshold where a wait starts
- * being perceived as a wait at all. */
-const SKELETON_DELAY_MS = 250;
-
 export function ArticleDetail({ slug }: { slug: string }) {
   const { articles, loading } = useArticles();
   const article = articles.find((a) => a.slug === slug);
-  const showSkeleton = useDelayedFlag(loading, SKELETON_DELAY_MS);
+  const showSkeleton = useDelayedFlag(loading);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -83,8 +61,13 @@ export function ArticleDetail({ slug }: { slug: string }) {
     return (
       <main className="article-detail">
         <div className="article-detail-col">
-          <button type="button" className="article-detail-back" onClick={navigateHome}>
-            ← Back
+          <button
+            type="button"
+            className="article-detail-back"
+            onClick={navigateHome}
+            aria-label="Back to articles"
+          >
+            <span aria-hidden="true">←</span>
           </button>
           <p className="article-detail-loading">This article couldn&apos;t be found.</p>
         </div>
@@ -101,8 +84,13 @@ export function ArticleDetail({ slug }: { slug: string }) {
     <motion.main key={slug} className="article-detail" {...entrance}>
       <div className="article-detail-col">
         <div className="article-detail-topbar">
-          <button type="button" className="article-detail-back" onClick={navigateHome}>
-            ← Back
+          <button
+            type="button"
+            className="article-detail-back"
+            onClick={navigateHome}
+            aria-label="Back to articles"
+          >
+            <span aria-hidden="true">←</span>
           </button>
         </div>
 

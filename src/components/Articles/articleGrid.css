@@ -130,11 +130,36 @@
   text-align: center;
 }
 
+/* Only the empty-category message uses this now. The "Loading articles…"
+   line it also carried was replaced by ArticleGridSkeleton. */
 .article-hub-loading {
   font-family: var(--font-editorial-mono);
   font-size: 11px;
   color: var(--color-ink-faint);
   padding: 40px 0;
+}
+
+/* Placeholder card. Inherits .article-card's 3:4 ratio and shared borders
+   so the skeleton row occupies exactly the space the real row will, then
+   strips the parts that only make sense on a real card. */
+.article-card--skeleton {
+  cursor: default;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+.skeleton-card-category {
+  width: 52px;
+  height: 11px;
+}
+
+.skeleton-card-title {
+  width: 100%;
+  height: 22px;
+}
+
+.skeleton-card-title--short {
+  width: 64%;
 }
 
 /* Paginated box-grid: 4 tall/narrow (3:4) cards per row, growing by one row

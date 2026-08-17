@@ -31,7 +31,7 @@
 
 /* ── HERO SKY ──
    The cool-grey/blue wash at the top of the page. It used to be a hard
-   #cdd6de band baked into .production-gradient-3d-base across the top 13%
+   #cdd6de band baked into the page ground across the top 13%
    of the DOCUMENT; as its own fixed, viewport-height-bounded layer it can
    fade out on scroll and leave the flat beige base behind.
 
@@ -162,11 +162,12 @@
    arriving through
    .production-gradient-vignette as you scroll instead of being painted in
    from first frame. */
-.production-gradient-3d-base {
-  position: absolute;
-  inset: 0;
-  background: var(--color-cream);
-}
+/* .production-gradient-3d-base is gone. It painted the flat page ground
+   and, briefly, transitioned background-color for the section-driven
+   background — which only ever worked because every value was a solid
+   colour. Browsers cannot interpolate gradients, so that approach snaps
+   the moment a section wants one. The ground now lives in PageBackground,
+   which crossfades stacked layers by opacity instead. */
 
 .production-gradient-3d-orb {
   position: absolute;
@@ -177,7 +178,7 @@
 /* top:30% used to sit this orb inside the middle content band (Pillars /
    Photo Collage / System Framework), adding unwanted warmth to sections
    meant to stay flat beige — moved down to reinforce the terracotta
-   bridge in .production-gradient-3d-base instead (that gradient's own
+   bridge in the page ground instead (that gradient's own
    terracotta peak sits at 84%), right before the footer. */
 .production-gradient-3d-orb--terracotta {
   top: 84%;

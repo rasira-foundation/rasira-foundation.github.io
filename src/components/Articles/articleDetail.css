@@ -21,18 +21,36 @@
   margin-bottom: 28px;
 }
 
+/* Glyph only, styled to match .article-card-arrow exactly — same family,
+   16px, same ink, same eased transform on hover — so the arrow that takes
+   you into an article and the one that brings you back read as the same
+   control. It was 12px mono in --color-ink-soft alongside the word
+   "Back"; without the label it needs the card arrow's weight to still be
+   a target rather than a stray character.
+
+   Sized as a real tap target: the glyph alone is a few pixels across, so
+   the 44px box is what makes it hittable on a phone. */
 .article-detail-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -12px;
   background: none;
   border: none;
   cursor: pointer;
-  font-family: var(--font-editorial-mono);
-  font-size: 12px;
-  color: var(--color-ink-soft);
+  touch-action: manipulation;
+  font-family: var(--font-editorial-sans);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--color-ink);
   padding: 0;
+  transition: transform 0.25s var(--ease-soft);
 }
 
 .article-detail-back:hover {
-  color: var(--color-ink);
+  transform: translateX(-3px);
 }
 
 /* Squared off to 4px with the rest of the site's radii — this was the
@@ -172,12 +190,11 @@
   margin-bottom: 0;
 }
 
-.skeleton-block {
-  display: block;
-  border-radius: 4px;
-  background: rgba(20, 18, 15, 0.09);
-  animation: skeleton-pulse 1.6s ease-in-out infinite;
-}
+/* .skeleton-block and @keyframes skeleton-pulse moved to index.css — the
+   article grid uses them too now, and a primitive shared by two
+   components does not belong in one of them. Only the size variants for
+   this page's own blocks stay here. */
+
 
 .skeleton-back {
   width: 52px;
@@ -213,22 +230,3 @@
   border-radius: 2px;
 }
 
-@keyframes skeleton-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.45;
-  }
-}
-
-/* The global reduced-motion block in index.css collapses
-   animation-duration to 0.01ms, which would leave these frozen at
-   whichever keyframe they landed on — possibly the 0.45 dip. `none`
-   holds them at full opacity instead. */
-@media (prefers-reduced-motion: reduce) {
-  .skeleton-block {
-    animation: none;
-  }
-}

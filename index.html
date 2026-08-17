@@ -16,6 +16,12 @@
     <title>Rasira Foundation</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- The articles come from the Sheets gviz endpoint, and that request
+         can only start once the JS bundle has parsed and mounted. Opening
+         the connection here means DNS, TCP and TLS are already done by the
+         time it fires, which is the single largest fixed cost in that
+         round trip — the request itself is one small JSON response. -->
+    <link rel="preconnect" href="https://docs.google.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap"
       rel="stylesheet"
