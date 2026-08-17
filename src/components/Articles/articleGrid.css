@@ -464,6 +464,11 @@
     font-size: 15px;
     min-width: 132px;
     padding: 15px 22px;
+    /* Half the desktop 56px. On a phone the cards stack into one column,
+       so this gap sits between the button and a single card rather than a
+       full row — at 56px it read as the button having drifted loose from
+       the list it belongs to. */
+    margin-top: 28px;
   }
 
   .article-card--ascii,

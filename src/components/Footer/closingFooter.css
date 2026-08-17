@@ -402,8 +402,11 @@
   stroke-width: 2.5px;
 }
 
+/* Thinner than the hour hand. Both were 2.5px, which read as two
+   identical strokes rather than as a clock — the hour hand should be the
+   heavier of the pair, and the minute hand already carries the length. */
 .analog-clock-minute {
-  stroke-width: 2.5px;
+  stroke-width: 1.5px;
 }
 
 .closing-footer-contact {
@@ -516,6 +519,19 @@
      open a dead 96px hole in the column. */
   .closing-footer-meta-right {
     margin-bottom: 0;
+    /* Light, not the dark #3a3532 the row uses on desktop.
+       Stacked, this line drops well below the other one and lands on the
+       charcoal part of the sunset rather than its orange band — where a
+       dark grey is all but invisible. #c8c8c6 matches the email and year
+       below it and reads 6.80:1 there. */
+    color: #c8c8c6;
+  }
+
+  /* Pushed clear of the wordmark. .closing-footer-base's 40px gap is tuned
+     for the desktop lockup; at phone width the wordmark is nearly
+     full-bleed and crowds the sign-off directly under it. */
+  .closing-footer-signoff {
+    margin-top: 20px;
   }
 }
 
