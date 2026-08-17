@@ -233,7 +233,13 @@
      see if a tap is a double-tap-to-zoom. */
   touch-action: manipulation;
   border-radius: 4px;
-  background: var(--color-dawn-orange);
+  /* The hero's own haze blue, not a new colour — it is already the page's
+     one cool accent (the hero sky's lower stop, and the source of the
+     background's first wash), so the card picks up something the site
+     already says rather than introducing a second accent alongside the
+     dawn orange. Dark ink on it reads 13.3:1, up from 6.85:1 on the
+     orange it replaces. */
+  background: var(--color-atmos-haze-blue);
   color: #1c1917;
   /* No font-weight — it was the only CTA of the three set at 700, and at
      the new 16px that weight on a mono face read as heavy rather than as
@@ -244,9 +250,12 @@
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
-/* Background-only, same reasoning as .article-hub-see-all:hover. */
+/* Background-only, same reasoning as .article-hub-see-all:hover. A step
+   DEEPER on hover rather than paler: on a dark card a lightening hover
+   makes the button bloom, and this fill is already near the top of its
+   range. #c3d2dc is the same hue a shade down. */
 .donation-cta:hover {
-  background: #f0b385;
+  background: #c3d2dc;
 }
 
 .donation-cta:active {

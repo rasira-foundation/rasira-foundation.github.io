@@ -28,26 +28,36 @@ export const SPRING: Transition = {
 };
 
 /**
- * Scroll-variant trigger: fire when a section reaches the MIDDLE of the
- * viewport, and fire again every time it does.
+ * Scroll-variant trigger: fire as a section rises into the reading area,
+ * and fire again every time it does.
  *
- * The -20% top and bottom collapses the observer's root to the centre 60%
- * of the screen, so a reveal happens once the element is genuinely being
- * looked at rather than the instant its first pixel clears the fold.
+ * The margin is ASYMMETRIC, and that is the whole point. It shrinks only
+ * the BOTTOM of the observer root, so an element has to rise past the 75%
+ * line before it counts as in view — a late trigger, which is what "centre
+ * of the viewport" was asking for. The top is left at 0, so the element
+ * stays in view until it has fully left the screen.
+ *
+ * A symmetric `-20% 0px -20% 0px` was tried and is actively broken with
+ * `once: false`. Together they mean anything outside the middle 60% is "not
+ * in view" and gets reverted to hidden — so a heading the user is plainly
+ * looking at, sitting in the top fifth of the screen, fades back out.
+ * Observed: the pillar labels and framework titles going blank while on
+ * screen. With repeat enabled, the root must never be shrunk on the edge
+ * the content EXITS through.
  *
  * `amount` is deliberately left at its default ("some") rather than set to
- * 0.5. The two are alternative ways of expressing "centre of viewport",
- * and stacking them breaks on tall elements: with the root already reduced
- * to 60% of the screen, anything taller than that can never have 50% of
- * itself inside it, so the trigger would never fire at all. Several
- * sections here are that tall.
+ * 0.5. The two are alternative ways of expressing a late trigger, and
+ * stacking them breaks on tall elements: with the root already reduced,
+ * anything taller than the remaining band can never have 50% of itself
+ * inside it, so it would never fire at all. Several sections here are that
+ * tall.
  *
  * once: false — reveals replay on the way back up. That is also the safer
- * default: a once:true reveal that fires while its section is hidden (behind
- * the splash, say) spends its only trigger and the content stays invisible,
- * a bug this page has hit before.
+ * default: a once:true reveal that fires while its section is hidden
+ * (behind the splash, say) spends its only trigger and the content stays
+ * invisible, a bug this page has hit before.
  */
 export const IN_VIEW = {
   once: false,
-  margin: '-20% 0px -20% 0px',
+  margin: '0px 0px -25% 0px',
 } as const;

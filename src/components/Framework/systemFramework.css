@@ -44,7 +44,12 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
   margin-bottom: 40px;
-  background: #e7e1d5;
+  /* Light terracotta, replacing the neutral sand #e7e1d5. The whole panel
+     now sits in the warm family rather than being a grey-beige block with
+     one warm column in it. Text is untouched and still clears easily:
+     13.1:1 for titles and 10.5:1 for body copy, against 14.4 / 11.5 on the
+     old sand. */
+  background: #e8d5c4;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -110,13 +115,19 @@
   background: transparent;
 }
 
-/* Warm tint marking the pivot stage, using the palette's existing dawn
-   orange at low alpha rather than introducing the reference's gold. The
-   text colors are untouched — the stage is distinguished by its ground,
-   not by recoloring the type, which would have broken the single dark-grey
-   body color every other node shares. */
+/* A DARKER step of the same terracotta as the panel, not a different hue.
+   Now that the whole diagram is warm, the pivot has to be distinguished by
+   depth rather than by temperature — a lighter or differently-coloured
+   stage would read as a mistake against a warm ground.
+
+   Opaque rather than an alpha over the panel: an alpha value silently
+   changes meaning if the panel colour is ever edited, and this pairing is
+   the one thing here that has to stay a deliberate two-step. 9.6:1 for
+   titles and 7.6:1 for body — the stage is distinguished by its ground,
+   never by recolouring the type, which would break the one dark-grey body
+   colour every other node shares. */
 .framework-column--pivot {
-  background: rgba(233, 138, 82, 0.12);
+  background: #d9b291;
 }
 
 /* The forward connector between stages. Sits ON the column's left rule,
@@ -135,7 +146,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: #e7e1d5;
+  background: #e8d5c4;
   border: 1px solid rgba(20, 18, 15, 0.22);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -143,10 +154,12 @@
   color: #2b2623;
 }
 
-/* The pivot's own connector picks up its tint, so the badge does not
-   read as a paler hole punched in the highlighted column. */
+/* The pivot's own connector picks up its tint, so the badge does not read
+   as a paler hole punched in the highlighted column. Deepened alongside
+   the column — at the old #eee0d2 it would now sit noticeably lighter than
+   the ground it straddles. */
 .framework-column--pivot .framework-connector {
-  background: #eee0d2;
+  background: #d9b291;
 }
 
 .framework-box-body {
@@ -320,7 +333,7 @@
     flex: 0 0 auto;
     scroll-snap-align: center;
     min-height: 0;
-    background: #e7e1d5;
+    background: #e8d5c4;
     border: 1px solid rgba(20, 18, 15, 0.14);
     border-radius: 0;
   }
@@ -340,8 +353,8 @@
      is distinguished by its whole edge rather than looking like a tinted
      card wearing a neutral border. */
   .framework-column--pivot {
-    background: #f1e2d4;
-    border-color: rgba(180, 110, 60, 0.35);
+    background: #d9b291;
+    border-color: rgba(150, 95, 55, 0.45);
   }
 
   /* No gap — cards butt directly against each other, and the -1px pulls

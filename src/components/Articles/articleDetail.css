@@ -1,6 +1,11 @@
+/* 14vh of top padding put roughly a sixth of the screen between the site
+   header and the back arrow — dead space on every article, and it grew
+   with the viewport, so it was worst on the large screens where it was
+   already most obvious. 5vh with a 40px floor keeps the header clear of
+   the back arrow on short viewports without the gap scaling away. */
 .article-detail {
   background: var(--color-cream);
-  padding-top: 14vh;
+  padding-top: max(40px, 5vh);
   padding-bottom: 16vh;
 }
 

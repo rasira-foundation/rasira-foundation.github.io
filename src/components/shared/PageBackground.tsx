@@ -78,11 +78,25 @@ interface WashLayer {
 const LAYERS: WashLayer[] = [
   {
     id: 'dawn',
-    range: [0, 0, 0.06, 0.46],
+    /* Starts at ZERO, not at peak. The first two points used to both be 0,
+       which meant this wash was already at full strength on the very first
+       painted frame — the colour was simply present at the top of the page
+       rather than arriving, so there was nothing to see when you began
+       scrolling. Fading in across the first 7% gives it an entrance, and
+       the y drift and scale below run through the same stretch, so it
+       floats up into place as it appears rather than switching on. */
+    range: [0, 0.07, 0.14, 0.46],
     peak: 0.16,
     background:
       'radial-gradient(circle at 50% 30%, rgba(193, 208, 223, 0.5) 0%, rgba(var(--color-page-rgb), 0) 68%)',
-    y: ['-24%', '24%'],
+    /* -20%, not further, and scale never below 1. The entry travel is
+       bounded by the layer's own oversize: at the start of the range the
+       scale is at its smallest, so that is where the element covers least,
+       and a bigger negative y there pulls its bottom edge up INTO the
+       viewport. -32% with scale 0.92 did exactly that (bottom edge 161px
+       inside the frame). These are the largest values that still cover at
+       every point in the range. */
+    y: ['-20%', '24%'],
     scale: [1, 1.5],
     rotate: [0, 16],
     float: { x: ['0%', '6%', '-4%', '0%'], y: ['0%', '-5%', '4%', '0%'], duration: 19 },
