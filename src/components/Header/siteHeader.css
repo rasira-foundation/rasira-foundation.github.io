@@ -14,7 +14,7 @@
 
 .site-header-logo {
   pointer-events: auto;
-  background: rgba(246, 241, 231, 0.35);
+  background: rgba(var(--color-page-rgb), 0.35);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: none;
@@ -26,7 +26,7 @@
 }
 
 .site-header-logo:hover {
-  background: rgba(246, 241, 231, 0.55);
+  background: rgba(var(--color-page-rgb), 0.55);
   opacity: 1;
 }
 

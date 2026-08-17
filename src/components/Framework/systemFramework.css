@@ -223,7 +223,10 @@
   color: #2b2623;
   padding: 16px 20px;
   border-left: 2px solid var(--color-dawn-orange);
-  background: rgba(246, 241, 231, 0.85);
+  /* Was a translucent cream, which only registered as a callout because
+     the page was beige — on white it would have been white on white, with
+     nothing but the orange edge to mark it. */
+  background: var(--color-cream-deep);
   border-radius: 0 4px 4px 0;
   max-width: 640px;
 }

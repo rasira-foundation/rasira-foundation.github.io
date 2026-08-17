@@ -38,10 +38,10 @@
   margin-left: calc(50% - 50vw);
   background: linear-gradient(
     to bottom,
-    rgba(245, 242, 235, 0) 0%,
-    rgba(245, 242, 235, 0) 22%,
-    #f5f2eb 22%,
-    #f5f2eb 100%
+    rgba(var(--color-page-rgb), 0) 0%,
+    rgba(var(--color-page-rgb), 0) 22%,
+    var(--color-cream) 22%,
+    var(--color-cream) 100%
   );
   padding: 0 0 48px;
 }
@@ -87,7 +87,7 @@
    1. A SOLID background, not the translucent wash this used to have.
       A transparent panel can't occlude anything — the image just showed
       straight through it, which is why the two appeared to scroll as one
-      block. #f5f2eb matches the page gradient's beige, so the panel
+      block. var(--color-cream) matches the page ground, so the panel
       reads as the page itself rising over the photo.
    2. A heavy negative top margin (-160px) so it physically overlaps the
       image's lower portion rather than sitting after it.
@@ -111,7 +111,7 @@
   max-width: var(--container-max);
   margin: -160px auto 0;
   padding: 56px 40px 48px;
-  background: #f5f2eb;
+  background: var(--color-cream);
   border: 1px solid var(--color-border-neutral);
   border-radius: 0;
   display: grid;
@@ -219,10 +219,10 @@ ul.pillar-body {
        transparent gap is ever left). */
     background: linear-gradient(
       to bottom,
-      rgba(245, 242, 235, 0) 0%,
-      rgba(245, 242, 235, 0) 25%,
-      #f5f2eb 25%,
-      #f5f2eb 100%
+      rgba(var(--color-page-rgb), 0) 0%,
+      rgba(var(--color-page-rgb), 0) 25%,
+      var(--color-cream) 25%,
+      var(--color-cream) 100%
     );
     /* NO overflow:hidden here, deliberately. It was added to stop the
        parallax translate leaving a gap above the photo — and it did, but
@@ -247,7 +247,7 @@ ul.pillar-body {
 
      Nothing is lost by dropping the fill. Above the tear the photo is
      opaque and now clipped to its wrapper, so there is no gap to cover;
-     below it, .pillars-grid carries its own #f5f2eb; and past that the
+     below it, .pillars-grid carries its own page fill; and past that the
      section's 32px tail lands on the page's own beige anyway. */
   .pillars-section {
     background: transparent;

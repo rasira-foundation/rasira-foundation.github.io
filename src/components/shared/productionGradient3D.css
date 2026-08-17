@@ -131,10 +131,15 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
+  /* Cool neutral grey, not the warm rgba(220,215,200) it started as. That
+     one was chosen against a beige page, where it read as depth; over a
+     white page it just fades the beige back in as you scroll, which works
+     against the point of a white ground. Lower alpha too — the same
+     density reads much heavier on white than it did on cream. */
   background: radial-gradient(
     circle at 50% 0%,
-    rgba(220, 215, 200, 0.8) 0%,
-    rgba(245, 242, 235, 0) 70%
+    rgba(212, 216, 221, 0.55) 0%,
+    rgba(var(--color-page-rgb), 0) 70%
   );
 }
 
@@ -143,7 +148,7 @@
 
    This deliberately no longer runs its own terracotta-to-charcoal
    bridge at the bottom: ClosingFooter now owns that entire sunset
-   transition as a scroll-revealed overlay starting from #f5f2eb at its
+   transition as a scroll-revealed overlay starting from the page color at its
    own top edge (see .closing-footer-sunset), so a second sweep here
    would darken the page twice over — once before the footer and again
    inside it. Holding flat beige to 100% means the handoff into the
@@ -151,15 +156,16 @@
    fragility: those stops had to be re-tuned against measured footer
    position every time page height shifted (observed anywhere from 81%
    to 94.8% across loads as async article/image content settled). */
-/* Now flat beige end to end. The cool grey (#cdd6de) hero band that used
-   to occupy the top 13% is gone: the page is specified to start on solid
-   #f5f2eb, with all of the atmosphere at the top arriving through
+/* Now one flat page color end to end (white, via --color-cream). The cool
+   grey (#cdd6de) hero band that used to occupy the top 13% is gone: the
+   page starts on the solid ground color, with the atmosphere at the top
+   arriving through
    .production-gradient-vignette as you scroll instead of being painted in
    from first frame. */
 .production-gradient-3d-base {
   position: absolute;
   inset: 0;
-  background: #f5f2eb;
+  background: var(--color-cream);
 }
 
 .production-gradient-3d-orb {
@@ -207,5 +213,5 @@
   border-radius: 50%;
   opacity: 0.8;
   filter: blur(90px);
-  background: radial-gradient(circle, rgba(233, 138, 82, 0.8) 0%, rgba(246, 241, 231, 0) 70%);
+  background: radial-gradient(circle, rgba(233, 138, 82, 0.8) 0%, rgba(var(--color-page-rgb), 0) 70%);
 }

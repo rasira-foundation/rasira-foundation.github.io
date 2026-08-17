@@ -1,6 +1,17 @@
 :root {
-  --color-cream: #f6f1e7;
-  --color-cream-deep: #efe7d6;
+  /* The page ground. Named "cream" from when it was #f6f1e7 — kept as the
+     name so every consumer keeps working, but the palette is white now.
+     --color-page-rgb exists because several gradients have to fade to
+     "the page color at zero alpha": interpolating to plain `transparent`
+     goes through transparent BLACK and leaves a dirty grey band, so those
+     stops must name the hue explicitly. Deriving them from one variable
+     stops the set drifting apart, which it did when they were a dozen
+     separate hardcoded rgba() values. */
+  --color-cream: #ffffff;
+  --color-page-rgb: 255, 255, 255;
+  /* Card hover / recessed fill. Has to be a real step off white now — at
+     the old beige it only needed to be a shade deeper than #f6f1e7. */
+  --color-cream-deep: #f1f0ed;
   --color-ink: #14120f;
   --color-ink-soft: rgba(20, 18, 15, 0.62);
   --color-ink-faint: rgba(20, 18, 15, 0.38);
@@ -14,7 +25,7 @@
      same color on both sides so the scroll still reads as one continuous
      wash. Kept separate from --color-dawn-orange above since that one
      still drives vivid UI accents (category tags, footer glow) elsewhere. */
-  --color-gradient-4: #f6f3ed; /* hero top == articles bottom == article card fill */
+  --color-gradient-4: #ffffff; /* hero top == articles bottom == article card fill */
   --color-atmos-haze-blue: #d8e2e9; /* hero bottom == constellation top */
   --color-atmos-apricot: #e8c19f; /* constellation mid */
   --color-atmos-orange: #dfaa83; /* constellation bottom == articles top */

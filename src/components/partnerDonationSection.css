@@ -72,9 +72,13 @@
   }
 }
 
-/* Light glass — frosted enough to read as a card against the transparent
-   canvas behind it, without the heavier saturate() the old flat-orange
-   fill needed. */
+/* Was translucent white on translucent white — "light glass", which read
+   as a card only because the page behind it was beige. On a white page
+   both the fill and the border were literally invisible and the card
+   dissolved into the background. It now carries a faint neutral fill and
+   a real ink-based border, so its edges come from contrast against the
+   page rather than from being lighter than it.
+   backdrop-filter went with the glass: there is nothing left to frost. */
 .partner-card {
   display: flex;
   flex-direction: column;
@@ -82,11 +86,9 @@
   gap: 24px;
   padding: 32px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 1px 2px rgba(20, 18, 15, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--color-cream-deep);
+  border: 1px solid var(--color-border-neutral);
+  box-shadow: 0 1px 2px rgba(20, 18, 15, 0.04);
 }
 
 .partner-card-topbar {
@@ -184,7 +186,7 @@
 }
 
 .donation-card-topbar span:last-child {
-  color: rgba(246, 243, 237, 0.5);
+  color: rgba(var(--color-page-rgb), 0.5);
   text-transform: none;
   letter-spacing: 0;
 }

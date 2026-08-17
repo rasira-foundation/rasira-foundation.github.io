@@ -34,7 +34,7 @@
 .closing-footer--dark {
   position: relative;
   background: transparent;
-  color: #f5f2eb;
+  color: var(--color-cream);
   /* Reset the light variant's box — .closing-footer-sky and
      .closing-footer-base carry their own padding, and any gap here would
      open a strip of page beige between the two backgrounds. */
@@ -108,7 +108,7 @@
      the perceived darkening evenly across the whole run. */
   background: linear-gradient(
     180deg,
-    rgba(245, 242, 235, 0) 0%,
+    rgba(var(--color-page-rgb), 0) 0%,
     rgba(58, 58, 56, 0) 28%,
     rgba(58, 58, 56, 0.16) 40%,
     rgba(58, 58, 56, 0.36) 50%,
