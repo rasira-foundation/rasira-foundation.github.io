@@ -56,6 +56,21 @@ export function BlurRevealText({
       variants={containerVariants(delay)}
       initial="hidden"
       whileInView="visible"
+      /* inherit={false} is REQUIRED, not tidiness.
+       *
+       * These components use variant LABELS ("hidden"/"visible"), and
+       * Framer propagates variant changes from any animating motion
+       * ancestor down to motion descendants. Several of these sit as
+       * direct children of a motion.div that runs its own reveal with
+       * OBJECT props — so there is no matching label to inherit, and the
+       * child never leaves "hidden". Symptom: body copy stuck invisible
+       * while headings a few pixels away were fine. The headings only
+       * worked by accident, because a plain <h3> sat between them and the
+       * animating parent and broke the propagation chain.
+       *
+       * This opts out of that inheritance so the component's own
+       * whileInView governs, wherever it is mounted. */
+      inherit={false}
       viewport={amount === undefined ? { ...IN_VIEW, once } : { ...IN_VIEW, once, amount }}
     >
       {words.map((word, i) => (
@@ -109,7 +124,17 @@ export function BlurRevealElement({
   };
 
   return (
-    <motion.div className={className} variants={variants} initial="hidden" whileInView="visible" viewport={amount === undefined ? { ...IN_VIEW, once } : { ...IN_VIEW, once, amount }}>
+    <motion.div
+      className={className}
+      variants={variants}
+      initial="hidden"
+      whileInView="visible"
+      /* See the note in BlurRevealText above — without this, a reveal
+         mounted directly inside another animating motion component never
+         leaves its hidden variant. */
+      inherit={false}
+      viewport={amount === undefined ? { ...IN_VIEW, once } : { ...IN_VIEW, once, amount }}
+    >
       {children}
     </motion.div>
   );

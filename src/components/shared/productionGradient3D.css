@@ -131,6 +131,9 @@
   position: fixed;
   inset: 0;
   pointer-events: none;
+  /* Same reason as .page-background: cover the strip behind iOS Safari's
+     collapsing toolbar, which `inset: 0` on a fixed element does not. */
+  min-height: 100lvh;
   /* Cool neutral grey, not the warm rgba(220,215,200) it started as. That
      one was chosen against a beige page, where it read as depth; over a
      white page it just fades the beige back in as you scroll, which works

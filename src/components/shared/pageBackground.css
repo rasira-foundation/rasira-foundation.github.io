@@ -20,6 +20,18 @@
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  /* Taller than the VISUAL viewport on purpose.
+     `inset: 0` on a fixed element covers what is currently visible, which
+     on iOS Safari excludes the strip behind the collapsing bottom toolbar.
+     The washes therefore tinted the page down to the toolbar and stopped,
+     leaving the untinted canvas showing below as a distinctly different
+     band — visible on device at the very bottom of the screen.
+     100lvh is the LARGE viewport height: the viewport as it would be with
+     the browser chrome retracted, i.e. including that strip. The extra
+     height is simply overscan; nothing is positioned relative to the
+     bottom edge. Falls back harmlessly on browsers without lvh, which are
+     the ones that do not have a collapsing toolbar to begin with. */
+  min-height: 100lvh;
 }
 
 /* The static ground. Never animated and never scroll-linked — this is what

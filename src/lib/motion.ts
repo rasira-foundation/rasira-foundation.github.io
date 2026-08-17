@@ -28,36 +28,40 @@ export const SPRING: Transition = {
 };
 
 /**
- * Scroll-variant trigger: fire as a section rises into the reading area,
- * and fire again every time it does.
+ * Scroll-variant trigger: reveal when a section enters the viewport, and
+ * reveal again every time it re-enters.
  *
- * The margin is ASYMMETRIC, and that is the whole point. It shrinks only
- * the BOTTOM of the observer root, so an element has to rise past the 75%
- * line before it counts as in view — a late trigger, which is what "centre
- * of the viewport" was asking for. The top is left at 0, so the element
- * stays in view until it has fully left the screen.
+ * NO margin and NO amount, and that is a correctness requirement rather
+ * than a preference.
  *
- * A symmetric `-20% 0px -20% 0px` was tried and is actively broken with
- * `once: false`. Together they mean anything outside the middle 60% is "not
- * in view" and gets reverted to hidden — so a heading the user is plainly
- * looking at, sitting in the top fifth of the screen, fades back out.
- * Observed: the pillar labels and framework titles going blank while on
- * screen. With repeat enabled, the root must never be shrunk on the edge
- * the content EXITS through.
+ * `whileInView` reverts an element to its `initial` state whenever it
+ * leaves the observer root — that is what `once: false` means. So any
+ * negative rootMargin carves out a band that is ON SCREEN but counts as
+ * out of view, and content sitting there gets actively hidden while the
+ * user is looking straight at it. Two versions of this shipped:
  *
- * `amount` is deliberately left at its default ("some") rather than set to
- * 0.5. The two are alternative ways of expressing a late trigger, and
- * stacking them breaks on tall elements: with the root already reduced,
- * anything taller than the remaining band can never have 50% of itself
- * inside it, so it would never fire at all. Several sections here are that
- * tall.
+ *   -20% top AND bottom  -> headings vanished in the top fifth of the
+ *                           screen while scrolling down
+ *   0 top, -25% bottom   -> same thing mirrored: scrolling UP, content
+ *                           moves down the screen, crosses the 75% line
+ *                           and disappears in the bottom quarter
  *
- * once: false — reveals replay on the way back up. That is also the safer
- * default: a once:true reveal that fires while its section is hidden
- * (behind the splash, say) spends its only trigger and the content stays
- * invisible, a bug this page has hit before.
+ * `amount` has the identical failure for the same reason: an element with
+ * less than the threshold visible is "out of view" and gets reset, which
+ * is exactly what happens at both edges of the screen.
+ *
+ * So the two settings are mutually exclusive, and this is the trade:
+ *   repeat + no shrink  -> triggers early (any pixel on screen), never
+ *                          hides anything visible.  <- chosen
+ *   late trigger + once -> fires at the centre, never replays.
+ * Nothing hides content the user can see, which is the property that
+ * matters more than where exactly the reveal begins.
+ *
+ * once: false is also the safer default for a second reason: a once:true
+ * reveal that fires while its section is hidden (behind the splash, say)
+ * spends its only trigger and the content stays invisible — a bug this
+ * page has hit before.
  */
 export const IN_VIEW = {
   once: false,
-  margin: '0px 0px -25% 0px',
 } as const;
