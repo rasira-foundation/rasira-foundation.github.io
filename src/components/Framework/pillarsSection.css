@@ -94,14 +94,26 @@
 
    z-index 2 beats .pillars-image-wrap's 0 within this section, so the
    panel wins that overlap. */
+/* Width is min(--container-max, 100% - 48px), centred — deliberately the
+   same box the framework diagram below resolves to (.system-framework's
+   24px side padding around a --container-max .framework-inner). max-width
+   alone was not enough: it matched only while the viewport was wider than
+   the container, and below that this panel ran to the section's own
+   full-bleed edges while the framework stayed inset by 24px, so the two
+   drifted out of alignment exactly when it was most visible.
+
+   Rectangular, not the 16px top corners it had — squared off to match the
+   framework panel's language, with a real outline on all four sides. */
 .pillars-grid {
   position: relative;
   z-index: 2;
+  width: calc(100% - 48px);
   max-width: var(--container-max);
   margin: -160px auto 0;
   padding: 56px 40px 48px;
   background: #f5f2eb;
-  border-radius: 16px 16px 0 0;
+  border: 1px solid var(--color-border-neutral);
+  border-radius: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 40px;
@@ -174,17 +186,103 @@ ul.pillar-body {
   }
 }
 
+/* MOBILE PARALLAX.
+   The negative margin is what makes the curtain ride up over the article
+   cards. A previous pass zeroed it on mobile to guarantee See All was
+   clear, which did work but cost the parallax entirely — the photo just
+   followed the grid in normal flow. The overlap is back at a smaller
+   -25vh, and the clearance is handled properly instead, by giving
+   .article-hub a bottom padding of 25vh + 48px at this same breakpoint
+   (see articleGrid.css). The two numbers are tied: change one and the
+   button starts being covered again. */
+@media (max-width: 860px) {
+  .pillars-image-wrap {
+    /* -30vh, matching the desktop overlap's magnitude (which is
+       -30vh + 100px). At -25vh the photo simply had less of the card row
+       to travel across before the pin released, so the same mechanism
+       produced a much weaker version of the effect. */
+    margin-top: -30vh;
+    /* The opaque fill lives HERE, not on .pillars-section, and that is the
+       point: this element's height is exactly the image's (75vh), so the
+       percentage below is measured against the photo itself. On the
+       section it would be a fraction of image + grid + padding, which
+       changes with the copy and stops describing where the tear is.
+       Desktop can use the section because there the image sizes it.
+
+       Top quarter transparent so the article cards show through as the
+       photo rides up over them; solid beige from there down so the PNG's
+       torn, transparent tail does not reveal those same cards again
+       underneath — which is what was showing the See All button below the
+       tear. 25% sits in the safe window: below the image's own top edge at
+       every point in its parallax travel (so the hard stop always hides
+       behind opaque photo), and above the tear's highest point (so no
+       transparent gap is ever left). */
+    background: linear-gradient(
+      to bottom,
+      rgba(245, 242, 235, 0) 0%,
+      rgba(245, 242, 235, 0) 25%,
+      #f5f2eb 25%,
+      #f5f2eb 100%
+    );
+    /* NO overflow:hidden here, deliberately. It was added to stop the
+       parallax translate leaving a gap above the photo — and it did, but
+       it also destroyed the whole effect: a clipped wrapper means the
+       image can never paint outside its own box, so it could no longer
+       ride UP over the article cards. It just sat in the wrapper looking
+       static. Desktop has no clip, which is exactly why it works there.
+
+       The gap it was covering is a non-issue: the section is transparent
+       at this breakpoint, so the strip the image vacates simply shows the
+       article cards underneath — which is what should be visible there
+       anyway, since this is the photo sliding off them. */
+  }
+
+  /* TRANSPARENT, carrying no fill of its own.
+     Not the desktop transparent-to-22% ramp — that hard stop is derived
+     from the PNG's natural aspect box and travel, and does not describe
+     the 75vh cover crop used here. But not a flat beige fill either,
+     which is what this was: an opaque section paints over the article
+     cards the curtain is meant to be sliding across, so the overlap
+     showed as a dead beige band instead of the cards receding underneath.
+
+     Nothing is lost by dropping the fill. Above the tear the photo is
+     opaque and now clipped to its wrapper, so there is no gap to cover;
+     below it, .pillars-grid carries its own #f5f2eb; and past that the
+     section's 32px tail lands on the page's own beige anyway. */
+  .pillars-section {
+    background: transparent;
+  }
+
+  /* 50% taller than the natural aspect-ratio box would be. object-fit:
+     cover on .pillars-image means the extra height crops the top and
+     bottom rather than stretching, which is the intent — the torn edge
+     and the figures stay legible instead of being squeezed into a thin
+     letterbox strip on a narrow screen. */
+  .pillars-image {
+    aspect-ratio: auto;
+    height: 75vh;
+    min-height: 420px;
+  }
+
+  /* The grid used to be pulled up under the tear; keep a smaller lift so
+     it still tucks under the torn edge without covering the figures. */
+  .pillars-grid {
+    margin-top: -80px;
+  }
+}
+
 @media (max-width: 640px) {
   .pillars-section {
     padding: 0 0 32px;
   }
 
-  .pillars-image-wrap {
-    margin-top: -48px;
-  }
-
+  /* 16px gutters, matching .system-framework's own padding at this
+     breakpoint so the two panels stay flush with each other. Expressed as
+     a width with auto margins rather than as side margins, so it keeps
+     centring the same way the base rule does. */
   .pillars-grid {
-    margin: -60px 16px 0;
+    width: calc(100% - 32px);
+    margin: -60px auto 0;
     padding: 32px 20px 28px;
   }
 }

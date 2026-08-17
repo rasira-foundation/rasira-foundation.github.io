@@ -13,15 +13,10 @@
   }
 }
 
-.partner-donation-header {
-  max-width: var(--container-max);
-  margin: 0 auto 40px;
-  display: flex;
-  gap: 24px;
-  padding-top: 24px;
-}
-
-.partner-donation-header span {
+/* Was .partner-donation-header span, in a separate flex row above the
+   grid. The labels are now grid items sitting directly before their own
+   card — see the comment in PartnerDonationSection.tsx. */
+.partner-donation-label {
   font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
@@ -30,34 +25,50 @@
   color: #383330;
 }
 
-@media (min-width: 1024px) {
-  .partner-donation-header span:first-child {
-    flex: 7;
-  }
-  .partner-donation-header span:last-child {
-    flex: 5;
-  }
-}
-
 .partner-donation-grid {
   max-width: var(--container-max);
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 28px;
+  /* Tight under a label, loose between the two label+card pairs. */
+  row-gap: 12px;
   align-items: stretch;
+  padding-top: 24px;
+}
+
+/* Each label hugs the card below it; the second pair gets the breathing
+   room that the old header row's margin used to provide. */
+.partner-donation-label--donation {
+  margin-top: 28px;
 }
 
 @media (min-width: 1024px) {
+  /* Desktop is unchanged visually: the labels are placed back onto their
+     own row above the cards, so this still reads as a header strip even
+     though the DOM now interleaves label, card, label, card. */
   .partner-donation-grid {
     grid-template-columns: repeat(12, 1fr);
-    gap: 32px;
+    grid-template-rows: auto auto;
+    column-gap: 32px;
+    row-gap: 40px;
+  }
+  .partner-donation-label {
+    grid-row: 1;
+  }
+  .partner-donation-label--partner {
+    grid-column: 1 / span 7;
+  }
+  .partner-donation-label--donation {
+    grid-column: 8 / span 5;
+    margin-top: 0;
   }
   .partner-card {
-    grid-column: span 7;
+    grid-row: 2;
+    grid-column: 1 / span 7;
   }
   .donation-card {
-    grid-column: span 5;
+    grid-row: 2;
+    grid-column: 8 / span 5;
   }
 }
 
@@ -70,7 +81,7 @@
   justify-content: space-between;
   gap: 24px;
   padding: 32px;
-  border-radius: 16px;
+  border-radius: 4px;
   background: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 1px 2px rgba(20, 18, 15, 0.06);
@@ -126,7 +137,7 @@
   display: flex;
   flex-direction: column;
   padding: 32px;
-  border-radius: 16px;
+  border-radius: 4px;
   background: rgba(20, 18, 15, 0.85);
   border: 1px solid rgba(115, 115, 115, 0.4);
   box-shadow: 0 20px 25px rgba(20, 18, 15, 0.25);
@@ -198,17 +209,36 @@
 
 /* 6px, matching .collabs-cta and .article-hub-see-all — all CTAs share
    one near-rectangular radius rather than the old full pill. */
+/* 16px, up from 11px. The padding grew with it — a label half again as
+   large inside the old 12/22 box would have read as cramped rather than
+   as a bigger button. */
 .donation-cta {
   align-self: flex-start;
   margin-top: 8px;
-  padding: 12px 22px;
-  border-radius: 6px;
+  /* min-height, not "padding that happens to add up". The 44px tap target
+     was previously emergent from padding plus whatever line box the font
+     produced, which is not something you can rely on — it shifts with any
+     font, line-height or padding change. Declaring it makes the floor
+     explicit and lets the padding be a visual choice again.
+     inline-flex + centering is what makes min-height actually centre the
+     label rather than leaving it top-aligned in a taller box. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 14px 28px;
+  /* Removes the ~300ms click delay mobile browsers add while they wait to
+     see if a tap is a double-tap-to-zoom. */
+  touch-action: manipulation;
+  border-radius: 4px;
   background: var(--color-dawn-orange);
   color: #1c1917;
-  font-weight: 700;
+  /* No font-weight — it was the only CTA of the three set at 700, and at
+     the new 16px that weight on a mono face read as heavy rather than as
+     emphasis. The orange fill already carries the emphasis. */
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
@@ -237,9 +267,20 @@
     padding: 20px;
   }
 
+  /* margin: 0 auto removed — it centred the logo while every other line
+     in the card (the topbar, the heading, the body copy) is flush left,
+     so it read as detached from the block it belongs to. */
   .partner-card-logo {
     display: block;
     width: 120px;
-    margin: 0 auto;
+    margin: 0;
+  }
+
+  /* Matches .collabs-cta at this breakpoint — see the reasoning there for
+     why this is 15px rather than the 17px HIG body size, and why the
+     padding is what carries the 44px tap target. */
+  .donation-cta {
+    font-size: 15px;
+    padding: 15px 22px;
   }
 }

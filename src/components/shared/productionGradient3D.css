@@ -29,6 +29,115 @@
   overflow: hidden;
 }
 
+/* ── HERO SKY ──
+   The cool-grey/blue wash at the top of the page. It used to be a hard
+   #cdd6de band baked into .production-gradient-3d-base across the top 13%
+   of the DOCUMENT; as its own fixed, viewport-height-bounded layer it can
+   fade out on scroll and leave the flat beige base behind.
+
+   65vh rather than full-height: it only ever needs to cover the hero, and
+   bounding it means the fade-out has nothing left to reveal further down
+   the page. No z-index for the same reason given above — a negative one
+   lets it slip behind body's own background fill and vanish entirely. */
+/* ABSOLUTE, not fixed — deliberately, and against the obvious reading of
+   "hero gradient". Fixed pins this to the viewport, so its blue sits over
+   whatever section happens to be scrolled into view; observed tinting the
+   System Framework halfway down the page and cutting a hard grey line
+   across it. That is the same failure this file already records for the
+   old ambient wash, which was removed for exactly this reason.
+
+   Anchored to the document top instead, it covers the hero and then
+   scrolls away on its own — so even if the scroll-driven opacity never
+   ran at all, it could not reach another section. The fade still happens;
+   it just is not the only thing standing between this layer and the rest
+   of the page. #root is position:relative (index.css), so top:0 here is
+   the top of the document. */
+.hero-sky {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 65vh;
+  pointer-events: none;
+  overflow: hidden;
+  /* The layer's own bottom edge has to be feathered, or it cuts a hard
+     horizontal line across the page at exactly 65vh — which is what a
+     bare height:65vh box does as soon as the gradient inside it is still
+     carrying any color when it reaches the bottom. Masking here makes the
+     edge soft no matter what the gradient below does, so the two are not
+     depending on each other to stay seamless. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 45%, transparent 100%);
+}
+
+/* The animated-gradient technique from the CodePen: an angled multi-stop
+   linear gradient blown up to 400% of its box, with only
+   background-position animated. Because the painted area is four times
+   the box, sliding the position sweeps entirely different parts of the
+   ramp through the frame — the colors appear to move and remix without
+   anything actually being repainted per frame, and the gradient's own
+   ends never come into view.
+
+   Colors stay in the page's existing cool palette rather than the
+   CodePen's saturated demo ones, but they need real separation across the
+   ramp: a first attempt used #cdd6de / #b8c4d0 / #dbe4ea / #c3ceda, which
+   are so close to one another that the sweep was running correctly and
+   still looked completely static. These span from the pale #e3e9ee down
+   to #a4b4c4, which is visible movement while still reading as sky.
+
+   The first and last stops match so the loop closes on itself with no
+   jump at the seam. */
+.hero-sky-wash {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(-45deg, #cdd6de, #a4b4c4, #e3e9ee, #b0c0ce, #cdd6de);
+  background-size: 400% 400%;
+  animation: hero-sky-drift 13s ease infinite;
+}
+
+@keyframes hero-sky-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Holds the sky still for anyone who has asked for less motion. The
+   global reduced-motion block in index.css collapses animation-duration
+   to 0.01ms, which would leave this parked at the keyframe it happened to
+   be on; setting `none` keeps it at its declared background-position. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-sky-wash {
+    animation: none;
+  }
+}
+
+/* Scroll-revealed atmospheric vignette hanging from the top of the
+   viewport. Fixed and viewport-relative — unlike .production-gradient-3d
+   above, which must stay absolute/document-sized (see its comment). A
+   radial rather than a linear ramp so it reads as light falling into the
+   page rather than as a band with an edge.
+
+   No z-index, for exactly the reason spelled out above: a negative one
+   would let this escape behind body's own background fill and vanish. It
+   renders before every section in App.tsx, and same-level boxes paint in
+   DOM order, so the content layers on top for free. */
+.production-gradient-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(220, 215, 200, 0.8) 0%,
+    rgba(245, 242, 235, 0) 70%
+  );
+}
+
 /* Solid cool grey hero -> a quick handoff into flat warm beige, then
    held flat for the rest of the page.
 
@@ -42,16 +151,15 @@
    fragility: those stops had to be re-tuned against measured footer
    position every time page height shifted (observed anywhere from 81%
    to 94.8% across loads as async article/image content settled). */
+/* Now flat beige end to end. The cool grey (#cdd6de) hero band that used
+   to occupy the top 13% is gone: the page is specified to start on solid
+   #f5f2eb, with all of the atmosphere at the top arriving through
+   .production-gradient-vignette as you scroll instead of being painted in
+   from first frame. */
 .production-gradient-3d-base {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    180deg,
-    #cdd6de 0%,
-    #cdd6de 13%,
-    #f5f2eb 18%,
-    #f5f2eb 100%
-  );
+  background: #f5f2eb;
 }
 
 .production-gradient-3d-orb {

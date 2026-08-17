@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, useMotionTemplate, useScroll, useTransform } from 'framer-motion';
+import { AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { SplashScreen } from './components/Splash/SplashScreen';
 import { SiteHeader } from './components/Header/SiteHeader';
 import { NarrativeHero } from './components/Hero/NarrativeHero';
@@ -13,6 +13,7 @@ import { ClosingFooter } from './components/Footer/ClosingFooter';
 import { NoiseOverlay } from './components/shared/NoiseOverlay';
 import { ProductionGradient3D } from './components/shared/ProductionGradient3D';
 import { useHashRoute } from './hooks/useHashRoute';
+import { useScrollRestoration } from './hooks/useScrollRestoration';
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
 const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
@@ -23,6 +24,11 @@ function App() {
     () => sessionStorage.getItem(MORPH_INTRO_SEEN_KEY) !== '1',
   );
   const route = useHashRoute();
+
+  // Homepage only. The article route deliberately jumps to the top on
+  // open (see ArticleDetail), and restoring a scroll position there would
+  // fight that.
+  useScrollRestoration(route.view === 'home');
 
   // Progress has to be measured on the WRAPPER, not on .article-hub
   // itself: that element is position:sticky, so while it's pinned its own
@@ -36,13 +42,12 @@ function App() {
   });
   const articleDepthScale = useTransform(layeredProgress, [0, 0.6], [1, 0.94]);
   const articleDepthOpacity = useTransform(layeredProgress, [0, 0.6], [1, 0.6]);
-  // Progressive defocus as the classroom curtain rises over the articles:
-  // the further through the layered section you scroll, the blurrier they
-  // get, so they read as receding behind the photo rather than just
-  // sliding under it. useMotionTemplate because `filter` needs a string,
-  // and a raw MotionValue<number> can't be interpolated into one.
-  const articleDepthBlurPx = useTransform(layeredProgress, [0, 0.6], [0, 12]);
-  const articleDepthFilter = useMotionTemplate`blur(${articleDepthBlurPx}px)`;
+  // A progressive blur used to ride along with these, to sell the cards
+  // receding BEHIND the photo rather than just sliding under it. Removed:
+  // it made them unreadable rather than distant, and on mobile — where the
+  // curtain doesn't overlap them the same way — it still ramped to its
+  // full 12px and simply stayed there. Scale and opacity alone carry the
+  // depth read without ever destroying the content.
 
   const handleSplashComplete = useCallback(() => {
     sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
@@ -114,7 +119,6 @@ function App() {
               heroDone={!showMorphIntro}
               depthScale={articleDepthScale}
               depthOpacity={articleDepthOpacity}
-              depthFilter={articleDepthFilter}
             />
             <PillarsSection heroDone={!showMorphIntro} />
           </div>

@@ -57,26 +57,68 @@ export function ProductionGradient3D() {
   const { scrollYProgress } = useScroll();
   const terracottaY = useTransform(scrollYProgress, [0, 1], ['0%', '18%']);
   const blueY = useTransform(scrollYProgress, [0, 1], ['0%', '-12%']);
+  // Soft radial vignette hanging from the top of the VIEWPORT, washing in
+  // over the first 15% of the page. Because it fades in rather than out,
+  // a stalled scroll value (see the note above) leaves it simply absent —
+  // the page still reads correctly off the static base gradient below.
+  const vignetteOpacity = useTransform(scrollYProgress, [0, 0.15], [0, 1]);
+  // The cool-grey/blue hero sky. This used to be baked into
+  // .production-gradient-3d-base as a hard #cdd6de band across the top
+  // 13% of the document; it's now its own viewport-pinned layer that
+  // fades out as you scroll past the hero, leaving the flat beige base.
+  const heroSkyOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
 
   return (
-    <div className="production-gradient-3d" aria-hidden="true">
-      <div className="production-gradient-3d-base" />
+    <>
+      {/* ORDER IS LOAD-BEARING. All three layers here are positioned with
+          z-index:auto, so they paint in DOM order — the document-sized
+          base must come FIRST or its solid beige fill paints straight
+          over the two viewport-pinned layers below and both vanish. (The
+          page content still lands on top of all three: the hero, header
+          and article hub are themselves positioned and come later in
+          App.tsx.) */}
+      <div className="production-gradient-3d" aria-hidden="true">
+        <div className="production-gradient-3d-base" />
 
+        <motion.div
+          className="production-gradient-3d-orb production-gradient-3d-orb--terracotta"
+          style={{ y: terracottaY }}
+          animate={{ scale: [1, 1.08, 0.95, 1], x: ['0%', '3%', '-3%', '0%'] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <motion.div
+          className="production-gradient-3d-orb production-gradient-3d-orb--blue"
+          style={{ y: blueY }}
+          animate={{ scale: [1, 0.92, 1.05, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        <div className="production-gradient-3d-footer-glow" />
+      </div>
+
+      {/* Both of these are fixed rather than document-sized, which is why
+          they are separate elements from the layer above: making
+          .production-gradient-3d itself fixed is a bug that has already
+          shipped here once (it pins one band of the gradient to the
+          viewport forever). */}
       <motion.div
-        className="production-gradient-3d-orb production-gradient-3d-orb--terracotta"
-        style={{ y: terracottaY }}
-        animate={{ scale: [1, 1.08, 0.95, 1], x: ['0%', '3%', '-3%', '0%'] }}
-        transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+        className="production-gradient-vignette"
+        style={{ opacity: vignetteOpacity }}
+        aria-hidden="true"
       />
 
-      <motion.div
-        className="production-gradient-3d-orb production-gradient-3d-orb--blue"
-        style={{ y: blueY }}
-        animate={{ scale: [1, 0.92, 1.05, 1] }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      <div className="production-gradient-3d-footer-glow" />
-    </div>
+      {/* Cool-grey/blue hero sky, pinned to the top of the viewport and
+          faded out by scroll. Unlike the vignette, this one fades OUT — so
+          a stalled scroll value leaves it fully present rather than
+          absent, which is the safe direction here, since the hero is
+          designed around it being there. The slow breathing motion is a
+          CSS keyframe on the inner element (background-position), not a
+          motion value, so it keeps running on its own clock even if scroll
+          never fires. */}
+      <motion.div className="hero-sky" style={{ opacity: heroSkyOpacity }} aria-hidden="true">
+        <div className="hero-sky-wash" />
+      </motion.div>
+    </>
   );
 }

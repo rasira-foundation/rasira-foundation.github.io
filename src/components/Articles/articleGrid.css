@@ -47,6 +47,37 @@
   position: relative;
 }
 
+/* Mobile keeps the pin — the curtain effect IS the pin, so releasing it
+   (which an earlier pass did) removed the parallax entirely: cards and
+   photo then both move at scroll speed, leaving no relative motion for
+   the eye to read.
+
+   The `top` offset is NOT set here — ArticleGrid.tsx measures it and
+   applies it inline, because pinning the bottom edge of a section taller
+   than the viewport needs a negative top equal to (viewport − height),
+   which CSS cannot express. An earlier attempt used `bottom: 0` instead;
+   that reads as the obvious answer and is wrong, since sticky `bottom`
+   releases the element before the photo arrives. See the comment on
+   stickyTop in ArticleGrid.tsx.
+
+   The bottom padding is the See All clearance, and it is TIED to the
+   curtain's -30vh overlap in pillarsSection.css: the photo eats 30vh of
+   it, leaving exactly 48px clear at any viewport height — the same 48px
+   the desktop pair resolves to. Change one number and the other has to
+   follow, or the button starts being covered. */
+@media (max-width: 860px) {
+  .article-hub {
+    padding-bottom: calc(30vh + 48px);
+  }
+
+  /* Expanded still releases the pin, same as desktop: with the full list
+     shown the curtain is pushed past the end of it, so there is nothing
+     riding over to hold still for. */
+  .article-hub--expanded {
+    position: relative;
+  }
+}
+
 .article-hub-inner {
   max-width: var(--container-max);
   margin: 0 auto;
@@ -325,14 +356,23 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 104px;
-  padding: 10px 26px;
-  border-radius: 6px;
+  /* Sized as a primary CTA, matching .donation-cta and .collabs-cta —
+     16px desktop, 17px mobile below. min-width grew with the type so the
+     shorter "See All" still reads as the same button as "Show Less"; the
+     whole point of that reservation is that the box does not resize when
+     the label swaps. */
+  min-width: 148px;
+  /* See .donation-cta for why min-height is declared rather than left to
+     emerge from padding, and what touch-action is for. */
+  min-height: 44px;
+  padding: 14px 28px;
+  touch-action: manipulation;
+  border-radius: 4px;
   background: #1c1917;
   border: 1px solid rgba(245, 242, 235, 0.18);
   box-shadow: 0 1px 3px rgba(20, 18, 15, 0.08);
   font-family: var(--font-editorial-sans);
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 600;
   color: #f5f2eb;
   cursor: pointer;
@@ -373,6 +413,15 @@
    tight to content instead, since a fixed 3:4 box left far too much dead
    air once titles are only 1-2 lines on a narrow screen. */
 @media (max-width: 640px) {
+  /* Same treatment as the other two CTAs at this breakpoint — see
+     .collabs-cta for why this is 15px rather than the 17px HIG body size,
+     and why the padding is what carries the 44px tap target. */
+  .article-hub-see-all {
+    font-size: 15px;
+    min-width: 132px;
+    padding: 15px 22px;
+  }
+
   .article-card--ascii,
   .article-card--text-only,
   .article-card--bottom-text {

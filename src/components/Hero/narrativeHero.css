@@ -144,16 +144,25 @@
     text-align: left;
   }
 
+  /* The negative margin lifts the whole copy block — title, paragraph and
+     tags together — rather than trimming the top padding, which would
+     have moved the title while leaving the block's internal spacing
+     subtly different from every other breakpoint. */
   .hero-copy {
     padding: 24px 16px;
+    margin-top: -20px;
   }
 
   .hero-title {
     margin-bottom: 24px;
   }
 
+  /* No font-size here any more. It was 16px, which silently overrode the
+     17px HIG mobile size set in index.css — same specificity, and this
+     file is imported after it, so the local rule won and that change was
+     doing nothing on the hero. Dropping the declaration removes the
+     conflict rather than duplicating the value in two places. */
   .hero-copy-paragraph {
-    font-size: 16px;
     max-width: 100%;
   }
 }

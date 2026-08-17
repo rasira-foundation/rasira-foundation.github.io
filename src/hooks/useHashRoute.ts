@@ -4,8 +4,6 @@ export type Route =
   | { view: 'home' }
   | { view: 'article'; slug: string };
 
-const HOME_SCROLL_KEY = 'rasira-home-scroll';
-
 function parseHash(hash: string): Route {
   const clean = hash.replace(/^#\/?/, '');
   const [segment, slug] = clean.split('/');
@@ -24,24 +22,17 @@ export function useHashRoute(): Route {
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  // Restore the homepage scroll position (saved in navigateToArticle) once
-  // we land back on "/" — from the in-app Back link or the browser's own
-  // back button, both of which fire a hashchange.
-  useEffect(() => {
-    if (route.view !== 'home') return;
-    const saved = sessionStorage.getItem(HOME_SCROLL_KEY);
-    if (!saved) return;
-    sessionStorage.removeItem(HOME_SCROLL_KEY);
-    requestAnimationFrame(() => {
-      window.scrollTo({ top: Number(saved), behavior: 'instant' });
-    });
-  }, [route.view]);
-
   return route;
 }
 
+/* Homepage scroll restoration used to live here: navigateToArticle saved
+ * window.scrollY, and an effect scrolled back to it on returning home.
+ * It has moved to useScrollRestoration, which now owns this for both
+ * back-navigation AND reload. Two systems writing scroll position would
+ * have fought each other, and the version here had the flaw that made
+ * reload fail anyway — a single requestAnimationFrame, which fires long
+ * before the article fetch has grown the page tall enough to scroll to. */
 export function navigateToArticle(slug: string) {
-  sessionStorage.setItem(HOME_SCROLL_KEY, String(window.scrollY));
   window.location.hash = `/article/${encodeURIComponent(slug)}`;
 }
 

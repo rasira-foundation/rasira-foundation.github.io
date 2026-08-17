@@ -10,6 +10,17 @@
   padding: 0 24px;
 }
 
+/* Nav strip — just the back link now; the category badge moved down into
+   the meta row. Kept as its own element rather than putting the gap back
+   on .article-detail-back's bottom margin, so the skeleton can mirror the
+   same structure and the spacing lives in one place. */
+.article-detail-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
 .article-detail-back {
   background: none;
   border: none;
@@ -18,25 +29,31 @@
   font-size: 12px;
   color: var(--color-ink-soft);
   padding: 0;
-  margin-bottom: 48px;
 }
 
 .article-detail-back:hover {
   color: var(--color-ink);
 }
 
+/* Squared off to 4px with the rest of the site's radii — this was the
+   last 999px pill outside the header logo. Tinted fill as well as the
+   outline it already had, so it reads as a chip at this smaller size
+   rather than as an outlined word. */
 .article-detail-badge {
   display: inline-block;
+  /* It is a flex item in .article-detail-meta now — without this it gets
+     squeezed before the longer text beside it does on a narrow screen. */
+  flex-shrink: 0;
   font-family: var(--font-editorial-sans);
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-dawn-orange);
-  border: 1px solid var(--color-dawn-orange);
-  border-radius: 999px;
-  padding: 5px 14px;
-  margin-bottom: 20px;
+  color: #b44d18;
+  background: rgba(233, 138, 82, 0.14);
+  border: 1px solid rgba(233, 138, 82, 0.5);
+  border-radius: 4px;
+  padding: 4px 10px;
 }
 
 .article-detail-title {
@@ -47,11 +64,25 @@
   color: var(--color-ink);
 }
 
+/* flex + gap rather than spaces baked into the text, so the separators
+   sit evenly regardless of field length, and wrap cleanly on narrow
+   screens instead of breaking mid-run. */
 .article-detail-meta {
   margin-top: 18px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   font-family: var(--font-editorial-mono);
   font-size: 12.5px;
   color: var(--color-ink-faint);
+}
+
+/* Deliberately NOT bolded — it reads as one even line with the date and
+   read time beside it. A weighted author was tried and pulled the eye
+   away from the title directly above. */
+.article-detail-author {
+  color: var(--color-ink-soft);
 }
 
 .article-detail-hero {
@@ -123,4 +154,81 @@
   font-family: var(--font-editorial-mono);
   font-size: 12px;
   color: var(--color-ink-faint);
+}
+
+/* ── LOADING SKELETON ── */
+/* Blocks are sized to the real elements they stand in for, so the page
+   does not reflow when the article arrives — that reflow is the whole
+   reason this exists rather than a single "Loading…" line. */
+.article-detail-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* The topbar's own 28px would stack on top of this column's 14px gap. */
+.article-detail-skeleton .article-detail-topbar {
+  margin-bottom: 0;
+}
+
+.skeleton-block {
+  display: block;
+  border-radius: 4px;
+  background: rgba(20, 18, 15, 0.09);
+  animation: skeleton-pulse 1.6s ease-in-out infinite;
+}
+
+.skeleton-back {
+  width: 52px;
+  height: 14px;
+}
+
+.skeleton-badge {
+  width: 72px;
+  height: 22px;
+}
+
+/* Matches .article-detail-title's own clamp() so the reserved height
+   tracks the real title across every viewport instead of being a fixed
+   guess that only holds at one width. */
+.skeleton-title {
+  width: 100%;
+  height: clamp(34px, 5.5vw, 52px);
+}
+
+.skeleton-title--short {
+  width: 62%;
+}
+
+.skeleton-meta {
+  width: 46%;
+  height: 14px;
+  margin-top: 6px;
+}
+
+.skeleton-hero {
+  width: 100%;
+  height: 320px;
+  border-radius: 2px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* The global reduced-motion block in index.css collapses
+   animation-duration to 0.01ms, which would leave these frozen at
+   whichever keyframe they landed on — possibly the 0.45 dip. `none`
+   holds them at full opacity instead. */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+  }
 }

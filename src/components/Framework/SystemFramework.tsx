@@ -33,77 +33,75 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
             itself. */}
         <div className="framework-card">
           <div className="framework-diagram">
-            {systemFramework.boxes.map((box, index) => (
-              <motion.div
-                key={box.title}
-                className={`framework-box framework-box--${box.variant}`}
-                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                viewport={{ once: false, amount: 0.25 }}
-                transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            {systemFramework.columns.map((column, columnIndex) => (
+              <div
+                key={column.nodes[0].title}
+                className={[
+                  'framework-column',
+                  'pivot' in column && column.pivot ? 'framework-column--pivot' : '',
+                  column.nodes.length > 1 ? 'framework-column--split' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
               >
-                <div className="framework-box-body">
-                  <BlurRevealText as="h3" className="framework-box-title" delay={index * 0.1}>{box.title}</BlurRevealText>
-                  <div className="framework-box-meta">
-                    <span className="framework-box-tag">[{box.tag}]</span>
-                    <span className="framework-box-step">{`0${index + 1} / 0${systemFramework.boxes.length}`}</span>
-                  </div>
-                  <div className="framework-box-divider" aria-hidden="true">
-                    <span className="framework-box-divider-dot" />
-                  </div>
-                  <ul className="framework-box-items">
-                    {box.items.map((item, itemIndex) => (
-                      <BlurRevealText as="li" key={item} delay={index * 0.1 + itemIndex * 0.06}>
-                        {`${item}${itemIndex < box.items.length - 1 ? '/' : '.'}`}
-                      </BlurRevealText>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
+                {/* Forward connector, straddling this column's left edge.
+                    Skipped on the first column, which nothing flows into.
+                    aria-hidden because the sequence is already carried by
+                    each node's step counter — a screen reader gains
+                    nothing from four loose arrow glyphs. */}
+                {columnIndex > 0 && (
+                  <span className="framework-connector" aria-hidden="true">
+                    →
+                  </span>
+                )}
+
+                {column.nodes.map((node, nodeIndex) => {
+                  /* Stagger is computed across the whole diagram rather
+                     than per column, so the five nodes still reveal in
+                     reading order instead of restarting at each column. */
+                  const delay = columnIndex * 0.1 + nodeIndex * 0.06;
+                  return (
+                    <motion.div
+                      key={node.title}
+                      className="framework-box"
+                      initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      viewport={{ once: false, amount: 0.25 }}
+                      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div className="framework-box-body">
+                        {/* Tag and step counter sit ABOVE the title — they
+                            label the stage, so they read as a header for
+                            what follows rather than as a footnote to it. */}
+                        <div className="framework-box-meta">
+                          <span className="framework-box-tag">[{node.tag}]</span>
+                          <span className="framework-box-step">{`${node.step} / ${systemFramework.total}`}</span>
+                        </div>
+                        <BlurRevealText as="h3" className="framework-box-title" delay={delay}>
+                          {node.title}
+                        </BlurRevealText>
+                        {/* One flowing line joined by pipes, not a stacked
+                            list. Wrapping is natural rather than forced, so
+                            a node with four short items takes two lines
+                            instead of four — which is what lets the divider
+                            rule go without the block collapsing into an
+                            undifferentiated column of text.
+
+                            A single BlurRevealText rather than one per item:
+                            it already reveals word by word, so the sequence
+                            reads the same while the separators travel with
+                            the words they sit between. */}
+                        <BlurRevealText className="framework-box-items" delay={delay}>
+                          {node.items.join(' | ')}
+                        </BlurRevealText>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             ))}
           </div>
 
-          <div className="framework-feedback">
-            <svg className="framework-feedback-svg" viewBox="0 0 1004 64" fill="none" aria-hidden="true">
-              {/* Orthogonal, not a bezier: down the right side, straight
-                  across, then up into the first card. Square corners
-                  (miter joins) match the rectangular language of the
-                  cards above rather than softening it with a curve. */}
-              <path
-                d="M 980 8 L 980 46 L 20 46 L 20 8"
-                stroke="#1c1917"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-                fill="none"
-                strokeLinecap="square"
-                strokeLinejoin="miter"
-                opacity="0.55"
-                markerEnd="url(#framework-feedback-arrow)"
-              />
-              <defs>
-                <marker
-                  id="framework-feedback-arrow"
-                  viewBox="0 0 10 10"
-                  refX="8"
-                  refY="5"
-                  markerWidth="6"
-                  markerHeight="6"
-                  orient="auto-start-reverse"
-                >
-                  <path
-                    d="M2 1L8 5L2 9"
-                    fill="none"
-                    stroke="#1c1917"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    opacity="0.55"
-                  />
-                </marker>
-              </defs>
-            </svg>
-            <p className="framework-feedback-label">{systemFramework.feedbackLabel}</p>
-          </div>
         </div>
 
         <p className="framework-note">{systemFramework.note}</p>

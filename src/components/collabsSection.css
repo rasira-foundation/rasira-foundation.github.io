@@ -38,13 +38,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 24px;
-  border-radius: 6px;
+  /* Matched to .donation-cta — these are the page's two primary CTAs and
+     sit in adjacent sections, so they have to be the same size. See that
+     rule for why min-height is declared rather than left to emerge from
+     padding, and what touch-action is for. */
+  justify-content: center;
+  min-height: 44px;
+  padding: 14px 28px;
+  touch-action: manipulation;
+  border-radius: 4px;
   background: var(--color-ink);
   color: var(--color-cream);
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 16px;
   transition: transform 0.25s var(--ease-soft), background 0.25s var(--ease-soft);
 }
 
@@ -86,5 +93,21 @@
   .collabs-body {
     margin-left: 0;
     margin-right: 0;
+  }
+
+  /* 15px, NOT the 17px HIG body size. Two reasons this is not body copy:
+     HIG's 17pt applies to body text and full-width primary buttons, not
+     an inline CTA like this one; and this is a MONO face, which sets
+     noticeably wider and heavier per character than the proportional
+     font that guidance assumes — 17px mono reads a size larger than
+     17px sans.
+
+     What actually matters on mobile is the 44px minimum tap target, and
+     that comes from padding rather than type size: 15px label (~18px
+     line box) + 15px padding top and bottom = ~48px tall. So the label
+     gets smaller while the target gets slightly bigger. */
+  .collabs-cta {
+    font-size: 15px;
+    padding: 15px 22px;
   }
 }

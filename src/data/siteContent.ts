@@ -38,33 +38,62 @@ export const systemFramework = {
   title: 'How the work is structured',
   subtitle:
     'The system logic communicates how we think about the work — without disclosing proprietary dimensions, scoring models, or decision rules.',
-  boxes: [
+  /* Columns, not a flat list of boxes. The first stage holds TWO stacked
+   * nodes (01a Person Profile / 01b Opportunity Context) while the rest
+   * hold one each — so the diagram is four columns across but five nodes
+   * total, and a flat array could no longer describe it. `total` is the
+   * denominator shown in each node's step counter; it counts stages, not
+   * nodes, which is why 01a and 01b share the same one. */
+  total: '04',
+  columns: [
     {
-      tag: 'Input',
-      title: 'Person Profile',
-      items: ['Capability', 'Orientation', 'Work Style', 'Agency & Adaptability'],
-      variant: 'dark' as const,
+      nodes: [
+        {
+          tag: 'Input',
+          step: '01a',
+          title: 'Person Profile',
+          items: ['Capability', 'Orientation', 'Work Style', 'Agency & Adaptability'],
+        },
+        {
+          tag: 'Context',
+          step: '01b',
+          title: 'Opportunity Context',
+          items: ['Demand', 'Supports', 'Barriers', 'Access'],
+        },
+      ],
     },
     {
-      tag: 'Process',
-      title: 'Evidence in Action',
-      items: ['Observed responses', 'Behaviour', 'Outputs'],
-      variant: 'neutral' as const,
+      nodes: [
+        {
+          tag: 'Process',
+          step: '02',
+          title: 'Evidence in Action',
+          items: ['Observed responses', 'Behaviour', 'Outputs'],
+        },
+      ],
     },
     {
-      tag: 'Pivot',
-      title: 'Decisions & Development',
-      items: ['Program adjustment', 'Facilitator guidance', 'Pathway alignment'],
-      variant: 'accent' as const,
+      pivot: true,
+      nodes: [
+        {
+          tag: 'Pivot',
+          step: '03',
+          title: 'Decisions & Development',
+          items: ['Program adjustment', 'Facilitator guidance', 'Pathway alignment'],
+        },
+      ],
     },
     {
-      tag: 'Outcome',
-      title: 'Outcomes',
-      items: ['Learning', 'Transition', 'Performance', 'Mobility'],
-      variant: 'cool' as const,
+      nodes: [
+        {
+          tag: 'Outcome',
+          step: '04',
+          title: 'Outcomes',
+          items: ['Learning', 'Transition', 'Performance', 'Mobility'],
+        },
+      ],
     },
   ],
-  feedbackLabel: 'Evidence and learning feedback',
   note: 'This public framework communicates the system logic without disclosing proprietary dimensions, items, scoring models, weights, or decision rules.',
 };
 

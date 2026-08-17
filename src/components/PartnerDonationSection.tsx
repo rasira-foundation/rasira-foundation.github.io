@@ -11,11 +11,18 @@ export function PartnerDonationSection() {
 
   return (
     <section className="partner-donation-section">
-      <div className="partner-donation-header">
-        <span>02 / Partners in the Field</span>
-        <span>03 / Direct Support</span>
-      </div>
+      {/* Each label now lives immediately before its own card rather than
+          in a shared two-span header row above both. That row read fine
+          on desktop, but below 1024px the grid collapses to one column
+          while the row stayed side by side — so "03 / Direct Support"
+          ended up floating next to the Partners card instead of over the
+          Direct Support one. In this order the mobile stacking is correct
+          by construction, and the desktop layout is restored by placing
+          the labels back onto row 1 in CSS. */}
       <div className="partner-donation-grid">
+        <span className="partner-donation-label partner-donation-label--partner">
+          02 / Partners in the Field
+        </span>
         <BlurRevealElement className="partner-card">
           <div>
             <div className="partner-card-topbar">
@@ -29,6 +36,10 @@ export function PartnerDonationSection() {
           <img className="partner-card-logo" src={springLogo} alt="Spring" />
           <p className="partner-card-body">{partner.body}</p>
         </BlurRevealElement>
+
+        <span className="partner-donation-label partner-donation-label--donation">
+          03 / Direct Support
+        </span>
 
         <BlurRevealElement className="donation-card" delay={0.1}>
           <span id="donate" />

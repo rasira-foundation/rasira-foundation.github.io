@@ -49,7 +49,12 @@
    breathing room before the wordmark. */
 .closing-footer-sky {
   position: relative;
-  padding: calc(30vh + 90px) 24px clamp(72px, 14vh, 160px);
+  /* The generous bottom padding is doing more than spacing. Everything
+     below the clock is where the sunset hands over to charcoal, and the
+     gradient stops are percentages — so the only way to make that
+     handover gentler is to give it more actual pixels to happen in.
+     Raised from clamp(72px, 14vh, 160px) for exactly that. */
+  padding: calc(30vh + 90px) 24px clamp(140px, 26vh, 300px);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -90,11 +95,28 @@
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  /* This layer alone owns ALL of the charcoal. It is plain CSS with no
+     animated properties, so it is painted normally rather than on its own
+     composited layer — which is what lets its flat tail match
+     .closing-footer-base's flat fill exactly. The warm layer above
+     deliberately contributes nothing down here. */
+  /* Many stops with a TAPERED alpha ramp, not a straight 0 -> 1.
+     A linear alpha ramp does not darken linearly to the eye: compositing
+     0 -> 0.25 is a much bigger visual step than 0.75 -> 1, so an evenly
+     spaced ramp reads as nothing happening and then a sudden arrival at
+     black. Front-loading the alpha and easing it in at the end spreads
+     the perceived darkening evenly across the whole run. */
   background: linear-gradient(
     180deg,
     rgba(245, 242, 235, 0) 0%,
-    rgba(245, 242, 235, 0) 30%,
-    rgba(58, 58, 56, 0.5) 66%,
+    rgba(58, 58, 56, 0) 28%,
+    rgba(58, 58, 56, 0.16) 40%,
+    rgba(58, 58, 56, 0.36) 50%,
+    rgba(58, 58, 56, 0.56) 59%,
+    rgba(58, 58, 56, 0.74) 67%,
+    rgba(58, 58, 56, 0.88) 74%,
+    rgba(58, 58, 56, 0.96) 79%,
+    #3a3a38 86%,
     #3a3a38 100%
   );
 }
@@ -126,34 +148,104 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* Fades to TRANSPARENT at the bottom rather than landing on charcoal.
+     This layer has an animated opacity, so the browser gives it its own
+     composited layer; where it previously ended on opaque #3a3a38 it met
+     the base's identical charcoal as two separately-composited paints,
+     and that boundary stayed faintly visible however exactly the colors
+     matched. Handing all the charcoal to the static base below means this
+     one contributes nothing at the join, so there is nothing to mismatch.
+     The darkening you see through here is the base's own ramp. */
+  /* This layer reaches ZERO at exactly 86% — the same point the base
+     below reaches flat #3a3a38. That alignment is the whole trick: from
+     80% down, the base is flat charcoal and this contributes nothing, so
+     the sky's bottom fifth is uniform and meets .closing-footer-base with
+     nothing to mismatch. Ending at 82% instead (one earlier attempt) left
+     this still tinting the base's already-flat region, and the point where
+     it finally cut out read as a horizontal edge.
+
+     The final stop is charcoal-at-alpha-0 rather than a brown-at-alpha-0
+     so the fade does not drift in hue on its way out. */
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 1) 18%,
-    #dbe4ea 34%,
-    #fbab6c 62%,
-    #845a39 82%,
-    #3a3a38 100%
+    rgba(255, 255, 255, 1) 16%,
+    #dbe4ea 32%,
+    #fbab6c 48%,
+    rgba(132, 90, 57, 0.5) 62%,
+    rgba(80, 60, 50, 0.22) 74%,
+    rgba(58, 58, 56, 0) 86%
   );
 }
 
-/* Warm ambient orb sitting behind the clock needle, matching the glow in
-   the reference. Sized in vmin so it stays proportional rather than
-   swamping narrow viewports. */
-.closing-footer-sunset-glow {
+/* Same animated-gradient technique as the hero (see .hero-sky-wash): an
+   angled multi-stop ramp at 400% of its box, with only background-position
+   animated, so the colors sweep and remix without the gradient's own ends
+   ever entering the frame. Existing sunset palette only.
+
+   Added as its OWN layer rather than by animating .closing-footer-sunset-
+   warm directly. That layer's vertical stop positions are what compose the
+   sunset — white sky, orange band, fade-out — and blowing it up to 400%
+   would scatter those stops. Keeping the motion separate means the sunset
+   composition and the charcoal legibility guarantee both survive.
+
+   The mask is feathered at BOTH ends. Fading out at the bottom keeps this
+   away from the wordmark, where everything has to stay flat matched
+   charcoal. Fading in at the top is just as necessary and was missing at
+   first: with the mask opaque from 0% this layer painted right up against
+   the beige section above and drew a hard horizontal band across the
+   footer's top edge — the exact seam the warm layer's transparent first
+   stop exists to avoid. */
+.closing-footer-sunset-drift {
   position: absolute;
-  /* Sits on the gradient's orange band (52%) rather than up in the pale
-     blue, so it reads as the sun inside the sunset rather than a stray
-     orange smudge in the sky. */
-  top: 50%;
-  left: 50%;
-  width: min(42vmin, 420px);
-  height: min(42vmin, 420px);
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(226, 130, 89, 0.55) 0%, rgba(226, 130, 89, 0) 70%);
-  filter: blur(40px);
+  inset: 0;
+  pointer-events: none;
+  /* Normal blending with alpha stops, not soft-light. soft-light between
+     two mid-tone warm colors is very nearly a no-op — the layer was
+     technically animating but the result was invisible. Semi-transparent
+     stops composited normally actually read as movement. */
+  background: linear-gradient(
+    -45deg,
+    rgba(251, 171, 108, 0.55),
+    rgba(219, 228, 234, 0.5),
+    rgba(226, 130, 89, 0.6),
+    rgba(245, 200, 160, 0.45),
+    rgba(251, 171, 108, 0.55)
+  );
+  background-size: 400% 400%;
+  animation: footer-sunset-drift 14s ease infinite;
+  /* Fades out to nothing at 80% — the same point the warm layer reaches
+     zero and the base reaches flat charcoal. All three layers ending
+     together is what keeps the sky's bottom fifth uniform; a layer that
+     cut out anywhere else would put its own edge into that band. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 40%, transparent 80%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 22%, #000 40%, transparent 80%);
 }
+
+@keyframes footer-sunset-drift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .closing-footer-sunset-drift {
+    animation: none;
+  }
+}
+
+/* The big ambient orb that used to live here (absolutely positioned at
+   50%/50% of the sky) is gone. It was placed independently of the clock,
+   so the two never lined up and the hands read as sitting off-centre in
+   their own glow. There is now a single glow, rendered inside
+   .closing-footer-clock-wrap — centred on the hands by construction, at
+   any viewport, with no percentage to keep in sync. */
 
 /* Real grid instead of the old percentage-of-footer-height absolute
    positioning — that broke as soon as the giant wordmark below inflated
@@ -189,6 +281,15 @@
    grey is that both lines read as one even tone, and knocking the second
    line and the timestamp back to 0.75 split them into two greys. */
 
+/* Softened, matching the reference, where this block sits slightly out of
+   focus while the timestamp opposite stays crisp — it reads as further
+   into the haze rather than as text laid on top of it. Kept under a pixel
+   so the letterforms stay legible; anything more and the mono face starts
+   to smear. */
+.closing-footer-meta-left {
+  filter: blur(0.7px);
+}
+
 /* Lifted clear of the clock's vertical centre, matching the staggered
    placement in the reference — the timestamp sits noticeably higher than
    the "time is ticking.." block on the other side. */
@@ -212,24 +313,62 @@
    stroke weight together and they stay hairline-thin at this size. */
 .closing-footer-clock-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: clamp(180px, 20vw, 280px);
   aspect-ratio: 1;
   flex-shrink: 0;
 }
 
+/* The one and only glow, absolutely centred on this square wrapper — so
+   it is centred on the clock's own pivot for free. Scaled off the
+   wrapper (%) rather than a fixed inset, so it keeps the same proportion
+   to the hands as the clock resizes across breakpoints. */
 .closing-footer-glow {
   position: absolute;
-  inset: -40px;
+  /* Centred WITHOUT a transform. This is a motion.div (Framer drives its
+     opacity), and Framer owns the `transform` property outright on any
+     element it animates — a CSS translate here is exactly the kind of
+     thing it silently overwrites, which would drop the glow down and to
+     the right of the hands. Offsetting by -(230-100)/2 = -65% on each
+     axis centres a 230% box on its parent using only box offsets, so the
+     hands' pivot and the bloom's centre are the same point by
+     construction. */
+  /* Deliberately modest. An earlier pass had this at 300% with an 80px
+     blur, chasing the prominence of the bloom in the reference — but at
+     that size it stopped reading as a glow around the clock and became a
+     large soft shape lying across the exact band where the sunset hands
+     over to the charcoal, which is what made that transition look broken.
+     Sized to the clock instead: it spills past the hands, and stops well
+     before the gradient's handover. Offset is -(150-100)/2 = -25%. */
+  top: -25%;
+  left: -25%;
+  width: 150%;
+  height: 150%;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--color-dawn-orange) 0%, rgba(233, 138, 82, 0) 70%);
-  opacity: 0.55;
-  filter: blur(4px);
+  background: radial-gradient(circle, rgba(233, 145, 95, 0.7) 0%, rgba(226, 130, 89, 0) 70%);
+  filter: blur(36px);
   pointer-events: none;
+  /* At this size the bloom reaches under both text columns, and
+     .closing-footer-clock-wrap is positioned while they are not — so
+     without this it would paint OVER them and wash the copy out. Both
+     values resolve inside .closing-footer-meta's stacking context. */
+  z-index: 0;
+}
+
+.closing-footer-meta-col {
+  position: relative;
+  z-index: 1;
 }
 
 .closing-footer-clock-blur {
+  position: relative;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .analog-clock {
@@ -238,23 +377,29 @@
   overflow: visible;
 }
 
-/* Only ever rendered inside .closing-footer--dark (the clock is gated on
-   showClock, same as the dark modifier) — safe to make this unconditionally
-   light rather than scoping it, since it never appears on the light
-   article-detail footer. */
+/* Solid white, fully opaque, no face circle — the hands are the entire
+   clock, reading against the warm glow behind them rather than against
+   any outline. (An earlier pass had these dark with a thin circular face;
+   both are gone.) What keeps them legible on the pale part of the sunset
+   is weight, not color: 2.5px of real stroke rather than the old
+   sub-pixel hairline at 65% opacity.
+
+   `vector-effect: non-scaling-stroke` is what makes those weights mean
+   real pixels: without it the 0 0 100 100 viewBox scales the stroke by
+   the wrapper's size, so the same value would render ~3x heavier at the
+   280px desktop clock than on mobile. */
 .analog-clock-hand {
   stroke: #ffffff;
   stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .analog-clock-hour {
-  stroke-width: 1;
-  stroke-opacity: 0.8;
+  stroke-width: 2.5px;
 }
 
 .analog-clock-minute {
-  stroke-width: 0.8;
-  stroke-opacity: 0.65;
+  stroke-width: 2.5px;
 }
 
 .closing-footer-contact {
@@ -287,13 +432,17 @@
 /* Scoped, unlike the clock/meta colors above — .closing-footer-mail also
    renders on the light article-detail footer (showClock=false, no
    --dark modifier), so it can't just flip to light text unconditionally. */
+/* Matched to .closing-footer-year--homepage rather than pure white — the
+   two sit stacked in the sign-off block and read as one unit, which the
+   white-against-grey pairing broke. */
 .closing-footer--dark .closing-footer-mail {
-  color: #ffffff;
-  border-bottom-color: rgba(255, 255, 255, 0.4);
+  color: #a1a1aa;
+  border-bottom-color: rgba(161, 161, 170, 0.4);
 }
 
 .closing-footer--dark .closing-footer-mail:hover {
-  border-color: #ffffff;
+  color: #d4d4d8;
+  border-color: #d4d4d8;
 }
 
 /* Sign-off under the wordmark: year on top, email beneath it. */
@@ -382,5 +531,12 @@
 
   .closing-footer-brand {
     padding-top: 24px;
+  }
+
+  /* Near full-bleed on a phone. The desktop 78% inset leaves generous
+     dark margins that work at that width but just shrink the wordmark on
+     a narrow screen, where it should be the dominant element. */
+  .closing-footer-brand-logo {
+    width: 96%;
   }
 }

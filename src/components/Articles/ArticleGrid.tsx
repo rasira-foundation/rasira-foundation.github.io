@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, type MotionValue } from 'framer-motion';
 import type { ArticleCategory } from '../../lib/sheets';
 import { useArticles } from './useArticles';
@@ -17,14 +17,18 @@ interface ArticleGridProps {
   /** Scroll-driven "recede into depth" as the classroom curtain slides
    * over this section. Applied to the inner wrapper rather than the
    * <section> itself, because the section already animates opacity for
-   * the heroDone gate and the two would fight over the same property. */
+   * the heroDone gate and the two would fight over the same property.
+   *
+   * Scale and opacity only — there was a scroll-driven blur here too, and
+   * it's gone. It made the cards genuinely unreadable rather than just
+   * distant, and worst of all on mobile, where the curtain doesn't ride
+   * over them the same way but the blur still ramped to its full 12px and
+   * stayed there. */
   depthScale?: MotionValue<number>;
   depthOpacity?: MotionValue<number>;
-  /** Scroll-driven blur string, e.g. `blur(6px)`. */
-  depthFilter?: MotionValue<string>;
 }
 
-export function ArticleGrid({ heroDone, depthScale, depthOpacity, depthFilter }: ArticleGridProps) {
+export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridProps) {
   const { articles, loading, isFallback } = useArticles();
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,26 +41,68 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity, depthFilter }:
   const visible = isExpanded ? filtered : filtered.slice(0, PER_ROW);
   const canExpand = filtered.length > PER_ROW;
 
+  // Sticky offset, measured rather than declared — this is what makes the
+  // classroom curtain work on a phone.
+  //
+  // `top: 0` pins the TOP edge, which is right while the section fits the
+  // viewport (desktop): the whole card row holds still and the photo
+  // scrolls up over it. On a narrow screen the cards stack far taller than
+  // the screen, so a top pin anchors the top and parks See All below the
+  // fold forever.
+  //
+  // `bottom: 0` is NOT the fix, though it looks like it should be. Sticky
+  // `bottom` pulls an element UP into view early and releases it once its
+  // natural position catches up — so it lets go before the photo ever
+  // arrives, which is exactly why the curtain never appeared here.
+  //
+  // Pinning the BOTTOM edge of an over-tall element needs a negative top,
+  // and that value depends on the element's own height, which CSS cannot
+  // express. Hence measuring. Math.min(0, …) means the formula covers both
+  // cases with no breakpoint: it resolves to 0 whenever the section fits.
+  const sectionRef = useRef<HTMLElement>(null);
+  const [stickyTop, setStickyTop] = useState(0);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const measure = () => setStickyTop(Math.min(0, window.innerHeight - el.offsetHeight));
+    measure();
+    // The height changes with the card images loading and with See All
+    // expanding, neither of which fires a resize event.
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    window.addEventListener('resize', measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, []);
+
   return (
     <motion.section
+      ref={sectionRef}
       className={isExpanded ? 'article-hub article-hub--expanded' : 'article-hub'}
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
+      /* top must be 0 while expanded. .article-hub--expanded switches this
+         to position:relative, and on a relatively-positioned element a
+         negative top is not a sticky anchor — it is a layout offset, so
+         the measured value would drag the whole section bodily up over
+         the hero above it. */
+      style={{ pointerEvents: heroDone ? 'auto' : 'none', top: isExpanded ? 0 : stickyTop }}
     >
-      {/* The depth treatment (blur / scale / fade) only makes sense while
-          the classroom curtain is actually riding over these cards. Once
-          expanded, the sticky pin is released and the curtain is pushed
-          down past the full list, so there's nothing overlapping to
-          recede behind — the scroll-linked values are swapped for static
-          neutral ones rather than left running against a curtain that
-          isn't there. */}
+      {/* The depth treatment only makes sense while the classroom curtain
+          is actually riding over these cards. Once expanded, the sticky
+          pin is released and the curtain is pushed down past the full
+          list, so there's nothing overlapping to recede behind — the
+          scroll-linked values are swapped for static neutral ones rather
+          than left running against a curtain that isn't there. */}
       <motion.div
         className="article-hub-inner"
         style={
           isExpanded
-            ? { scale: 1, opacity: 1, filter: 'blur(0px)' }
-            : { scale: depthScale, opacity: depthOpacity, filter: depthFilter }
+            ? { scale: 1, opacity: 1 }
+            : { scale: depthScale, opacity: depthOpacity }
         }
       >
         <nav className="article-tabs">

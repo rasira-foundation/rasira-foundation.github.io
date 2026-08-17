@@ -79,7 +79,7 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
             a muted sunset rather than an unreadable footer. */}
         <div className="closing-footer-sunset" aria-hidden="true">
           <motion.div className="closing-footer-sunset-warm" style={{ opacity: sunsetOpacity }} />
-          <motion.div className="closing-footer-sunset-glow" style={{ opacity: glowOpacity }} />
+          <div className="closing-footer-sunset-drift" />
         </div>
 
         <motion.div
@@ -96,7 +96,7 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
 
           <div className="closing-footer-meta-col closing-footer-meta-center">
             <div className="closing-footer-clock-wrap">
-              <div className="closing-footer-glow" aria-hidden="true" />
+              <motion.div className="closing-footer-glow" style={{ opacity: glowOpacity }} aria-hidden="true" />
               <BlurRevealElement className="closing-footer-clock-blur">
                 <AnalogClock hourDeg={clock.hourDeg} minuteDeg={clock.minuteDeg} />
               </BlurRevealElement>

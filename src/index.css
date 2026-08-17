@@ -112,6 +112,49 @@ button {
   position: relative;
 }
 
+/* ── MOBILE TYPOGRAPHY (Apple HIG) ──
+   Kept together here rather than as six separate media queries scattered
+   across component files: this is one cross-cutting rule about handheld
+   readability, and splitting it up makes it impossible to see the scale
+   as a whole or keep it consistent when copy moves between components.
+
+   Desktop keeps the established 11 / 16 / 22 / 28 / 36 scale untouched —
+   this only lifts body copy on small screens, where 16px is below HIG's
+   17px comfortable-reading size.
+
+   Meta labels are deliberately absent: they are already at 11px, which is
+   HIG's floor, so there is nothing to raise.
+
+   Every selector is prefixed with `body` to raise its specificity to
+   (0,1,1). This is NOT cosmetic. Each of these classes has a base
+   font-size in its own component file, at the same (0,1,0) specificity as
+   a bare class here — and Vite always bundles index.css first, since
+   main.tsx imports it before anything else. So the component's 16px sat
+   later in the sheet and won, and this entire block silently did nothing
+   (verified in the built CSS: this rule at byte ~1.5k, .pillar-body at
+   ~7.5k, .collabs-body at ~11.6k). Being in a media query buys no
+   priority — media queries do not affect specificity. */
+@media (max-width: 767px) {
+  /* Primary body copy: 16px -> 17px. */
+  body .hero-copy-paragraph,
+  body .collabs-body,
+  body .pillar-body,
+  body .partner-card-heading,
+  body .partner-card-body,
+  body .donation-card-heading,
+  body .donation-card-body {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  /* Secondary body / list items: 15px, snugger leading so a stacked list
+     still reads as a group rather than as separate lines. */
+  body .framework-box-items {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

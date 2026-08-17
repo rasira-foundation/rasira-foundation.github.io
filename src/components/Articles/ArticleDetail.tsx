@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useArticles } from './useArticles';
 import { navigateHome } from '../../hooks/useHashRoute';
@@ -11,20 +11,72 @@ const entrance = {
   transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
 };
 
+/** Stands in for the article while it loads, laid out to the same shape it
+ * will resolve into — badge row, two title lines, meta line, hero block.
+ * Replaces a bare "Loading…" line, which flashed a single line of text and
+ * then reflowed the whole page as the real content arrived. The blocks are
+ * aria-hidden and the region is announced via role/aria-busy instead, so a
+ * screen reader hears one "loading" rather than a list of empty boxes. */
+export function ArticleDetailSkeleton() {
+  return (
+    <main className="article-detail" role="status" aria-busy="true" aria-label="Loading article">
+      <div className="article-detail-col article-detail-skeleton" aria-hidden="true">
+        <div className="article-detail-topbar">
+          <span className="skeleton-block skeleton-back" />
+        </div>
+        <span className="skeleton-block skeleton-title" />
+        <span className="skeleton-block skeleton-title skeleton-title--short" />
+        {/* Mirrors the real meta row: badge first, then the byline. */}
+        <div className="article-detail-meta">
+          <span className="skeleton-block skeleton-badge" />
+          <span className="skeleton-block skeleton-meta" />
+        </div>
+      </div>
+      <div className="article-detail-hero" aria-hidden="true">
+        <span className="skeleton-block skeleton-hero" />
+      </div>
+    </main>
+  );
+}
+
+/** Goes true only if `active` has stayed true for `delay` ms. Used to hold
+ * the loading skeleton back: when the articles are already cached or the
+ * response is quick, the flag never flips and no skeleton is ever rendered. */
+function useDelayedFlag(active: boolean, delay: number) {
+  const [flag, setFlag] = useState(false);
+
+  useEffect(() => {
+    if (!active) {
+      setFlag(false);
+      return;
+    }
+    const id = window.setTimeout(() => setFlag(true), delay);
+    return () => window.clearTimeout(id);
+  }, [active, delay]);
+
+  return flag;
+}
+
+/** Below this, a load is fast enough that showing anything would be a
+ * flicker rather than feedback. Roughly the threshold where a wait starts
+ * being perceived as a wait at all. */
+const SKELETON_DELAY_MS = 250;
+
 export function ArticleDetail({ slug }: { slug: string }) {
   const { articles, loading } = useArticles();
   const article = articles.find((a) => a.slug === slug);
+  const showSkeleton = useDelayedFlag(loading, SKELETON_DELAY_MS);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [slug]);
 
   if (loading) {
-    return (
-      <main className="article-detail">
-        <p className="article-detail-loading">Loading…</p>
-      </main>
-    );
+    // Nothing at all until the load has been slow enough to be worth
+    // acknowledging — see useDelayedFlag. A skeleton that appears and
+    // vanishes inside a couple of hundred milliseconds is a flash of
+    // layout, which reads worse than the brief blank it replaced.
+    return showSkeleton ? <ArticleDetailSkeleton /> : <main className="article-detail" />;
   }
 
   if (!article) {
@@ -48,16 +100,32 @@ export function ArticleDetail({ slug }: { slug: string }) {
     // the home grid.
     <motion.main key={slug} className="article-detail" {...entrance}>
       <div className="article-detail-col">
-        <button type="button" className="article-detail-back" onClick={navigateHome}>
-          ← Back
-        </button>
+        <div className="article-detail-topbar">
+          <button type="button" className="article-detail-back" onClick={navigateHome}>
+            ← Back
+          </button>
+        </div>
 
-        <span className="article-detail-badge">{article.category}</span>
         <h1 className="article-detail-title">{article.title}</h1>
+
+        {/* The category badge leads this row, sitting to the left of the
+            contributor — it belongs with the article's attribution rather
+            than up in the nav strip beside Back.
+
+            Separate spans rather than one interpolated string so the
+            separators can be hidden from screen readers; they would
+            otherwise be read out as "bullet" between every field. */}
         <p className="article-detail-meta">
-          {article.author}
-          {article.date && ` · ${article.date}`}
-          {` · ${article.readTime}`}
+          <span className="article-detail-badge">{article.category}</span>
+          <span className="article-detail-author">{article.author}</span>
+          {article.date && (
+            <>
+              <span aria-hidden="true">•</span>
+              <time>{article.date}</time>
+            </>
+          )}
+          <span aria-hidden="true">•</span>
+          <span>{article.readTime}</span>
         </p>
       </div>
 
