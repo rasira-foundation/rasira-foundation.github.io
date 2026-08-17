@@ -99,16 +99,37 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
   const visible = isExpanded ? filtered : filtered.slice(0, PER_ROW);
   const canExpand = filtered.length > PER_ROW;
 
+  /* Collapsing removes rows ABOVE the button, so the page shortens under
+     the viewport and the button lands somewhere else entirely. This used to
+     scroll to the top of the SECTION, which fixed the disorientation but
+     overshot — you pressed a control at the bottom of the list and were
+     thrown up to the first article. Returning to the button keeps you where
+     you were acting.
+     Only on collapse: expanding adds rows BELOW the button, so nothing
+     above it moves and the page does not need to chase anything. */
+  const collapsing = useRef(false);
+
   const handleToggle = () => {
-    // Collapsing removes rows ABOVE the button, so the page shortens under
-    // the viewport and you are left staring at whatever followed the grid.
-    // Scrolling back to the section keeps the cards you just collapsed in
-    // view. Only on collapse — expanding adds rows below and needs nothing.
-    if (isExpanded) {
-      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    collapsing.current = isExpanded;
     setIsExpanded((v) => !v);
   };
+
+  useEffect(() => {
+    if (!collapsing.current) return;
+    collapsing.current = false;
+    /* Waits out the grid's own layout animation rather than firing on the
+       next frame. Two reasons a single rAF was wrong: the grid animates its
+       height over GRID_TRANSITION, so one frame later the button is still
+       mid-flight and scrollIntoView would chase a transient position; and
+       rAF does not fire at all in a backgrounded tab, so the scroll would
+       simply never happen. A timer still fires there (throttled, which is
+       harmless when nobody is looking). */
+    const id = window.setTimeout(
+      () => buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      GRID_TRANSITION.duration * 1000,
+    );
+    return () => window.clearTimeout(id);
+  }, [isExpanded]);
 
   // Sticky offset, measured rather than declared — this is what makes the
   // classroom curtain work on a phone.
@@ -129,6 +150,7 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
   // express. Hence measuring. Math.min(0, …) means the formula covers both
   // cases with no breakpoint: it resolves to 0 whenever the section fits.
   const sectionRef = useRef<HTMLElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const [stickyTop, setStickyTop] = useState(0);
 
   useEffect(() => {
@@ -244,6 +266,7 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
           /* layout so the button rides the grid's height change rather than
              being teleported to its new position on the next frame. */
           <motion.button
+            ref={buttonRef}
             layout
             transition={GRID_TRANSITION}
             type="button"

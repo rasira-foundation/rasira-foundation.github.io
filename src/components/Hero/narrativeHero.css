@@ -90,11 +90,19 @@
   font-size: 16px;
   line-height: 1.6;
   max-width: 600px;
+  /* The paragraph's own ink, moved here off .hero-copy-word — that class
+     is now shared with the tag line, which is deliberately lighter. Left
+     on the word span it would have overridden the tags' colour, since the
+     spans are the elements actually painting the text. */
+  color: #2b2826;
 }
 
+/* inline-block because blur and transform are ignored on a plain inline
+   box. Colour is inherited so this can be reused by any line that wants
+   the word-by-word reveal without also inheriting the paragraph's ink. */
 .hero-copy-word {
   display: inline-block;
-  color: #2b2826;
+  color: inherit;
 }
 
 .hero-copy-tags {

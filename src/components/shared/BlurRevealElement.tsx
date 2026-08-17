@@ -10,8 +10,14 @@ const containerVariants = (delay: number): Variants => ({
   visible: { transition: { staggerChildren: 0.028, delayChildren: delay } },
 });
 
+/* 12px, up from 8px. The blur was being applied correctly but barely
+   registered: with a critically damped spring (bounce: 0) most of the
+   travel happens in the first third of the duration, so a small blur is
+   already gone before the eye catches it. A deeper starting blur is what
+   makes the reveal read as words resolving into focus rather than simply
+   fading in. */
 const wordVariants: Variants = {
-  hidden: { opacity: 0, y: 14, filter: 'blur(8px)' },
+  hidden: { opacity: 0, y: 14, filter: 'blur(12px)' },
   visible: {
     opacity: 1,
     y: 0,
