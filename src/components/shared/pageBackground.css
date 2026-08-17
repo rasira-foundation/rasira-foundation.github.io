@@ -1,15 +1,15 @@
-/* Fixed, so the ground stays put under the scrolling page and a change
-   reads as the page itself changing state rather than as something
-   scrolling into view.
+/* Fixed, so the ground stays put under the scrolling page and the washes
+   read as atmosphere the page moves through rather than as bands scrolling
+   with it.
 
    Fixed is safe HERE in a way it explicitly is not for
    .production-gradient-3d (see the comment in productionGradient3D.css,
    which records a real bug from making that layer fixed). The difference
    is what each one paints: that layer's gradient stops are tied to
    document positions, so pinning it to the viewport put the wrong band
-   over the wrong section. This layer paints one value at a time with no
-   internal vertical structure to misalign — whichever section is on
-   screen is exactly the one whose value is showing.
+   over the wrong section. These layers have no fixed internal structure to
+   misalign — their position is driven by scroll progress, so what shows is
+   always a function of where you actually are.
 
    No z-index, for the reason spelled out in productionGradient3D.css: a
    negative one lets a layer escape behind body's own background fill and
@@ -22,30 +22,30 @@
   overflow: hidden;
 }
 
+/* The static ground. Never animated and never scroll-linked — this is what
+   guarantees the page has a correct, opaque colour even if every motion
+   value above it were frozen at zero. Text contrast never depends on
+   scroll being live. */
+.page-background-base {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream);
+}
+
+/* will-change names BOTH properties Framer drives here. Opacity alone was
+   not enough once the gradient's centre became a motion value: without the
+   hint the compositor has no reason to promote these, and a full-viewport
+   radial repainting every frame is exactly the work this technique exists
+   to avoid. translateZ(0) forces the layer up front rather than leaving it
+   to a heuristic. */
 .page-background-layer {
   position: absolute;
   inset: 0;
+  will-change: opacity, transform;
+  transform: translateZ(0);
 }
 
-/* Only the incoming layer transitions. The base is whatever the last fade
-   settled on and never animates — it is simply what shows through until
-   the layer above it has finished arriving.
-
-   will-change hints the compositor to promote this to its own layer up
-   front, so the fade is a GPU composite rather than a repaint per frame.
-   It is set only on the incoming layer, which is unmounted between
-   changes — leaving it on a permanent element would hold a texture in
-   memory for the whole session to no purpose. */
-.page-background-layer--incoming {
-  opacity: 0;
-  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity;
-}
-
-/* The component's fallback timer still promotes the layer, so the change
-   lands — it just lands immediately instead of fading. */
-@media (prefers-reduced-motion: reduce) {
-  .page-background-layer--incoming {
-    transition: none;
-  }
-}
+/* Nothing to disable for reduced motion: these are driven by scroll
+   position rather than by a timed animation, so they only ever move as
+   fast as the user themselves scrolls. There is no autonomous motion here
+   to suppress. */

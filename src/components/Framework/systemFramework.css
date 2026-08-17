@@ -6,25 +6,15 @@
    the others being .collabs-slot's padding-top and .collabs-card's
    padding-top. (A fourth, .framework-feedback's margin-bottom, went away
    with that block — see further down.) */
-/* The soft tint the diagram sits on. It lives here rather than on the page
-   background layer on purpose: this element scrolls WITH the section, so
-   its top and bottom edges are the section's own edges and can be faded
-   out to nothing. A fixed page-level tint cannot do that — .pillars-section
-   above paints an opaque fill that ends at a document position, so the
-   tint appeared abruptly wherever that section stopped, and the seam
-   travelled up the screen as you scrolled.
-
-   Both ends land on the page colour at zero alpha rather than on
-   `transparent`, which browsers interpolate through transparent black and
-   would leave a grey cast across the fade. */
+/* Transparent again. This briefly carried its own tint gradient, added as
+   a workaround: a page-level tint seamed against .pillars-section's opaque
+   bottom edge, so the tint was moved onto the section that wanted it.
+   That constraint is gone — .pillars-section now fades its tail out, and
+   the page ground carries a scroll-linked wash across this part of the
+   page (the `depth` layer in PageBackground). Keeping a second tint here
+   would stack two of them over the same region. */
 .system-framework {
-  background: linear-gradient(
-    to bottom,
-    rgba(var(--color-page-rgb), 0) 0%,
-    var(--color-cream-deep) 20%,
-    var(--color-cream-deep) 80%,
-    rgba(var(--color-page-rgb), 0) 100%
-  );
+  background: transparent;
   padding: 0 24px 8px;
 }
 

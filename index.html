@@ -22,13 +22,66 @@
          time it fires, which is the single largest fixed cost in that
          round trip — the request itself is one small JSON response. -->
     <link rel="preconnect" href="https://docs.google.com" crossorigin />
+    <!-- Fonts, loaded WITHOUT blocking first paint.
+
+         `display=swap` is already in the URL, so the font files themselves
+         never cause FOIT — text paints in the fallback face and swaps. But
+         a plain <link rel="stylesheet"> is still render-blocking: the
+         browser will not paint ANYTHING until this stylesheet resolves, and
+         it is a third-party request. That is the delay before the hero text
+         appears, not the font loading itself.
+
+         preload starts the fetch at the highest priority; the media="print"
+         trick lets the second link download without blocking (print styles
+         are irrelevant to screen rendering), then onload promotes it to
+         all. The noscript copy keeps it working with JS disabled. -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap"
       rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap"
+      media="print"
+      onload="this.media='all'; this.onload=null;"
     />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
+    </noscript>
+
+    <!-- CRITICAL CSS — inline on purpose, so it applies on the very first
+         paint, before the bundle or any stylesheet has resolved.
+
+         This is the fix for the background flashing ahead of the splash.
+         The splash is a React component, so it cannot exist until the
+         bundle parses and mounts; until then the browser paints whatever
+         html/body say, and that used to be the page ground — so the
+         gradient layers appeared first and the splash dropped in over them.
+         Painting the splash's OWN top colour here means the first frame
+         already looks like the splash, and the real component replaces an
+         identical-looking surface rather than covering a different one.
+
+         Values are duplicated from :root deliberately: this has to run
+         before the stylesheet that defines those variables exists. -->
+    <style>
+      html,
+      body {
+        background: #ffffff;
+      }
+      /* Matches .splash's own gradient (--color-gradient-4 ->
+         --color-atmos-haze-blue). Removed by the app once React has
+         mounted — see main.tsx. */
+      html.pre-mount,
+      html.pre-mount body {
+        background: linear-gradient(180deg, #ffffff 0%, #d8e2e9 100%);
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Set synchronously, before the module bundle is even requested, so
+      // the very first paint uses the splash-coloured critical CSS above.
+      // main.tsx clears it once React has committed.
+      document.documentElement.classList.add('pre-mount');
+    </script>
     <!-- This site has never registered a service worker, but if a stale one
          from an earlier deploy (or a different tool) is still active in a
          visitor's browser, it can keep serving a cached, now-mismatched

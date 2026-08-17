@@ -156,47 +156,107 @@ button {
   }
 }
 
-/* ── MOBILE TYPOGRAPHY (Apple HIG) ──
-   Kept together here rather than as six separate media queries scattered
-   across component files: this is one cross-cutting rule about handheld
-   readability, and splitting it up makes it impossible to see the scale
-   as a whole or keep it consistent when copy moves between components.
+/* ── MOBILE TYPOGRAPHY ──
+   One block rather than a media query per component file. This is a
+   cross-cutting rule about handheld readability, and split across six
+   files it becomes impossible to see the scale as a whole or keep it
+   consistent when copy moves between components. Desktop is untouched.
 
-   Desktop keeps the established 11 / 16 / 22 / 28 / 36 scale untouched —
-   this only lifts body copy on small screens, where 16px is below HIG's
-   17px comfortable-reading size.
-
-   Meta labels are deliberately absent: they are already at 11px, which is
-   HIG's floor, so there is nothing to raise.
-
-   Every selector is prefixed with `body` to raise its specificity to
-   (0,1,1). This is NOT cosmetic. Each of these classes has a base
-   font-size in its own component file, at the same (0,1,0) specificity as
-   a bare class here — and Vite always bundles index.css first, since
-   main.tsx imports it before anything else. So the component's 16px sat
-   later in the sheet and won, and this entire block silently did nothing
-   (verified in the built CSS: this rule at byte ~1.5k, .pillar-body at
-   ~7.5k, .collabs-body at ~11.6k). Being in a media query buys no
-   priority — media queries do not affect specificity. */
+   Every selector is prefixed with `body` to raise it to (0,1,1)
+   specificity. This is NOT cosmetic. Each of these classes carries a base
+   font-size in its own component file at the same (0,1,0) specificity as
+   a bare class here, and Vite always bundles index.css first, since
+   main.tsx imports it before anything else — so the component rule sits
+   later in the sheet and wins. An earlier version of this block omitted
+   the prefix and silently did nothing at all. Being inside a media query
+   buys no priority: media queries do not affect specificity. */
 @media (max-width: 767px) {
-  /* Primary body copy: 16px -> 17px. */
+  /* Hero / main title. Down from the desktop clamp, whose lower bound
+     (34px) is larger than this whole range — at 320px a 34px display face
+     leaves almost no room for the line to breathe. break-word is a
+     backstop: the longest single words in these headings still fit at
+     320px, but a future edit should not be able to push a glyph past the
+     viewport edge. */
+  body .hero-title,
+  body .article-detail-title {
+    font-size: clamp(28px, 8vw, 34px);
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
+  /* Section headings. All of these are 22px on desktop except the article
+     body's h2 at 28px; the clamp brings them into one range so a card
+     title and a section title do not compete at phone width. */
+  body .article-card-title,
+  body .pillar-label,
+  body .framework-box-title,
+  body .collabs-heading,
+  body .article-detail-body h2,
+  body .article-detail-body h3 {
+    font-size: clamp(20px, 5vw, 24px);
+    line-height: 1.25;
+  }
+
+  /* Body copy and lists — 16px floor, 1.6 leading.
+     1.6 rather than 1.5 because nearly all of this is set in a monospace
+     face: mono has a smaller x-height and wider glyphs than a
+     proportional face at the same nominal size, so it reads smaller and
+     needs more room between lines to stay comfortable. */
   body .hero-copy-paragraph,
   body .collabs-body,
   body .pillar-body,
+  body .framework-box-items,
   body .partner-card-heading,
   body .partner-card-body,
   body .donation-card-heading,
   body .donation-card-body {
-    font-size: 17px;
-    line-height: 1.5;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
-  /* Secondary body / list items: 15px, snugger leading so a stacked list
-     still reads as a group rather than as separate lines. */
-  body .framework-box-items {
-    font-size: 15px;
-    line-height: 1.45;
+  /* Captions and metadata — dates, read times, bylines, the footer clock
+     row. These were 11px, which is the floor for a BADGE (short, uppercase,
+     widely tracked) but too small for anything read as a phrase. */
+  body .article-card-meta,
+  body .article-detail-meta,
+  body .article-detail-loading,
+  body .partner-card-topbar,
+  body .collabs-support,
+  body .closing-footer-meta-left,
+  body .closing-footer-meta-right,
+  body .closing-footer-mail,
+  body .closing-footer-year {
+    font-size: 13px;
+    line-height: 1.4;
   }
+
+  /* Badges and overlines stay at 11px. Uppercase, tracked, and read as a
+     label rather than as running text, so the floor that applies to prose
+     does not apply here — and raising them would crowd the titles they
+     sit above. Listed explicitly rather than left implicit so it is clear
+     this is a decision and not an omission. */
+  body .article-card-category,
+  body .article-detail-badge,
+  body .framework-box-meta,
+  body .partner-donation-label,
+  body .donation-card-topbar,
+  body .hero-copy-tags {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    line-height: 1.4;
+  }
+
+  /* The blur is an atmospheric touch that works at desktop size; at 13px
+     on a phone held at arm's length it is the difference between legible
+     and not. */
+  body .closing-footer-meta-left {
+    filter: none;
+  }
+
+  /* .article-card-ascii is deliberately excluded from all of the above —
+     it is pre-formatted diagram art whose alignment depends on its exact
+     size, and scaling it would break the drawing rather than help anyone
+     read it. */
 }
 
 @media (prefers-reduced-motion: reduce) {

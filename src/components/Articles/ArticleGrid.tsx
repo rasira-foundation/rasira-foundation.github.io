@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, type MotionValue } from 'framer-motion';
+import { AnimatePresence, motion, type MotionValue } from 'framer-motion';
 import type { ArticleCategory } from '../../lib/sheets';
 import { useArticles } from './useArticles';
 import { ArticleCard } from './ArticleCard';
@@ -8,6 +8,12 @@ import './articleGrid.css';
 
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
 const PER_ROW = 4;
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+/** Shared by the grid and the button so the container's height change and
+ * the button's move are one motion rather than two that nearly match. */
+const GRID_TRANSITION = { duration: 0.5, ease: EASE } as const;
+const CARD_TRANSITION = { duration: 0.35, ease: EASE } as const;
 
 interface ArticleGridProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -61,6 +67,17 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
 
   const visible = isExpanded ? filtered : filtered.slice(0, PER_ROW);
   const canExpand = filtered.length > PER_ROW;
+
+  const handleToggle = () => {
+    // Collapsing removes rows ABOVE the button, so the page shortens under
+    // the viewport and you are left staring at whatever followed the grid.
+    // Scrolling back to the section keeps the cards you just collapsed in
+    // view. Only on collapse — expanding adds rows below and needs nothing.
+    if (isExpanded) {
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setIsExpanded((v) => !v);
+  };
 
   // Sticky offset, measured rather than declared — this is what makes the
   // classroom curtain work on a phone.
@@ -158,17 +175,52 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
         ) : visible.length === 0 ? (
           <p className="article-hub-loading">Nothing published in this category yet.</p>
         ) : (
-          <motion.div className="article-grid" layout>
-            {visible.map((article, i) => (
-              <ArticleCard key={article.slug} article={article} index={i % PER_ROW} />
-            ))}
+          /* `layout` on the grid animates its own height as rows are added
+             or removed, so the button below and the whole page beneath it
+             slide rather than jumping.
+
+             mode="popLayout" is what makes collapsing look right: it pulls
+             exiting cards out of layout flow immediately, so the remaining
+             cards begin closing up straight away instead of waiting for the
+             exit animation to finish and then snapping. */
+          <motion.div className="article-grid" layout transition={GRID_TRANSITION}>
+            <AnimatePresence mode="popLayout" initial={false}>
+              {visible.map((article, i) => (
+                <motion.div
+                  key={article.slug}
+                  layout
+                  className="article-grid-cell"
+                  initial={{ opacity: 0, y: 20, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.98 }}
+                  transition={{
+                    ...CARD_TRANSITION,
+                    /* Only the NEWLY revealed cards stagger. The first row
+                       is already on screen when you press See All, so
+                       delaying it would restart an animation on cards that
+                       never moved. */
+                    delay: isExpanded && i >= PER_ROW ? (i - PER_ROW) * 0.06 : 0,
+                  }}
+                >
+                  <ArticleCard article={article} index={i % PER_ROW} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
         )}
 
         {canExpand && (
-          <button type="button" className="article-hub-see-all" onClick={() => setIsExpanded((v) => !v)}>
+          /* layout so the button rides the grid's height change rather than
+             being teleported to its new position on the next frame. */
+          <motion.button
+            layout
+            transition={GRID_TRANSITION}
+            type="button"
+            className="article-hub-see-all"
+            onClick={handleToggle}
+          >
             {isExpanded ? 'Show Less' : 'See All'}
-          </button>
+          </motion.button>
         )}
       </motion.div>
     </motion.section>

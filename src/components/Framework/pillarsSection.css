@@ -13,36 +13,30 @@
    (html/body are overflow-x:clip, so the 100vw-vs-scrollbar discrepancy
    can't produce a horizontal scrollbar.)
 
-   The background is transparent down to 22%, then solid beige. The two
-   halves need opposite things: the strip ABOVE the photo must stay
-   see-through (a full solid fill showed there as an ugly beige band,
-   since the parallax translate offsets the image inside its wrapper),
-   while everything BELOW the torn edge must be opaque or the pinned
-   article shows through the PNG's transparent tail.
-
-   22% comes from sampling the PNG's actual alpha channel, not from
-   eyeballing it: the first transparent pixel below opaque photo is at
-   y=386 of 714, i.e. the tear really begins at 54% of the image — not
-   the ~78% it looks like, because the tear's notches cut much higher
-   than its visual "waterline". With the image's parallax travel that
-   puts the tear's top edge between 29% (image at its highest) and 59%
-   (its lowest) of this section, and the image's own top edge between
-   -15% and 15%. So the fill has to start inside 15%..29% — below the
-   photo's top edge so the hard stop is always hidden behind opaque
-   photo, and above the tear's highest point so no transparent gap is
-   ever left. An earlier 40% sat below that window and leaked. */
+   This section no longer carries a fill of its own; see .pillars-image-wrap
+   below, which does, and the note there for how its threshold is derived. */
 .pillars-section {
   position: relative;
   z-index: 30;
   width: 100vw;
   margin-left: calc(50% - 50vw);
-  background: linear-gradient(
-    to bottom,
-    rgba(var(--color-page-rgb), 0) 0%,
-    rgba(var(--color-page-rgb), 0) 22%,
-    var(--color-cream) 22%,
-    var(--color-cream) 100%
-  );
+  /* The tail now FADES OUT rather than running opaque to the section's
+     last pixel. That hard bottom edge was invisible while the page behind
+     it was flat white, but the page ground carries scroll-linked
+     atmospheric washes now (see PageBackground) — and an opaque section
+     ending at a fixed document position cuts a hard horizontal line
+     across them, one that travels up the screen as you scroll, since the
+     section moves and the washes do not.
+
+     Fading over the last 12% is safe: .pillars-grid sits in that region
+     with its own opaque fill, so nothing behind is ever exposed. The
+     article above has long since scrolled past by this point. */
+  /* No fill here any more — it moved to .pillars-image-wrap, whose height
+     IS the image's, so the threshold below can be expressed as a fraction
+     of the photo rather than of image + grid + padding. That mattered once
+     the artwork changed: the old 22% was derived from a PNG that was
+     opaque from its first row, and the current one is torn at BOTH edges. */
+  background: transparent;
   padding: 0 0 48px;
 }
 
@@ -70,12 +64,37 @@
   margin-top: calc(-30vh + 100px);
   pointer-events: none;
   user-select: none;
+  /* THE FILL. Percentages here are fractions of the PHOTO, because this
+     wrapper's height is the photo's height — which is the only frame in
+     which "where the tear starts" is a stable number.
+
+     42% is measured, not eyeballed. Sampling the current PNG's alpha
+     channel: it is torn at BOTH edges — transparent for roughly its top
+     10% and its bottom 20%, reliably opaque only between about 20% and
+     65%. Mapping those through scale(1.1) about centre (t -> 1.1t - 0.05)
+     and the parallax's +-18% travel, the opaque core's top edge lands
+     anywhere in -1%..35% and the tear's top edge in 48.5%..84.5%. The
+     hard stop therefore has to sit inside 35%..48.5%: below the opaque
+     top at every scroll position so it is always hidden behind photo, and
+     above the tear at every position so no transparent gap is ever left.
+
+     The previous asset was opaque from its first row with a single tear
+     at 54%, which is why the old threshold was 22% — that number does not
+     survive this artwork, and reusing it would have leaked the article
+     through the top. */
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-page-rgb), 0) 0%,
+    rgba(var(--color-page-rgb), 0) 42%,
+    var(--color-cream) 42%,
+    var(--color-cream) 100%
+  );
 }
 
 .pillars-image {
   display: block;
   width: 100%;
-  aspect-ratio: 1400 / 714;
+  aspect-ratio: 2406 / 1228;
   height: auto;
   object-fit: cover;
   will-change: transform;
@@ -220,8 +239,8 @@ ul.pillar-body {
     background: linear-gradient(
       to bottom,
       rgba(var(--color-page-rgb), 0) 0%,
-      rgba(var(--color-page-rgb), 0) 25%,
-      var(--color-cream) 25%,
+      rgba(var(--color-page-rgb), 0) 42%,
+      var(--color-cream) 42%,
       var(--color-cream) 100%
     );
     /* NO overflow:hidden here, deliberately. It was added to stop the

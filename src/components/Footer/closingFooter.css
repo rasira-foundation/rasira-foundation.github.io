@@ -274,7 +274,11 @@
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1.5;
-  color: #4a4642;
+  /* 6.42:1 against the sunset's mid-orange, up from #4a4642's 4.96:1.
+     That passed AA on paper, but this block also carries a slight blur
+     (below) and sits on a gradient rather than a flat fill, so the margin
+     was thinner than the number suggested. */
+  color: #3a3532;
 }
 
 /* No opacity dimming on these any more — the whole point of a single
@@ -434,10 +438,14 @@
    --dark modifier), so it can't just flip to light text unconditionally. */
 /* Matched to .closing-footer-year--homepage rather than pure white — the
    two sit stacked in the sign-off block and read as one unit, which the
-   white-against-grey pairing broke. */
+   white-against-grey pairing broke.
+
+   Raised from #a1a1aa, which measured 4.45:1 against this block's #3a3a38
+   — under the 4.5:1 AA floor, and this is a link. #c8c8c6 clears it at
+   6.80:1 while staying visibly quieter than the white wordmark above. */
 .closing-footer--dark .closing-footer-mail {
-  color: #a1a1aa;
-  border-bottom-color: rgba(161, 161, 170, 0.4);
+  color: #c8c8c6;
+  border-bottom-color: rgba(200, 200, 198, 0.45);
 }
 
 .closing-footer--dark .closing-footer-mail:hover {
@@ -456,8 +464,10 @@
   gap: 8px;
 }
 
+/* Same 4.45:1 -> 6.80:1 correction as the email beside it; the two are a
+   stacked pair and have to match. */
 .closing-footer-year--homepage {
-  color: #a1a1aa;
+  color: #c8c8c6;
 }
 
 /* Giant closing wordmark — the real rasira-2lines.svg logo (see

@@ -14,35 +14,7 @@ import { NoiseOverlay } from './components/shared/NoiseOverlay';
 import { ProductionGradient3D } from './components/shared/ProductionGradient3D';
 import { useHashRoute } from './hooks/useHashRoute';
 import { useScrollRestoration } from './hooks/useScrollRestoration';
-import { useSectionBackground } from './hooks/useSectionBackground';
 import { PageBackground } from './components/shared/PageBackground';
-
-/* Page ground per section, in the style of Framer's Background Changer.
-   Every value is an existing palette token rather than a new colour: the
-   page is white throughout except the framework band, which picks up the
-   recessed tone so the diagram's sand panel sits on something instead of
-   floating on pure white. Sections declare these via data-bg below, and
-   PageBackground crossfades between them. This map is the
-   single place to change the sequence. */
-const SECTION_BACKGROUNDS = {
-  hero: 'var(--color-cream)',
-  articles: 'var(--color-cream)',
-  /* White, like the rest — NOT a tint, despite this being the section
-     that wants one.
-
-     A tint here was tried and produced a hard horizontal seam. The reason
-     is structural rather than a matter of picking softer stops: this layer
-     is fixed and full-viewport, while .pillars-section above it paints an
-     opaque white fill that ends at a fixed DOCUMENT position. Wherever
-     that section stops, the tinted layer behind it simply appears, with
-     nothing to fade the join — and because the section scrolls while the
-     layer does not, the edge travels up the screen as you go.
-
-     The framework's tint lives on .system-framework instead, where it can
-     fade in and out at its own top and bottom edges. See systemFramework.css. */
-  framework: 'var(--color-cream)',
-  closing: 'var(--color-cream)',
-} as const;
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
 const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
@@ -58,10 +30,6 @@ function App() {
   // open (see ArticleDetail), and restoring a scroll position there would
   // fight that.
   useScrollRestoration(route.view === 'home');
-
-  // Reads the data-bg of whichever section is crossing the middle of the
-  // viewport; the crossfade itself is CSS on the ground element.
-  const sectionBackground = useSectionBackground(SECTION_BACKGROUNDS.hero);
 
   // Progress has to be measured on the WRAPPER, not on .article-hub
   // itself: that element is position:sticky, so while it's pinned its own
@@ -121,7 +89,7 @@ function App() {
               section below is transparent now; this single layer is
               what actually paints the page's color and floating orbs
               as it scrolls. */}
-          <PageBackground background={sectionBackground} />
+          <PageBackground active={!showSplash} />
           <ProductionGradient3D />
 
           {/* Header lives inside the atmosphere band, which is
@@ -133,7 +101,7 @@ function App() {
               with ProductionGradient3D's own percentage-based stops, it
               left a visible seam where the overlay cut off. Removed; this
               band now just shows ProductionGradient3D straight through. */}
-          <div className="atmosphere-band" data-bg={SECTION_BACKGROUNDS.hero}>
+          <div className="atmosphere-band">
             <SiteHeader visible={!showSplash} />
             <NarrativeHero
               splashDone={!showSplash}
@@ -148,7 +116,7 @@ function App() {
               the way to the footer. Ending the wrapper after
               PillarsSection releases it exactly once the classroom photo
               and the copy panel have finished sliding over it. */}
-          <div className="layered-scroll" ref={layeredRef} data-bg={SECTION_BACKGROUNDS.articles}>
+          <div className="layered-scroll" ref={layeredRef}>
             <ArticleGrid
               heroDone={!showMorphIntro}
               depthScale={articleDepthScale}
@@ -156,10 +124,8 @@ function App() {
             />
             <PillarsSection heroDone={!showMorphIntro} />
           </div>
-          <div data-bg={SECTION_BACKGROUNDS.framework}>
-            <SystemFramework heroDone={!showMorphIntro} />
-          </div>
-          <div className="collabs-slot" data-bg={SECTION_BACKGROUNDS.closing}>
+          <SystemFramework heroDone={!showMorphIntro} />
+          <div className="collabs-slot">
             <CollabsSection />
           </div>
           <PartnerDonationSection />

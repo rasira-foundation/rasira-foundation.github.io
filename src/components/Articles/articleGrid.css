@@ -177,6 +177,25 @@
   border-top: 1px solid var(--color-border-neutral);
 }
 
+/* Animation wrapper introduced by the See All stagger — each card is now
+   inside a motion.div so it can have its own enter/exit. That wrapper is
+   the grid item, so it has to pass sizing straight through to the card or
+   the border-collapse pattern below breaks: the card would no longer fill
+   its cell and the shared edges would stop meeting.
+
+   min-width: 0 on both because a grid item's default min-width is auto,
+   which floors at content width — a long unbroken title would push its
+   column wider than its siblings. */
+.article-grid-cell {
+  display: flex;
+  min-width: 0;
+}
+
+.article-grid-cell > .article-card {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Shared by both the internal-nav <button> and the external-link <a>
    variant (see ArticleCard.tsx) — text-decoration/color resets below are
    no-ops for the button but needed for the anchor, which otherwise
