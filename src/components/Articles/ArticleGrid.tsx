@@ -9,6 +9,9 @@ import './articleGrid.css';
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
 const PER_ROW = 4;
 
+/** Survives the article round trip; see the note on isExpanded below. */
+const EXPANDED_KEY = 'rasira-articles-expanded';
+
 const EASE = [0.16, 1, 0.3, 1] as const;
 /** Shared by the grid and the button so the container's height change and
  * the button's move are one motion rather than two that nearly match. */
@@ -58,7 +61,35 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
   const { articles, loading, isFallback } = useArticles();
   const showSkeleton = useDelayedFlag(loading);
   const [activeTab, setActiveTab] = useState<ArticleCategory>('Highlight');
-  const [isExpanded, setIsExpanded] = useState(false);
+  /* Expanded/collapsed survives navigating into an article and back.
+   *
+   * This is not only a convenience. useScrollRestoration puts the page
+   * back where it was, and a restored scroll position only means anything
+   * if the page is the same HEIGHT it was — collapsing the grid on return
+   * removes rows above the saved offset, so the restore lands somewhere
+   * else entirely, or gets clamped because the document is now shorter
+   * than the position it is trying to reach. The two have to agree.
+   *
+   * sessionStorage rather than component state for the same reason the
+   * scroll position uses it: the grid unmounts entirely on the article
+   * route, so nothing in React survives the round trip. Read lazily in the
+   * initialiser so the very first render is already correct and the list
+   * never flashes collapsed before expanding. */
+  const [isExpanded, setIsExpanded] = useState(() => {
+    try {
+      return sessionStorage.getItem(EXPANDED_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(EXPANDED_KEY, isExpanded ? '1' : '0');
+    } catch {
+      /* Private mode or quota — losing the preference is not worth an error. */
+    }
+  }, [isExpanded]);
 
   const filtered = useMemo(
     () => (activeTab === 'Highlight' ? articles : articles.filter((a) => a.category === activeTab)),

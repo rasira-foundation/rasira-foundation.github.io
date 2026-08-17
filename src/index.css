@@ -197,21 +197,30 @@ button {
     line-height: 1.25;
   }
 
-  /* Body copy and lists — 16px floor, 1.6 leading.
-     1.6 rather than 1.5 because nearly all of this is set in a monospace
-     face: mono has a smaller x-height and wider glyphs than a
-     proportional face at the same nominal size, so it reads smaller and
-     needs more room between lines to stay comfortable. */
+  /* Body copy set in MONO — 15px, one below the serif beside it.
+     IBM Plex Mono has a large x-height and wide, evenly-spaced glyphs, so
+     at a matched nominal size it reads visibly larger than Newsreader and
+     the two stop looking like one type system. Stepping the mono down by
+     1px is what brings them into balance; matching the numbers does not.
+     1.6 leading rather than 1.5 for the same reason — wide glyphs need
+     more room between lines to stay comfortable at this size. */
   body .hero-copy-paragraph,
   body .collabs-body,
   body .pillar-body,
   body .framework-box-items,
-  body .partner-card-heading,
   body .partner-card-body,
-  body .donation-card-heading,
   body .donation-card-body {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.6;
+  }
+
+  /* The SERIF body copy holds at 16px. These two are Newsreader/Fraunces,
+     not mono, so they were never part of the mismatch — dropping them too
+     would just shrink the card headings for no reason. */
+  body .partner-card-heading,
+  body .donation-card-heading {
+    font-size: 16px;
+    line-height: 1.5;
   }
 
   /* Captions and metadata — dates, read times, bylines, the footer clock
