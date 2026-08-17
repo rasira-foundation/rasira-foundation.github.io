@@ -154,6 +154,17 @@
   color: #2b2623;
 }
 
+/* The bidirectional connector. Two glyphs' worth of mark in the same
+   badge, so it needs a little more room than the single arrow or the
+   strokes crowd the rim; the offset tracks half the new width so it still
+   straddles the column rule rather than sitting beside it. */
+.framework-connector--feedback {
+  width: 30px;
+  height: 30px;
+  left: -15px;
+  font-size: 12px;
+}
+
 /* The pivot's own connector picks up its tint, so the badge does not read
    as a paler hole punched in the highlighted column. Deepened alongside
    the column — at the old #eee0d2 it would now sit noticeably lighter than

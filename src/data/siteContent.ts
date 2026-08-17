@@ -84,6 +84,13 @@ export const systemFramework = {
       ],
     },
     {
+      /* The link INTO this stage runs both ways: outcomes feed back into
+         Decisions & Development rather than simply ending the sequence.
+         This is what the dashed return curve under the diagram used to
+         say — it was removed because it connected nothing once mobile
+         turned the stages into a swipe deck, and the relationship reads
+         more directly on the connector itself. */
+      feedback: true,
       nodes: [
         {
           tag: 'Outcome',

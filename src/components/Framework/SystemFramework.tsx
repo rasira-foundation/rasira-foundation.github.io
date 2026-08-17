@@ -10,15 +10,20 @@ interface SystemFrameworkProps {
   heroDone: boolean;
 }
 
-/** The public-framework diagram: eyebrow/title/subtitle, then 4 "packet"
- * cards (Person Profile -> Evidence in Action -> Decisions & Development
- * -> Outcomes) connected by arrows, a dashed feedback-loop curve back
- * from Outcomes to Evidence in Action, and a disclaimer note. Each card
- * has a notched top edge (clip-path) and a placeholder media block —
- * real photography/illustration per stage can replace that block later,
- * it's just the card's own accent color for now. Text color/size is
- * fixed and explicit on every variant (dark ink at 16px for body copy),
- * not dependent on whatever's behind the card. */
+/** The public-framework diagram: four stages across, five nodes total
+ * (stage 01 splits into 01a Person Profile / 01b Opportunity Context),
+ * joined by connector badges that straddle each stage rule, plus a
+ * disclaimer note.
+ *
+ * The last connector is bidirectional rather than a forward arrow —
+ * outcomes feed back into Decisions & Development. That relationship used
+ * to be drawn as a dashed return curve beneath the diagram; it was removed
+ * because it connected nothing once mobile turned the stages into a
+ * horizontal swipe deck, and it now lives on the connector itself, which
+ * survives that layout change.
+ *
+ * Text colour and size are fixed and explicit on every node, not dependent
+ * on whatever is behind the card. */
 export function SystemFramework({ heroDone }: SystemFrameworkProps) {
   return (
     <motion.section
@@ -51,8 +56,25 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
                     each node's step counter — a screen reader gains
                     nothing from four loose arrow glyphs. */}
                 {columnIndex > 0 && (
-                  <span className="framework-connector" aria-hidden="true">
-                    →
+                  <span
+                    className={
+                      'feedback' in column && column.feedback
+                        ? 'framework-connector framework-connector--feedback'
+                        : 'framework-connector'
+                    }
+                    /* Not aria-hidden like the one-way arrows: those only
+                       restate the sequence the step counters already give,
+                       but this one carries information nothing else does —
+                       that the last stage feeds back into the third. */
+                    role="img"
+                    aria-label={
+                      'feedback' in column && column.feedback
+                        ? 'Feeds back into the previous stage'
+                        : undefined
+                    }
+                    aria-hidden={'feedback' in column && column.feedback ? undefined : true}
+                  >
+                    {'feedback' in column && column.feedback ? '⇄' : '→'}
                   </span>
                 )}
 
