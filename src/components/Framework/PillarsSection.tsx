@@ -4,6 +4,7 @@ import { BlurRevealText } from '../shared/BlurRevealElement';
 import { pillars } from '../../data/siteContent';
 import pillarsImage from '../../assets/photos/pillars-torn-classroom.png';
 import './pillarsSection.css';
+import { IN_VIEW, SPRING } from '../../lib/motion';
 
 interface PillarsSectionProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -37,7 +38,7 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
     <motion.section
       className="pillars-section"
       animate={{ opacity: heroDone ? 1 : 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      transition={SPRING}
       /* Always none on the SECTION. Its box is dragged upward by the
          image's negative top margin, so it physically overlaps the
          article cards above — and a section with pointer-events:auto
@@ -64,8 +65,8 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
             className="pillar-block"
             initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
             whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            viewport={{ once: false, amount: 0.25 }}
-            transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            viewport={IN_VIEW}
+            transition={{ ...SPRING, delay: index * 0.08 }}
           >
             <h3 className="pillar-label">
               <span className="pillar-marker" aria-hidden="true" />

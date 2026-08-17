@@ -66,8 +66,25 @@
    well, splitting the column in half. */
 .framework-column {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  /* GRID with grid-auto-rows: 1fr, not flex — and this is what puts the
+     connector on the divider.
+
+     The connector is pinned at top: 50% of the column, so it only lines up
+     with a split column's internal rule if that rule is genuinely at the
+     halfway mark. Under flex, `flex: 1` on the boxes distributes FREE
+     space equally — but this column's height comes from its own content
+     (it is the tallest card in the row, and the others stretch to match
+     it), so there is no free space to share and each box simply ends at
+     its content height. Person Profile carries three lines of items and
+     Opportunity Context two, so the rule landed below centre while the
+     arrow stayed at 50%.
+
+     grid-auto-rows: 1fr sizes every row to the tallest row instead, so the
+     two boxes are equal by construction and the divider is at exactly 50%
+     whatever the copy does. Single-node columns are unaffected: one row at
+     1fr is the full height. */
+  display: grid;
+  grid-auto-rows: 1fr;
   min-height: 380px;
   border-left: 1px solid rgba(20, 18, 15, 0.14);
 }
@@ -83,8 +100,11 @@
   border-top: 1px solid rgba(20, 18, 15, 0.14);
 }
 
+/* min-height: 0 lets a grid row actually hold its 1fr share: the default
+   `auto` minimum would let the taller box push its row past an equal
+   split, which is the behaviour being corrected above. */
 .framework-box {
-  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   background: transparent;

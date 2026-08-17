@@ -9,20 +9,15 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-/* Hands control of the page's ground back to the app.
+/* The `pre-mount` class set in index.html is NOT cleared here.
  *
- * index.html paints the splash's own colour on <html> before the bundle
- * loads, so the first frame is never the page background. That class has to
- * come off once React has actually committed, or it would sit on top of the
- * real background for the whole session.
+ * It used to be, two frames after this render — but React mounting and the
+ * splash finishing are different moments. The splash stays on screen for
+ * its full run, so clearing on mount flipped <html> to the page colour
+ * while the splash was still showing its own gradient. Anything the fixed
+ * splash does not cover then shows the wrong colour: on iOS Safari that is
+ * the strip behind the collapsing toolbar, which appeared as a pale band
+ * under the splash.
  *
- * Two rAFs, not one: the first fires before the browser has painted React's
- * initial commit, so clearing there can still expose a frame of page ground
- * between the critical CSS going away and the splash being painted — which
- * is the exact flash this exists to prevent. The second runs after that
- * paint, when the splash is genuinely on screen. */
-requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    document.documentElement.classList.remove('pre-mount')
-  })
-})
+ * App.tsx now clears it when the splash actually ends, so the canvas
+ * matches the splash for exactly as long as the splash is up. */

@@ -60,6 +60,16 @@ function App() {
     setShowMorphIntro(false);
   }, []);
 
+  /* Keeps the document canvas matching the splash for as long as the
+     splash is up — see the note in main.tsx and the critical CSS in
+     index.html. The class starts on (set synchronously in the document, so
+     it applies to the very first paint) and comes off only once the splash
+     has finished, which is what stops a mismatched strip showing wherever
+     the fixed splash does not reach. */
+  useEffect(() => {
+    document.documentElement.classList.toggle('pre-mount', showSplash);
+  }, [showSplash]);
+
   // Lock scroll on the homepage sitting underneath while the splash is up.
   useEffect(() => {
     document.body.style.overflow = showSplash ? 'hidden' : '';

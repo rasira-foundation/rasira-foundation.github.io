@@ -1,7 +1,7 @@
 import { motion, type Variants } from 'framer-motion';
 import { Fragment, type ReactNode } from 'react';
+import { IN_VIEW, SPRING } from '../../lib/motion';
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Per-word stagger. `hidden`/`visible` are inherited by the word spans
  * below, so the parent only has to orchestrate timing. */
@@ -16,7 +16,7 @@ const wordVariants: Variants = {
     opacity: 1,
     y: 0,
     filter: 'blur(0px)',
-    transition: { duration: 0.55, ease: EASE },
+    transition: SPRING,
   },
 };
 
@@ -26,6 +26,9 @@ interface BlurRevealTextProps {
   as?: 'p' | 'span' | 'h2' | 'h3' | 'li';
   delay?: number;
   once?: boolean;
+  /** Overrides IN_VIEW's default. Left undefined so the shared
+   * centre-of-viewport margin governs on its own — setting both a margin
+   * and an amount can make tall elements untriggerable. */
   amount?: number;
 }
 
@@ -42,7 +45,7 @@ export function BlurRevealText({
   as = 'p',
   delay = 0,
   once = false,
-  amount = 0.25,
+  amount,
 }: BlurRevealTextProps) {
   const Tag = motion[as];
   const words = children.split(' ');
@@ -53,7 +56,7 @@ export function BlurRevealText({
       variants={containerVariants(delay)}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once, amount }}
+      viewport={amount === undefined ? { ...IN_VIEW, once } : { ...IN_VIEW, once, amount }}
     >
       {words.map((word, i) => (
         <Fragment key={`${word}-${i}`}>
@@ -72,6 +75,9 @@ interface BlurRevealElementProps {
   className?: string;
   delay?: number;
   once?: boolean;
+  /** Overrides IN_VIEW's default. Left undefined so the shared
+   * centre-of-viewport margin governs on its own — setting both a margin
+   * and an amount can make tall elements untriggerable. */
   amount?: number;
 }
 
@@ -90,7 +96,7 @@ export function BlurRevealElement({
   className,
   delay = 0,
   once = false,
-  amount = 0.25,
+  amount,
 }: BlurRevealElementProps) {
   const variants: Variants = {
     hidden: { filter: 'blur(8px)', opacity: 0, y: 24 },
@@ -98,12 +104,12 @@ export function BlurRevealElement({
       filter: 'blur(0px)',
       opacity: 1,
       y: 0,
-      transition: { duration: 1, delay, ease: EASE },
+      transition: { ...SPRING, delay },
     },
   };
 
   return (
-    <motion.div className={className} variants={variants} initial="hidden" whileInView="visible" viewport={{ once, amount }}>
+    <motion.div className={className} variants={variants} initial="hidden" whileInView="visible" viewport={amount === undefined ? { ...IN_VIEW, once } : { ...IN_VIEW, once, amount }}>
       {children}
     </motion.div>
   );

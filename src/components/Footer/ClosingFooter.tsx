@@ -1,11 +1,12 @@
 import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useLocalClock } from '../../hooks/useLocalClock';
 import { CONTACT_EMAIL, closingNarrative } from '../../data/siteContent';
 import { AnalogClock } from './AnalogClock';
 import { BlurRevealElement } from '../shared/BlurRevealElement';
 import twoLineLogo from '../../assets/rasira-2lines.svg';
 import './closingFooter.css';
+import { IN_VIEW, SPRING, SPRING_SECONDS } from '../../lib/motion';
 
 interface ClosingFooterProps {
   /** The glow, clock, meta row, and giant wordmark only make sense as
@@ -43,6 +44,30 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
   // scroll-linked and keeps the bottom dark, so the white wordmark can
   // never end up sitting on bare beige.
   const sunsetOpacity = useTransform(scrollYProgress, [0.05, 0.75], [0.35, 1]);
+
+  /* The wordmark's float needs its OWN scroll range. The footer progress
+     above is measured from the footer's top edge and completes once that
+     edge reaches the top of the viewport — but the wordmark sits near the
+     footer's bottom, so by the time it is on screen that value has long
+     since pinned at 1 and would drive nothing.
+     'start end' -> 'center center': 0 when the wordmark's top first enters
+     the bottom of the viewport, 1 when it reaches the middle. */
+  const brandRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: brandProgress } = useScroll({
+    target: brandRef,
+    offset: ['start end', 'center center'],
+  });
+  /* Spring-smoothed for the same reason as the page background: raw scroll
+     progress only updates when a scroll event fires, and those arrive in
+     wheel-sized chunks, so binding straight to it steps rather than
+     glides. */
+  const brandFloat = useSpring(brandProgress, {
+    duration: SPRING_SECONDS,
+    bounce: 0,
+    restDelta: 0.0002,
+  });
+  const brandY = useTransform(brandFloat, [0, 1], [90, 0]);
+  const brandScale = useTransform(brandFloat, [0, 1], [0.94, 1]);
 
   if (!showClock) {
     return (
@@ -86,8 +111,8 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
           className="closing-footer-meta"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: '-10% 0px' }}
-          transition={{ duration: 0.8 }}
+          viewport={IN_VIEW}
+          transition={SPRING}
         >
           <div className="closing-footer-meta-col closing-footer-meta-left">
             <p>{closingNarrative.line1}</p>
@@ -116,12 +141,27 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
          * be recolored with CSS `color`. Using the actual SVG rather than
          * approximating the letterforms means the "Foundati●n" dot styling
          * already baked into the asset just comes along for free. */}
+        {/* Opacity stays on the whileInView reveal while the float comes
+            from scroll — deliberately split rather than driving both off
+            scroll progress.
+
+            A scroll-derived value only advances while scroll and rAF
+            actually run, and this file already documents that failure
+            elsewhere. If opacity were scroll-bound, a frozen value would
+            leave the wordmark permanently invisible. Bound to a reveal, the
+            worst case is it simply animates in; the float is then free to
+            fail safe too, since a stuck y offset is inert rather than
+            broken. The two never collide: opacity is not a transform, so
+            Framer's animate prop and the style motion values below are
+            writing different properties. */}
         <motion.div
+          ref={brandRef}
           className="closing-footer-brand"
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: false, margin: '-10% 0px' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={IN_VIEW}
+          transition={SPRING}
+          style={{ y: brandY, scale: brandScale }}
         >
           <img src={twoLineLogo} alt="Rasira Foundation" className="closing-footer-brand-logo" />
         </motion.div>

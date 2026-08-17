@@ -1,75 +1,113 @@
-import { motion, useMotionTemplate, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion';
 import './pageBackground.css';
 
 /**
- * A single atmospheric wash. Positions are fractions of total page scroll.
+ * How long the background takes to catch up to the scroll position.
  *
- * `range` is four points, not two: fade in from → fully in → hold until →
- * gone. Splitting the hold out from the fades is what lets neighbouring
- * layers OVERLAP — each one is still fading out while the next is already
- * fading in, so there is never a scroll position where one layer hands
- * over to another in a single frame. That overlap is the buffer that
- * removes the snap.
+ * Deliberately NOT the shared SPRING_SECONDS the content reveals use, even
+ * though both happen to be springs. They are different kinds of thing: a
+ * reveal is a discrete animation with a start and an end, triggered once
+ * when an element enters view. This is a FOLLOWER — it never starts or
+ * finishes, it just trails a value that is itself changing continuously.
+ * Tying them to one constant would mean retuning how the text appears in
+ * order to change how closely the background tracks the scroll, which are
+ * unrelated decisions. Shorter than the reveal spring so this reads as
+ * tracking rather than lagging.
+ */
+const FOLLOW_SECONDS = 0.45;
+
+/**
+ * A single atmospheric wash.
  *
- * `from`/`to` are the radial's centre at scroll 0 and scroll 1. The centre
- * is interpolated continuously, so the gradient drifts across the viewport
- * as you scroll instead of sitting still and merely changing strength.
+ * `range` is four points: fade in from → fully in → hold until → gone. The
+ * two middle values are now equal or nearly so on every layer, which means
+ * there is effectively NO hold — opacity is rising or falling at every
+ * scroll position. Real plateaus were the reason the background could look
+ * frozen mid-section: between two triggers there was genuinely nothing
+ * changing. The four-point shape is kept because it is what lets
+ * neighbouring layers overlap, each still fading out while the next fades
+ * in.
+ *
+ * `y`, `scale` and `rotate` are the spatial motion: start/end pairs mapped
+ * across the whole page, so the shape physically drifts, expands and turns
+ * as you scroll rather than only changing strength.
+ *
+ * `float` is the ambient loop — a slow, time-based orbit that keeps the
+ * layer alive while the page is stationary.
  */
 interface WashLayer {
   id: string;
   range: [number, number, number, number];
   peak: number;
-  color: string;
-  size: string;
-  from: [string, string];
-  to: [string, string];
+  /** Painted once as a static CSS background; motion is all transform. */
+  background: string;
+  y: [string, string];
+  scale: [number, number];
+  rotate: [number, number];
+  float: { x: string[]; y: string[]; duration: number };
 }
 
 /**
+ * PEAK STRENGTHS ARE LOW ON PURPOSE — this is the constraint that governs
+ * this whole layer, not a matter of taste.
+ *
+ * The page is built from opaque panels that end at fixed document
+ * positions: .pillars-grid, the image wrap's fill, the footer's blocks.
+ * Any tint the ground carries is something those panels have an EDGE
+ * against, and because they scroll while the washes do not, that edge
+ * travels up the screen. Three separate rounds of "the background isn't
+ * smooth" all traced back to exactly this. If a section genuinely needs a
+ * visible colour of its own, it should paint it on ITSELF, where it can
+ * fade at its own edges.
+ *
  * Every layer is a TINT over the static base, never a replacement for it.
- *
- * That is a deliberate safety property, not a stylistic one. Scroll-derived
- * values only advance while scroll and rAF actually run, and this codebase
- * has already shipped a bug where a frozen one left the page's colour stuck
- * and broke contrast for whatever was on screen. Here, a frozen value means
- * a tint sits at whatever strength it had — the page underneath is still
- * the static page colour, so text contrast can never depend on the scroll
- * position being live.
- *
- * Ranges deliberately overlap, and the hold sections are kept short: dawn
- * is still fading out at 0.42 while depth has been fading in since 0.18,
- * and depth runs to 0.88 while dusk starts at 0.58. With the fades this
- * long and the holds this brief, almost every scroll position falls inside
- * at least one active ramp — so there is essentially no stretch of the page
- * where the background is static and then suddenly is not.
+ * That is a safety property: scroll-derived values only advance while
+ * scroll and rAF run, and this codebase has already shipped a bug where a
+ * frozen one left the page's colour stuck and broke contrast. Here a
+ * frozen value means a tint sits at some strength — the page underneath is
+ * still the static page colour, so text contrast never depends on scroll
+ * being live.
  */
 const LAYERS: WashLayer[] = [
   {
     id: 'dawn',
-    range: [0, 0, 0.1, 0.42],
-    peak: 0.5,
-    color: 'rgba(193, 208, 223, 0.5)',
-    size: '90vmax',
-    from: ['50%', '4%'],
-    to: ['38%', '26%'],
+    range: [0, 0, 0.06, 0.46],
+    peak: 0.16,
+    background:
+      'radial-gradient(circle at 50% 30%, rgba(193, 208, 223, 0.5) 0%, rgba(var(--color-page-rgb), 0) 68%)',
+    y: ['-24%', '24%'],
+    scale: [1, 1.5],
+    rotate: [0, 16],
+    float: { x: ['0%', '6%', '-4%', '0%'], y: ['0%', '-5%', '4%', '0%'], duration: 19 },
   },
   {
     id: 'depth',
-    range: [0.18, 0.45, 0.55, 0.88],
-    peak: 0.45,
-    color: 'rgba(211, 206, 194, 0.55)',
-    size: '100vmax',
-    from: ['62%', '30%'],
-    to: ['40%', '70%'],
+    range: [0.16, 0.5, 0.5, 0.9],
+    peak: 0.12,
+    background:
+      'radial-gradient(circle at 58% 45%, rgba(211, 206, 194, 0.55) 0%, rgba(var(--color-page-rgb), 0) 70%)',
+    y: ['-26%', '22%'],
+    scale: [1.05, 1.55],
+    rotate: [0, -19],
+    float: { x: ['0%', '-7%', '5%', '0%'], y: ['0%', '4%', '-6%', '0%'], duration: 26 },
   },
   {
     id: 'dusk',
-    range: [0.58, 0.92, 1, 1],
-    peak: 0.5,
-    color: 'rgba(233, 168, 120, 0.42)',
-    size: '110vmax',
-    from: ['34%', '80%'],
-    to: ['58%', '52%'],
+    range: [0.54, 1, 1, 1],
+    peak: 0.16,
+    background:
+      'radial-gradient(circle at 42% 62%, rgba(233, 168, 120, 0.42) 0%, rgba(var(--color-page-rgb), 0) 70%)',
+    y: ['-22%', '26%'],
+    scale: [1.1, 1.6],
+    rotate: [0, 13],
+    float: { x: ['0%', '5%', '-6%', '0%'], y: ['0%', '-6%', '3%', '0%'], duration: 23 },
   },
 ];
 
@@ -77,83 +115,93 @@ const LAYERS: WashLayer[] = [
  * One layer's own hooks. Split into a component rather than looped inside
  * the parent so the number of washes can change without breaking React's
  * rule that hook order stays stable across renders.
+ *
+ * TWO nested elements, and the split is required rather than tidy. Framer
+ * writes the whole `transform` property on any element it animates, so the
+ * scroll-driven y/scale/rotate and the ambient x/y loop cannot share a
+ * node — whichever wrote last would erase the other. Outer takes scroll,
+ * inner takes the idle orbit, and the browser composes the two.
  */
 function Wash({
   layer,
   progress,
   active,
+  still,
 }: {
   layer: WashLayer;
   progress: MotionValue<number>;
   active: boolean;
+  still: boolean;
 }) {
   const scrolled = useTransform(progress, layer.range, [0, layer.peak, layer.peak, 0]);
-  // Held at zero until the page's own content has mounted. Without this the
-  // washes are the first thing on screen — they need no data and no layout,
-  // so they paint while the hero is still resolving, and the atmosphere
-  // arrives before the thing it is supposed to be atmosphere FOR.
+  // Held at zero until the page's own content has mounted, so the
+  // atmosphere never paints ahead of the hero it belongs to.
   const opacity = useTransform(scrolled, (v) => (active ? v : 0));
-  const x = useTransform(progress, [0, 1], [layer.from[0], layer.to[0]]);
-  const y = useTransform(progress, [0, 1], [layer.from[1], layer.to[1]]);
 
-  // The gradient string itself is rebuilt from motion values every frame,
-  // which is what animates the radial's position. Ending on the page
-  // colour at zero alpha rather than `transparent` matters: browsers
-  // interpolate `transparent` through transparent BLACK, which would put a
-  // grey cast through the falloff.
-  const background = useMotionTemplate`radial-gradient(circle ${layer.size} at ${x} ${y}, ${layer.color} 0%, rgba(var(--color-page-rgb), 0) 70%)`;
+  const y = useTransform(progress, [0, 1], layer.y);
+  const scale = useTransform(progress, [0, 1], layer.scale);
+  const rotate = useTransform(progress, [0, 1], layer.rotate);
 
-  return <motion.div className="page-background-layer" style={{ background, opacity }} />;
+  return (
+    <motion.div className="page-background-layer" style={{ opacity, y, scale, rotate }}>
+      <motion.div
+        className="page-background-float"
+        style={{ background: layer.background }}
+        animate={still ? { x: '0%', y: '0%' } : { x: layer.float.x, y: layer.float.y }}
+        transition={
+          still
+            ? { duration: 0 }
+            : {
+                duration: layer.float.duration,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                // The keyframe arrays open and close on 0%, so the loop
+                // joins back onto itself with no jump at the seam.
+                times: [0, 0.33, 0.66, 1],
+              }
+        }
+      />
+    </motion.div>
+  );
 }
 
 /**
  * The page ground: a static base plus scroll-linked atmospheric washes.
  *
- * This replaces a discrete version that watched sections with an
- * IntersectionObserver and crossfaded between fixed values on a state
- * change. That approach could only ever step between states — the fade was
- * smooth, but it started when a boundary was crossed and ran on its own
- * clock, so it never corresponded to where you actually were on the page.
- * Driving opacity and gradient position straight off scrollYProgress means
- * the background is a continuous function of scroll position: scrub
- * backwards and it retraces exactly, stop halfway and it holds halfway.
- *
- * Opacity is still what animates, never the gradient property — gradients
- * are not interpolable, so stacking and fading remains the only approach
- * that does not snap.
+ * Motion here is transform-based, not paint-based. An earlier version
+ * interpolated the radial's own `circle at x% y%` through a motion
+ * template — that does move the gradient, but it re-rasterises it every
+ * frame, so the layer can never be handed to the compositor. Painting each
+ * gradient once and moving the element with y/scale/rotate is both the
+ * larger motion and the cheaper one.
  */
-interface PageBackgroundProps {
-  /** False until the main content has mounted; holds the washes at zero so
-   * they never paint ahead of the hero. The static base underneath is
-   * unaffected and always paints, so the page is never blank. */
-  active?: boolean;
-}
-
-export function PageBackground({ active = true }: PageBackgroundProps) {
+export function PageBackground({ active = true }: { active?: boolean }) {
   const { scrollYProgress } = useScroll();
+  /* The ambient orbit runs with no user input, so it is exactly the kind
+     of motion someone asking for less of it means. It has to be stopped
+     HERE rather than in CSS: the global reduced-motion rule in index.css
+     collapses animation-duration, which reaches CSS animations only —
+     this loop is driven by Framer in JavaScript and would sail straight
+     past it. The scroll-driven transforms are left alone; they only move
+     when the user does. */
+  const still = useReducedMotion() ?? false;
 
-  /* Spring-smoothed, and this is what actually makes it feel continuous.
+  /* Spring-smoothed, and this is what makes it feel continuous.
    *
-   * Raw scrollYProgress is already a continuous function of position, but
-   * it only UPDATES when a scroll event fires — and those arrive in
-   * chunks, not per pixel. A mouse wheel notch jumps ~100px in one event;
-   * a trackpad flick delivers coarse deltas too. Mapping opacity straight
-   * off that steps the background once per event, which reads as snapping
-   * even though nothing is state-driven.
+   * Raw scrollYProgress is a continuous function of position but only
+   * UPDATES when a scroll event fires, and those arrive in chunks — a
+   * wheel notch is ~100px in one event. Driving anything straight off it
+   * steps once per event, which reads as snapping even with no state
+   * involved. The spring keeps integrating every frame toward the latest
+   * value, so the background moves on every painted frame instead.
    *
-   * Passing it through a spring decouples the animation from the event
-   * rate: the spring keeps integrating every frame toward the latest
-   * scroll value, so the background moves on every painted frame rather
-   * than only on the ones where a scroll event happened. Low stiffness
-   * and high damping give a slow, non-springy follow — this should trail
-   * the scroll slightly, not bounce past it.
-   *
-   * restDelta is small because these drive opacity: the spring has to
-   * keep resolving well past the point where a positional animation would
-   * be considered settled, or the last fraction of a fade stops short. */
+   * restDelta is small because this drives opacity as well as transform:
+   * the spring has to keep resolving well past where a positional
+   * animation would be considered settled, or the last of a fade stops
+   * short of its endpoint. */
   const progress = useSpring(scrollYProgress, {
-    stiffness: 55,
-    damping: 26,
+    duration: FOLLOW_SECONDS,
+    bounce: 0,
     restDelta: 0.0002,
   });
 
@@ -161,7 +209,7 @@ export function PageBackground({ active = true }: PageBackgroundProps) {
     <div className="page-background" aria-hidden="true">
       <div className="page-background-base" />
       {LAYERS.map((layer) => (
-        <Wash key={layer.id} layer={layer} progress={progress} active={active} />
+        <Wash key={layer.id} layer={layer} progress={progress} active={active} still={still} />
       ))}
     </div>
   );

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { BlurRevealText } from './shared/BlurRevealElement';
 import { collabsSection } from '../data/siteContent';
 import './collabsSection.css';
+import { IN_VIEW, SPRING } from '../lib/motion';
 
 /** Closing CTA card, rendered by App.tsx inside .collabs-slot (see
  * collabsSection.css), which just centers it with page-standard padding —
@@ -20,8 +21,8 @@ export function CollabsSection() {
       className="collabs-card"
       initial={{ opacity: 0, filter: 'blur(8px)', y: 24 }}
       whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-      viewport={{ once: false, amount: 0.25 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      viewport={IN_VIEW}
+      transition={SPRING}
     >
       <BlurRevealText as="h2" className="collabs-heading">{collabsSection.heading}</BlurRevealText>
       <BlurRevealText className="collabs-body" delay={0.1}>{collabsSection.body}</BlurRevealText>

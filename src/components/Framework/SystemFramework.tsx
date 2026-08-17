@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { BlurRevealText } from '../shared/BlurRevealElement';
 import { systemFramework } from '../../data/siteContent';
 import './systemFramework.css';
+import { IN_VIEW, SPRING } from '../../lib/motion';
 
 interface SystemFrameworkProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -23,7 +24,7 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
     <motion.section
       className="system-framework"
       animate={{ opacity: heroDone ? 1 : 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      transition={SPRING}
       style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
     >
       <div className="framework-inner">
@@ -66,8 +67,8 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
                       className="framework-box"
                       initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
                       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      viewport={{ once: false, amount: 0.25 }}
-                      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
+                      viewport={IN_VIEW}
+                      transition={{ ...SPRING, delay }}
                     >
                       <div className="framework-box-body">
                         {/* Tag and step counter sit ABOVE the title — they

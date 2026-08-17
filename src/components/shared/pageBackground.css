@@ -32,20 +32,44 @@
   background: var(--color-cream);
 }
 
-/* will-change names BOTH properties Framer drives here. Opacity alone was
-   not enough once the gradient's centre became a motion value: without the
-   hint the compositor has no reason to promote these, and a full-viewport
-   radial repainting every frame is exactly the work this technique exists
-   to avoid. translateZ(0) forces the layer up front rather than leaving it
-   to a heuristic. */
+/* OVERSIZED, deliberately. These now scale to as much as 1.45 and rotate
+   up to 11deg, and a box that only covers the viewport would swing its own
+   corners into frame as it turns — a visible hard edge sweeping across the
+   page. 220% centred by the negative inset means the element's edges stay
+   well outside the viewport through the whole transform range — raised
+   from 190% when the y travel roughly doubled, so the margin still
+   outruns the drift.
+
+   will-change names both properties Framer drives on this node. The
+   gradient underneath is painted once and never changes, so with the hint
+   the compositor can promote this and every frame is a transform, not a
+   repaint — which is the entire reason the motion moved off the gradient's
+   own `circle at x% y%` and onto the element. */
 .page-background-layer {
   position: absolute;
-  inset: 0;
+  inset: -60%;
+  width: 220%;
+  height: 220%;
   will-change: opacity, transform;
-  transform: translateZ(0);
 }
 
-/* Nothing to disable for reduced motion: these are driven by scroll
-   position rather than by a timed animation, so they only ever move as
-   fast as the user themselves scrolls. There is no autonomous motion here
-   to suppress. */
+/* The ambient orbit lives on its own node because Framer owns the whole
+   `transform` property per element — the scroll-driven y/scale/rotate
+   above and this idle x/y cannot share one. This is also what paints the
+   gradient. */
+.page-background-float {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+/* No reduced-motion block here, and that is not an oversight.
+   The idle orbit IS autonomous motion and does need suppressing — but it
+   is driven by Framer in JavaScript, and the global
+   `animation-duration: 0.01ms` rule in index.css only reaches CSS
+   animations. It is switched off in PageBackground.tsx via
+   useReducedMotion() instead, which is the only thing that actually
+   reaches it.
+
+   The scroll-driven transforms need nothing either way: they only ever
+   move as fast as the user themselves scrolls. */
