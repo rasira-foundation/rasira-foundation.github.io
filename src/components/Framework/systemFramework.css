@@ -421,97 +421,52 @@
 }
 
 /* ── LOOP ──
-   A cycle, not a bracket. The first version was a U hanging under the
-   panel, which reads as "these things are grouped" rather than "the end
-   returns to the beginning". This one leaves the panel at the bottom
-   right, runs left underneath it, then rises OUTSIDE the left edge and
-   points back in at the first stage — a closed circuit you can follow.
+   The cycle track. Geometry lives in FrameworkLoop.tsx, which measures this
+   box and draws an SVG at 1:1 with its pixels; this only sizes and places
+   the box and styles the label.
 
-   Absolutely positioned so the rail can sit outside the panel on both
-   sides without widening anything. The 12px inset stays well inside
-   .system-framework's own 24px gutter, so the rail can never reach the
-   viewport edge even at the narrowest desktop width.
-
-   Borders on a box, not an SVG: a path spanning a fluid width needs
-   preserveAspectRatio="none", which stretches the stroke and any arrowhead
-   horizontally as the container grows. Borders scale with no distortion. */
+   Static in flow rather than absolutely positioned. The previous version
+   was absolute so its rails could sit outside the panel, which meant its
+   height had to be carved out of the card's padding and every end had to be
+   pinned by hand — two rounds of the rails floating short of the panel came
+   out of that. Occupying real layout means the track simply follows the
+   diagram and cannot drift from it. */
 .framework-loop {
-  position: absolute;
-  left: -12px;
-  right: -12px;
-  /* Starts level with the split column's own divider, so the rail returns
-     to the same height the connectors sit at rather than to an arbitrary
-     point on the panel's edge. */
-  top: 46%;
-  bottom: 6px;
-  border-left: 1px dashed rgba(20, 18, 15, 0.3);
-  border-bottom: 1px dashed rgba(20, 18, 15, 0.3);
-  pointer-events: none;
+  position: relative;
+  height: 58px;
+  margin-top: 0;
 }
 
-/* The right-hand rail, drawn only for the stretch BELOW the panel — it
-   leaves from the bottom edge rather than running up the side, so the
-   circuit reads as exiting the last stage. A pseudo-element because one
-   box cannot draw a border on part of a side.
-
-   `top: 0` rather than a fixed height. It was 34px against a 40px gap, so
-   the rail stopped 6px short and the circuit visibly did not touch the
-   panel it was supposed to leave from — the loop read as a detached
-   dashed box. Anchoring both ends means it spans the gap exactly, whatever
-   that gap is set to. */
-.framework-loop::after {
-  content: '';
-  position: absolute;
-  right: -1px;
-  top: 0;
-  bottom: 0;
-  border-right: 1px dashed rgba(20, 18, 15, 0.3);
+.framework-loop-svg {
+  display: block;
 }
 
-/* Solid triangle rather than a text glyph. An arrow character is subject
-   to the font's own metrics and optical weight, and at this size it read
-   as a stray mark; a border triangle is exactly the shape and weight
-   intended. Points RIGHT, back into the first stage.
-
-   Its TIP lands on the panel edge rather than near it. The rail sits 12px
-   outside the panel, so a 12px-wide triangle starting at the rail closes
-   that distance exactly — previously it stopped ~7px short and the arrow
-   floated in the margin, pointing at nothing. Sized in one place: change
-   the rail inset and this has to change with it. */
-.framework-loop-arrow {
-  position: absolute;
-  left: 0;
-  top: -5px;
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 12px solid rgba(20, 18, 15, 0.45);
-}
-
-/* Sits ON the bottom rule with the page colour behind it, so the dashes
+/* Sits ON the bottom run with the page colour behind it, so the dashes
    appear to break around the label rather than run beneath it. */
 .framework-loop-label {
   position: absolute;
   left: 50%;
-  bottom: -8px;
+  bottom: -7px;
   transform: translateX(-50%);
-  padding: 0 12px;
+  padding: 0 14px;
   background: var(--color-cream);
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   color: #4a4642;
   white-space: nowrap;
 }
 
-/* Hidden on the swipe deck. The loop describes a relationship between the
-   two ENDS of a continuous row; once the stages become separately
-   scrolling cards there are no ends on screen together for it to join.
-   The bidirectional connector into Outcomes still carries the
-   relationship there. */
-@media (max-width: 860px) {
+/* The compact track is a short vertical stub, so the label belongs beside
+   it rather than across it — centred under the deck instead. */
+@media (max-width: 767px) {
   .framework-loop {
-    display: none;
+    height: 46px;
+  }
+
+  .framework-loop-label {
+    bottom: -18px;
+    padding: 0;
+    background: none;
   }
 }

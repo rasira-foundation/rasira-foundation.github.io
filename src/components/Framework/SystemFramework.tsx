@@ -4,6 +4,7 @@ import { systemFramework } from '../../data/siteContent';
 import './systemFramework.css';
 import { IN_VIEW, SPRING } from '../../lib/motion';
 import { SectionHeading } from '../shared/SectionHeading';
+import { FrameworkLoop } from './FrameworkLoop';
 
 interface SystemFrameworkProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -128,19 +129,7 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
             ))}
           </div>
 
-          {/* The loop back to the start. Drawn with BORDERS on a plain box
-              rather than an SVG path, which is what the earlier version
-              used: an SVG spanning a fluid width needs
-              preserveAspectRatio="none", and that distorts the stroke and
-              any arrow marker horizontally as the container resizes.
-              Three borders give the same bracket at any width with no
-              distortion at all, and the label sits on the line with the
-              page colour behind it so the rule appears to break around it
-              rather than run underneath. */}
-          <div className="framework-loop" aria-hidden="true">
-            <span className="framework-loop-arrow">↑</span>
-            <span className="framework-loop-label">{systemFramework.loopLabel}</span>
-          </div>
+          <FrameworkLoop label={systemFramework.loopLabel} />
         </div>
 
         <p className="framework-note">{systemFramework.note}</p>

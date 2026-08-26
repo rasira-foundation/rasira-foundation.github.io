@@ -93,7 +93,12 @@
   font-family: var(--font-mono);
   font-size: 16px;
   line-height: 1.6;
-  max-width: 600px;
+  /* Sized so the current copy sets in exactly two lines. At 600px the last
+     word wrapped alone onto a third — the second line needs ~63 monospace
+     characters and 600px holds about 62. Still well short of .hero-copy's
+     own 1180px container, so this stays a narrow supporting column rather
+     than running the full width. */
+  max-width: 680px;
   /* The paragraph's own ink, moved here off .hero-copy-word — that class
      is now shared with the tag line, which is deliberately lighter. Left
      on the word span it would have overridden the tags' colour, since the

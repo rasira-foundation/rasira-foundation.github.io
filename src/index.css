@@ -16,6 +16,10 @@
   --color-ink-soft: rgba(20, 18, 15, 0.62);
   --color-ink-faint: rgba(20, 18, 15, 0.38);
   --color-line: rgba(20, 18, 15, 0.14);
+  /* The framework cycle track and its arrowhead. Its own token because the
+     SVG needs one value for both stroke and fill, and it sits a step
+     stronger than --color-line so a dashed rule still reads at 1px. */
+  --color-loop-track: rgba(20, 18, 15, 0.32);
 
   --color-dawn-orange: #e98a52;
 
