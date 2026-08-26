@@ -13,9 +13,13 @@
    the page ground carries a scroll-linked wash across this part of the
    page (the `depth` layer in PageBackground). Keeping a second tint here
    would stack two of them over the same region. */
+/* 50px of top padding separates this section's heading from the pillars
+   panel above it. The two were butting up against each other, so the
+   heading read as a caption belonging to that panel rather than as the
+   start of a new section. */
 .system-framework {
   background: transparent;
-  padding: 0 24px 8px;
+  padding: 50px 24px 8px;
 }
 
 .framework-inner {
@@ -23,7 +27,21 @@
   margin: 0 auto;
 }
 
+/* Positioning context for the loop rail, which is absolutely positioned so
+   it can run OUTSIDE the diagram's left and right edges without taking up
+   layout width of its own.
+
+   The 46px gap below the diagram is PADDING here rather than margin on the
+   diagram itself, and that distinction is load-bearing. As a margin on the
+   last child it collapsed straight out through this box's bottom edge, so
+   the card measured no taller than the diagram — and the loop, positioned
+   against the card's bottom, drew its horizontal run 6px ABOVE the panel
+   instead of below it, i.e. hidden behind the panel. Padding cannot
+   collapse, so the gap is genuinely part of this box and the rail has
+   somewhere to sit. */
 .framework-card {
+  position: relative;
+  padding-bottom: 46px;
   margin-bottom: 24px;
 }
 
@@ -43,7 +61,6 @@
      its own column wider than the others. */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: stretch;
-  margin-bottom: 40px;
   /* Light terracotta, replacing the neutral sand #e7e1d5. The whole panel
      now sits in the warm family rather than being a grey-beige block with
      one warm column in it. Text is untouched and still clears easily:
@@ -400,5 +417,101 @@
   .framework-diagram {
     margin-left: -16px;
     margin-right: -16px;
+  }
+}
+
+/* ── LOOP ──
+   A cycle, not a bracket. The first version was a U hanging under the
+   panel, which reads as "these things are grouped" rather than "the end
+   returns to the beginning". This one leaves the panel at the bottom
+   right, runs left underneath it, then rises OUTSIDE the left edge and
+   points back in at the first stage — a closed circuit you can follow.
+
+   Absolutely positioned so the rail can sit outside the panel on both
+   sides without widening anything. The 12px inset stays well inside
+   .system-framework's own 24px gutter, so the rail can never reach the
+   viewport edge even at the narrowest desktop width.
+
+   Borders on a box, not an SVG: a path spanning a fluid width needs
+   preserveAspectRatio="none", which stretches the stroke and any arrowhead
+   horizontally as the container grows. Borders scale with no distortion. */
+.framework-loop {
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  /* Starts level with the split column's own divider, so the rail returns
+     to the same height the connectors sit at rather than to an arbitrary
+     point on the panel's edge. */
+  top: 46%;
+  bottom: 6px;
+  border-left: 1px dashed rgba(20, 18, 15, 0.3);
+  border-bottom: 1px dashed rgba(20, 18, 15, 0.3);
+  pointer-events: none;
+}
+
+/* The right-hand rail, drawn only for the stretch BELOW the panel — it
+   leaves from the bottom edge rather than running up the side, so the
+   circuit reads as exiting the last stage. A pseudo-element because one
+   box cannot draw a border on part of a side.
+
+   `top: 0` rather than a fixed height. It was 34px against a 40px gap, so
+   the rail stopped 6px short and the circuit visibly did not touch the
+   panel it was supposed to leave from — the loop read as a detached
+   dashed box. Anchoring both ends means it spans the gap exactly, whatever
+   that gap is set to. */
+.framework-loop::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 0;
+  bottom: 0;
+  border-right: 1px dashed rgba(20, 18, 15, 0.3);
+}
+
+/* Solid triangle rather than a text glyph. An arrow character is subject
+   to the font's own metrics and optical weight, and at this size it read
+   as a stray mark; a border triangle is exactly the shape and weight
+   intended. Points RIGHT, back into the first stage.
+
+   Its TIP lands on the panel edge rather than near it. The rail sits 12px
+   outside the panel, so a 12px-wide triangle starting at the rail closes
+   that distance exactly — previously it stopped ~7px short and the arrow
+   floated in the margin, pointing at nothing. Sized in one place: change
+   the rail inset and this has to change with it. */
+.framework-loop-arrow {
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 12px solid rgba(20, 18, 15, 0.45);
+}
+
+/* Sits ON the bottom rule with the page colour behind it, so the dashes
+   appear to break around the label rather than run beneath it. */
+.framework-loop-label {
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%);
+  padding: 0 12px;
+  background: var(--color-cream);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #4a4642;
+  white-space: nowrap;
+}
+
+/* Hidden on the swipe deck. The loop describes a relationship between the
+   two ENDS of a continuous row; once the stages become separately
+   scrolling cards there are no ends on screen together for it to join.
+   The bidirectional connector into Outcomes still carries the
+   relationship there. */
+@media (max-width: 860px) {
+  .framework-loop {
+    display: none;
   }
 }

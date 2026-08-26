@@ -53,12 +53,16 @@
   color: var(--color-ink-soft);
 }
 
-/* Same max-width + horizontal padding as .article-hub / .article-hub-inner
-   (see articleGrid.css) — matching that container formula exactly, not
-   just approximating it, is what makes this text's left edge land flush
-   with the article cards' own left edge below. */
+/* max-width is the container PLUS its gutters, not the container itself.
+   Everything else on the page (.article-hub, .system-framework) puts the
+   24px gutter on an outer full-width element and caps an inner box at
+   --container-max, so content begins exactly at the container edge. This
+   block instead capped ITSELF at --container-max and padded inward, so its
+   text started 24px further in than every section below it — the hero sat
+   visibly inset from "Story From the Field". Adding the gutters to the cap
+   makes the content edge land on the container edge. */
 .hero-copy {
-  max-width: var(--container-max);
+  max-width: calc(var(--container-max) + 48px);
   margin: 50px auto 0;
   text-align: left;
   padding: 3.5vh 24px 4vh;

@@ -8,7 +8,7 @@ export const heroIntro = {
   // already carries the name, so repeating it here would just be noise.
   title: 'Helping young people imagine who they could become',
   paragraph:
-    'A research-and-practice collective working on how young people understand themselves, imagine their futures, and build the confidence to move toward them.',
+    'Human capital potential starts at believing what is possible. We are a research-and-practice collective working on that layer.',
   tags: ['anthropology', 'workforce development', 'field-based program design'],
 };
 
@@ -35,9 +35,11 @@ export const frameworkBridgeText = 'Here is the system logic behind that work';
 
 export const systemFramework = {
   eyebrow: 'Public Framework',
-  title: 'How the work is structured',
-  subtitle:
-    'The system logic communicates how we think about the work — without disclosing proprietary dimensions, scoring models, or decision rules.',
+  title: 'How We Think About the Work',
+  subtitle: 'Connects "what we do" to "how we think".',
+  /* Sits on the loop line beneath the diagram, breaking the dashed rule so
+     the line reads as labelled rather than merely decorative. */
+  loopLabel: 'Outcomes inform the next cycle',
   /* Columns, not a flat list of boxes. The first stage holds TWO stacked
    * nodes (01a Person Profile / 01b Opportunity Context) while the rest
    * hold one each — so the diagram is four columns across but five nodes
@@ -102,6 +104,11 @@ export const systemFramework = {
     },
   ],
   note: 'This public framework communicates the system logic without disclosing proprietary dimensions, items, scoring models, weights, or decision rules.',
+};
+
+export const articleSection = {
+  title: 'Story From the Field',
+  subtitle: 'Toolkits, observations, and field notes from our programs and research.',
 };
 
 export const collabsSection = {

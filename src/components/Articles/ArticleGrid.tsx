@@ -4,6 +4,8 @@ import type { ArticleCategory } from '../../lib/sheets';
 import { useArticles } from './useArticles';
 import { ArticleCard } from './ArticleCard';
 import { useDelayedFlag } from '../../hooks/useDelayedFlag';
+import { SectionHeading } from '../shared/SectionHeading';
+import { articleSection } from '../../data/siteContent';
 import './articleGrid.css';
 
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
@@ -196,6 +198,8 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
             : { scale: depthScale, opacity: depthOpacity }
         }
       >
+        <SectionHeading title={articleSection.title} subtitle={articleSection.subtitle} />
+
         <nav className="article-tabs">
           {TABS.map((tab) => (
             <button

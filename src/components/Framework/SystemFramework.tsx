@@ -3,6 +3,7 @@ import { BlurRevealText } from '../shared/BlurRevealElement';
 import { systemFramework } from '../../data/siteContent';
 import './systemFramework.css';
 import { IN_VIEW, SPRING } from '../../lib/motion';
+import { SectionHeading } from '../shared/SectionHeading';
 
 interface SystemFrameworkProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -33,6 +34,8 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
       style={{ pointerEvents: heroDone ? 'auto' : 'none' }}
     >
       <div className="framework-inner">
+        <SectionHeading title={systemFramework.title} subtitle={systemFramework.subtitle} />
+
         {/* Just a spacing wrapper now — each .framework-box below carries
             its own explicit background and text color, so nothing here
             needs to guarantee contrast against ProductionGradient3D
@@ -125,6 +128,19 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
             ))}
           </div>
 
+          {/* The loop back to the start. Drawn with BORDERS on a plain box
+              rather than an SVG path, which is what the earlier version
+              used: an SVG spanning a fluid width needs
+              preserveAspectRatio="none", and that distorts the stroke and
+              any arrow marker horizontally as the container resizes.
+              Three borders give the same bracket at any width with no
+              distortion at all, and the label sits on the line with the
+              page colour behind it so the rule appears to break around it
+              rather than run underneath. */}
+          <div className="framework-loop" aria-hidden="true">
+            <span className="framework-loop-arrow">↑</span>
+            <span className="framework-loop-label">{systemFramework.loopLabel}</span>
+          </div>
         </div>
 
         <p className="framework-note">{systemFramework.note}</p>

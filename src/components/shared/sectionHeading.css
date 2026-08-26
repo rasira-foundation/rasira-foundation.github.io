@@ -1,0 +1,56 @@
+/* Base AND mobile sizes both live in this file, deliberately — unlike the
+   older sections whose mobile sizes sit in index.css's shared block. That
+   block exists to work around a specificity trap: index.css is bundled
+   first, so a component's own base size would otherwise win over it. A
+   component that declares both in one file has no such conflict, and
+   keeping them together means the scale is readable in one place. */
+.section-heading {
+  max-width: var(--container-max);
+  margin: 0 auto 36px;
+  width: 100%;
+}
+
+.section-heading-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  /* The pair is one block: the title sits close to its subtitle and the
+     whole thing is separated from the content below, rather than the two
+     lines being spaced apart from each other. */
+  margin: 0 0 10px;
+}
+
+/* .section-heading-rule was removed — see the note in SectionHeading.tsx. */
+
+.section-heading-subtitle {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.6;
+  color: #383330;
+  /* No max-width. It was 46ch, which broke the article subtitle across two
+     lines mid-phrase; both subtitles are short enough to sit on one line
+     inside the container, and one line is what makes them read as a
+     standfirst rather than a paragraph. */
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .section-heading {
+    margin-bottom: 24px;
+  }
+
+  /* Matches the section-heading step in the shared mobile scale. */
+  .section-heading-title {
+    font-size: clamp(20px, 5vw, 24px);
+    line-height: 1.25;
+  }
+
+  /* 15px, one below the serif — same reasoning as the rest of the mobile
+     mono body copy: Plex Mono reads larger than the serif at a matched
+     size. */
+  .section-heading-subtitle {
+    font-size: 15px;
+  }
+}
