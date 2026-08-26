@@ -407,8 +407,15 @@
 }
 
 @media (max-width: 640px) {
+  /* 30px of top padding, not the 0 this used to carry. Desktop uses 50px
+     to keep this heading from reading as a caption belonging to the
+     pillars panel above it; at phone width that separation had been
+     zeroed entirely, so "How We Think About the Work" sat hard against
+     the panel's bottom edge. 30px rather than the full 50 because the
+     pillars section already contributes 32px of its own bottom padding
+     at this breakpoint. */
   .system-framework {
-    padding: 0 16px 48px;
+    padding: 30px 16px 48px;
   }
 
   /* The full-bleed margin has to track the section's padding, which drops
