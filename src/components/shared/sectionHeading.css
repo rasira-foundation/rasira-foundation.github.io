@@ -22,6 +22,15 @@
   margin: 0 0 10px;
 }
 
+/* With no subtitle the 10px above is separating the title from nothing —
+   it just adds to whatever gap the consumer already sets. Grid and flex
+   items do not collapse margins with their children, so on the pillars
+   panel it really did stack on top of the row gap rather than folding
+   into it. */
+.section-heading-title:last-child {
+  margin-bottom: 0;
+}
+
 /* .section-heading-rule was removed — see the note in SectionHeading.tsx. */
 
 .section-heading-subtitle {

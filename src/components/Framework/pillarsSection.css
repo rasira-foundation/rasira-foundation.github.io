@@ -146,6 +146,21 @@
   gap: 40px;
 }
 
+/* The panel's heading is a grid child, so it has to be told to span the
+   full row — left to itself it would take the first column and shove the
+   three pillars along by one, dropping the last off the grid entirely.
+
+   margin-bottom is zeroed because the grid's own 40px row gap already
+   separates the heading from the columns; the component's default 36px
+   would stack on top of that. Also drops the max-width the shared
+   component carries for its normal use above a section — as a grid item
+   it should simply fill the track it spans. */
+.pillars-grid > .section-heading {
+  grid-column: 1 / -1;
+  max-width: none;
+  margin-bottom: 0;
+}
+
 .pillar-block {
   padding-right: 40px;
   border-right: 1px solid var(--color-border-neutral);

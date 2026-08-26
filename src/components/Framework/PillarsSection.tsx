@@ -1,10 +1,11 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { BlurRevealText } from '../shared/BlurRevealElement';
-import { pillars } from '../../data/siteContent';
+import { pillars, pillarsSection } from '../../data/siteContent';
 import pillarsImage from '../../assets/photos/pillars-torn-classroom.png';
 import './pillarsSection.css';
 import { IN_VIEW, SPRING } from '../../lib/motion';
+import { SectionHeading } from '../shared/SectionHeading';
 
 interface PillarsSectionProps {
   /** Stays hidden until the splash + hero intro sequence has fully
@@ -59,6 +60,14 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
       </div>
 
       <div className="pillars-grid" style={{ pointerEvents: heroDone ? 'auto' : 'none' }}>
+        {/* Inside the panel, not above it. Every other section puts its
+            heading before the box it introduces, but this panel is dragged
+            up over the classroom photo by a heavy negative margin — a
+            heading placed before it would sit on the photograph rather
+            than on the page. As a grid child it spans all three columns
+            (see .pillars-grid > .section-heading). */}
+        <SectionHeading title={pillarsSection.title} />
+
         {pillars.map((pillar, index) => (
           <motion.div
             key={pillar.label}

@@ -12,13 +12,21 @@ export const heroIntro = {
   tags: ['anthropology', 'workforce development', 'field-based program design'],
 };
 
+/* Heads the three-column panel. Sits INSIDE that panel rather than above
+   it like the other two section headings, because the panel is pulled up
+   over the classroom photo by a large negative margin — a heading placed
+   before it would land on the photograph. */
+export const pillarsSection = {
+  title: 'How We Work',
+};
+
 export const pillars: Array<{ label: string; items?: string[]; body?: string }> = [
   {
-    label: 'We aim to help young people',
+    label: 'We help young people',
     items: [
       'Identify strengths',
-      'Practice real-world tasks before making high-stakes choices',
       'Build confidence through evidence',
+      'Make decisions based on fit, not just expectation',
     ],
   },
   {
@@ -27,7 +35,7 @@ export const pillars: Array<{ label: string; items?: string[]; body?: string }> 
   },
   {
     label: 'We design programs with community partners',
-    body: 'for young people the labor market often overlooks: rural youth, first-generation jobseekers, and young people without strong credentials.',
+    body: 'for young people the labor market often overlooks such as rural youth, first-generation jobseekers, and young people without strong credentials.',
   },
 ];
 
