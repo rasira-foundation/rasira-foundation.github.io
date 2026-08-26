@@ -136,7 +136,20 @@
   z-index: 2;
   width: calc(100% - 48px);
   max-width: var(--container-max);
-  margin: -160px auto 0;
+  /* No negative pull any more — .pillars-heading above owns it, and the
+     gap to the panel is the heading's own 36px bottom margin.
+
+     The pull is also SMALLER than the -160px this used to be, and that is
+     forced rather than a preference. Measured across the scroll range, the
+     clear band between the photo's torn edge and the panel's top swings
+     from -52px to +103px as the parallax drifts the image, so there is no
+     stable strip above the panel for a heading to sit in. -80px on the
+     heading puts it about 20px below the tear's lowest position at every
+     scroll offset. The cost is that the panel overlaps the photo's wrapper
+     by ~10px instead of 160px; what is lost is overlap with the wrapper's
+     TRANSPARENT tail, not with the visible photograph, and the torn edge
+     now reads in full above the heading the way it already did on phones. */
+  margin: 0 auto;
   padding: 56px 40px 48px;
   background: var(--color-cream);
   border: 1px solid var(--color-border-neutral);
@@ -146,19 +159,28 @@
   gap: 40px;
 }
 
-/* The panel's heading is a grid child, so it has to be told to span the
-   full row — left to itself it would take the first column and shove the
-   three pillars along by one, dropping the last off the grid entirely.
+/* The section heading, ABOVE the panel rather than inside it.
 
-   margin-bottom is zeroed because the grid's own 40px row gap already
-   separates the heading from the columns; the component's default 36px
-   would stack on top of that. Also drops the max-width the shared
-   component carries for its normal use above a section — as a grid item
-   it should simply fill the track it spans. */
-.pillars-grid > .section-heading {
-  grid-column: 1 / -1;
-  max-width: none;
-  margin-bottom: 0;
+   Deliberately the same width expression as .pillars-grid below, because
+   that is what makes "How We Work" share a left edge with "How We Think
+   About the Work": the panel and .framework-inner already resolve to the
+   same box, so anchoring the heading to the panel's OUTER edge (not its
+   40px-padded interior) lines the two headings up at every width.
+
+   This element now carries the negative margin that used to sit on the
+   panel — it is the first thing after the photo, so it is what has to be
+   pulled up. See the note on .pillars-grid for why the pull is smaller
+   than the 160px it replaces.
+
+   z-index 2 to match the panel: the photo's wrapper is z-index 0 within
+   this section, and without its own stacking position the heading would
+   be painted over by the image. */
+.pillars-heading {
+  position: relative;
+  z-index: 2;
+  width: calc(100% - 48px);
+  max-width: var(--container-max);
+  margin: -80px auto 0;
 }
 
 .pillar-block {
@@ -306,10 +328,21 @@ ul.pillar-body {
     min-height: 420px;
   }
 
-  /* The grid used to be pulled up under the tear; keep a smaller lift so
-     it still tucks under the torn edge without covering the figures. */
+  /* The lift moves to the heading, which is now the first element after
+     the photo.
+
+     It must be at least (heading height + the heading's 36px bottom
+     margin) or the panel stops reaching the photo wrapper's bottom edge
+     and leaves a transparent strip between them — and the article hub's
+     sticky See All button scrolls straight through that strip as a dark
+     bar. The wrapper's fill and the panel's fill are the only two opaque
+     things here, so they have to touch. */
+  .pillars-heading {
+    margin-top: -72px;
+  }
+
   .pillars-grid {
-    margin-top: -80px;
+    margin-top: 0;
   }
 }
 
@@ -322,9 +355,18 @@ ul.pillar-body {
      breakpoint so the two panels stay flush with each other. Expressed as
      a width with auto margins rather than as side margins, so it keeps
      centring the same way the base rule does. */
+  /* Width tracks the panel's so the two keep a common left edge, and with
+     it .system-framework's 16px gutter — all three left edges line up. */
+  .pillars-heading {
+    width: calc(100% - 32px);
+    /* Same constraint as the 860 block, with this breakpoint's smaller
+       heading (20px) and its 24px bottom margin. */
+    margin-top: -56px;
+  }
+
   .pillars-grid {
     width: calc(100% - 32px);
-    margin: -60px auto 0;
+    margin: 0 auto;
     padding: 32px 20px 28px;
   }
 }

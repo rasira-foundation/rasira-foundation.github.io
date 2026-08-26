@@ -59,15 +59,16 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
         <motion.img src={pillarsImage} alt="" className="pillars-image" style={{ y: imageY, scale: 1.1 }} />
       </div>
 
-      <div className="pillars-grid" style={{ pointerEvents: heroDone ? 'auto' : 'none' }}>
-        {/* Inside the panel, not above it. Every other section puts its
-            heading before the box it introduces, but this panel is dragged
-            up over the classroom photo by a heavy negative margin — a
-            heading placed before it would sit on the photograph rather
-            than on the page. As a grid child it spans all three columns
-            (see .pillars-grid > .section-heading). */}
+      {/* Outside the panel and above it, matching how every other section
+          heads itself. Its box is the panel's OUTER box, not the padded
+          interior — that is what puts "How We Work" on the same left edge
+          as "How We Think About the Work" below, since the panel and
+          .framework-inner already resolve to the same width. */}
+      <div className="pillars-heading">
         <SectionHeading title={pillarsSection.title} />
+      </div>
 
+      <div className="pillars-grid" style={{ pointerEvents: heroDone ? 'auto' : 'none' }}>
         {pillars.map((pillar, index) => (
           <motion.div
             key={pillar.label}
