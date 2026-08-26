@@ -27,21 +27,21 @@
   margin: 0 auto;
 }
 
-/* Positioning context for the loop rail, which is absolutely positioned so
-   it can run OUTSIDE the diagram's left and right edges without taking up
-   layout width of its own.
+/* A transparent wrapper — the terracotta panel is .framework-diagram, not
+   this. Worth stating because it is easy to measure the loop against this
+   box and conclude the track is floating off the panel when it is not.
 
-   The 46px gap below the diagram is PADDING here rather than margin on the
-   diagram itself, and that distinction is load-bearing. As a margin on the
-   last child it collapsed straight out through this box's bottom edge, so
-   the card measured no taller than the diagram — and the loop, positioned
-   against the card's bottom, drew its horizontal run 6px ABOVE the panel
-   instead of below it, i.e. hidden behind the panel. Padding cannot
-   collapse, so the gap is genuinely part of this box and the rail has
-   somewhere to sit. */
+   No padding-bottom any more. It used to reserve 46px for the loop, which
+   was absolutely positioned and so took no layout height of its own. The
+   loop is static in flow now and occupies that space itself, which made
+   the reservation a second, empty 46px stacked under the track — pushing
+   the disclaimer note 70px down for no reason. The old value is also why
+   this had to be padding rather than margin: as a margin on the last child
+   it collapsed out through this box's bottom edge, leaving the card no
+   taller than the diagram and the loop drawing its horizontal run behind
+   the panel. Neither problem exists once the loop carries its own height. */
 .framework-card {
   position: relative;
-  padding-bottom: 46px;
   margin-bottom: 24px;
 }
 
