@@ -83,18 +83,30 @@
      survive this artwork, and reusing it would have leaked the article
      through the top.
 
-     The tail fades out over the last 10% rather than ending opaque. This
-     wrapper is full-bleed, so a hard bottom edge draws a line right across
-     the page where the fill stops and the ground resumes — visible as soon
-     as the ground carries any tint at all, and it travels as you scroll.
-     .pillars-grid overlaps this region with its own fill, so fading here
-     exposes nothing. */
+     The tail fades out rather than ending opaque. This wrapper is
+     full-bleed, so a hard bottom edge draws a line right across the page
+     where the fill stops and the ground resumes — visible as soon as the
+     ground carries any tint at all, and it travels as you scroll.
+
+     The fade is 24 PIXELS, not the 10% it used to be, and both halves of
+     that matter. Fixed length: this wrapper is full-bleed with a fixed
+     aspect ratio, so its height grows with viewport width and a percentage
+     fade grows with it — 82px at 1600px wide, more on a large display —
+     while whatever has to cover the fade is measured in px. Short: the
+     fade is TRANSLUCENT, and the only thing behind it is the article hub,
+     so every pixel of it that .pillars-grid does not cover is a strip the
+     article cards show through. That is a real regression this file
+     already caused once: when the panel gave up its -160px pull so the
+     heading could sit outside it, the panel stopped reaching the fade and
+     71px of it went bare, leaking a card and two arrows across the band
+     beside "How We Work". 24px is short enough for the heading to clear
+     the torn edge and still leave the panel covering the fade entirely. */
   background: linear-gradient(
     to bottom,
     rgba(var(--color-page-rgb), 0) 0%,
     rgba(var(--color-page-rgb), 0) 42%,
     var(--color-cream) 42%,
-    var(--color-cream) 90%,
+    var(--color-cream) calc(100% - 24px),
     rgba(var(--color-page-rgb), 0) 100%
   );
 }
@@ -180,7 +192,14 @@
   z-index: 2;
   width: calc(100% - 48px);
   max-width: var(--container-max);
-  margin: -80px auto 0;
+  /* -96px is a floor, not a preference: it must be at least the heading's
+     height (34) plus its bottom margin (36) plus the wrapper's 24px bottom
+     fade, or .pillars-grid stops covering that fade and the article hub
+     leaks through it. The 2px over the 94 minimum is slack. Raising this
+     number moves the heading toward the photo's torn edge, which it must
+     stay below at every scroll offset — measured clearance is 27px, so
+     there is not much room in the other direction either. */
+  margin: -96px auto 0;
 }
 
 .pillar-block {
