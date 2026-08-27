@@ -36,9 +36,10 @@
   padding-top: 24px;
 }
 
-/* Each label hugs the card below it; the second pair gets the breathing
-   room that the old header row's margin used to provide. */
-.partner-donation-label--donation {
+/* Each label hugs the card below it; the SECOND pair in the stack gets the
+   breathing room the old header row's margin used to provide. That is the
+   partner pair now, since Direct Support leads. */
+.partner-donation-label--partner {
   margin-top: 28px;
 }
 
@@ -55,20 +56,26 @@
   .partner-donation-label {
     grid-row: 1;
   }
-  .partner-donation-label--partner {
-    grid-column: 1 / span 7;
-  }
+  /* Direct Support takes the left, Partners the right. Each keeps its own
+     width rather than swapping slots as well as sides: the donation card is
+     a compact dark block and the partner card carries a logo and two
+     paragraphs, so stretching the first into the wider slot would change
+     what each card is, not just where it sits. */
   .partner-donation-label--donation {
-    grid-column: 8 / span 5;
+    grid-column: 1 / span 5;
     margin-top: 0;
   }
-  .partner-card {
-    grid-row: 2;
-    grid-column: 1 / span 7;
+  .partner-donation-label--partner {
+    grid-column: 6 / span 7;
+    margin-top: 0;
   }
   .donation-card {
     grid-row: 2;
-    grid-column: 8 / span 5;
+    grid-column: 1 / span 5;
+  }
+  .partner-card {
+    grid-row: 2;
+    grid-column: 6 / span 7;
   }
 }
 

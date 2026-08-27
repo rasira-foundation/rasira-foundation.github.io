@@ -169,12 +169,60 @@
    last row (e.g. one lone card) never paints a border or fill into the
    empty columns beside it, since there's no shared gap-background there
    to show through. Both edges use the same token/weight throughout. */
+/* The frame lives on the PANEL, not the grid, so the heading sits inside
+   it as a title bar. The collapse scheme is otherwise unchanged: this draws
+   the top and left edges, each card draws its own right and bottom, and the
+   rule under the heading closes the title bar off from the first row. Moving
+   these two borders rather than adding a second set is what avoids doubling
+   any line.
+
+   --panel-rule recolours EVERY line in this panel, not only the outer
+   frame, and that is deliberate. The outer edge is not one element's
+   border: the top and left come from this box while the right and bottom
+   come from whichever cards happen to sit at the edge. Colouring only this
+   box would give an orange top and left against a grey right and bottom.
+   Recolouring the whole set keeps the frame one colour and the internal
+   rules consistent with it.
+
+   The alpha matters as much as the hue. At full strength the dawn orange
+   turns a quiet editorial grid into a warning box; at 0.5 it reads as a
+   warm rule that belongs to the same family as the category tags already
+   sitting inside these cards. */
+.article-hub-panel {
+  --panel-rule: rgba(233, 138, 82, 0.5);
+  width: 100%;
+  border-left: 1px solid var(--panel-rule);
+  border-top: 1px solid var(--panel-rule);
+}
+
+/* Scoped to the panel so the article DETAIL page's cards, and any other
+   consumer of .article-card, keep the neutral rule. */
+.article-hub-panel .article-card {
+  border-right-color: var(--panel-rule);
+  border-bottom-color: var(--panel-rule);
+}
+
+/* Title bar. Padding matches the cards' own so the heading's text sits on
+   the same optical margin as the card text directly beneath it. */
+.article-hub-panel > .section-heading {
+  max-width: none;
+  margin: 0;
+  padding: 26px 20px 22px;
+  border-bottom: 1px solid var(--panel-rule);
+  /* The title bar closes its OWN right edge. The panel deliberately has no
+     border-right — the frame's right side comes from whichever cards sit in
+     the last column — but no card sits beside the heading, so without this
+     the frame was simply open along the heading's height. Drawn here rather
+     than on the panel because the heading's right edge falls on exactly the
+     same x as those cards' right borders, so the line continues unbroken
+     instead of doubling up beside them. */
+  border-right: 1px solid var(--panel-rule);
+}
+
 .article-grid {
   width: 100%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  border-left: 1px solid var(--color-border-neutral);
-  border-top: 1px solid var(--color-border-neutral);
 }
 
 /* Animation wrapper introduced by the See All stagger — each card is now

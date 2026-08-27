@@ -198,8 +198,6 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
             : { scale: depthScale, opacity: depthOpacity }
         }
       >
-        <SectionHeading title={articleSection.title} subtitle={articleSection.subtitle} />
-
         <nav className="article-tabs">
           {TABS.map((tab) => (
             <button
@@ -222,7 +220,18 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
           </p>
         )}
 
-        {loading ? (
+        {/* The heading sits INSIDE the frame, as its title bar. The frame
+            itself moved off .article-grid and onto this wrapper so the
+            heading is inside it — which also keeps the heading present in
+            the loading and empty states, where there is no grid to hang it
+            on. See the border-collapse note in the stylesheet: the wrapper
+            now draws the top and left edges, the cards still draw the
+            right and bottom, and the rule under the heading is what closes
+            it off from the first row. */}
+        <div className="article-hub-panel">
+          <SectionHeading title={articleSection.title} subtitle={articleSection.subtitle} />
+
+          {loading ? (
           /* Nothing at all until the fetch has been slow enough to be
              worth acknowledging (see useDelayedFlag). This is the state
              you land in coming Back from an article, where the articles
@@ -262,9 +271,10 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
                   <ArticleCard article={article} index={i % PER_ROW} />
                 </motion.div>
               ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </div>
 
         {canExpand && (
           /* layout so the button rides the grid's height change rather than

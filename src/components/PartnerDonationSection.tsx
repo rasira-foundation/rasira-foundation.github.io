@@ -11,37 +11,24 @@ export function PartnerDonationSection() {
 
   return (
     <section className="partner-donation-section">
-      {/* Each label now lives immediately before its own card rather than
-          in a shared two-span header row above both. That row read fine
-          on desktop, but below 1024px the grid collapses to one column
-          while the row stayed side by side — so "03 / Direct Support"
-          ended up floating next to the Partners card instead of over the
-          Direct Support one. In this order the mobile stacking is correct
-          by construction, and the desktop layout is restored by placing
-          the labels back onto row 1 in CSS. */}
+      {/* Direct Support comes FIRST in the DOM, and that is what puts it on
+          the left on desktop and first in the stack on mobile — the two
+          have to agree, so the order is set here rather than by reordering
+          in CSS.
+
+          Each label sits immediately before its own card rather than in a
+          shared header row above both. That row read fine on desktop, but
+          below 1024px the grid collapses to one column while the row stayed
+          side by side, leaving a label floating beside the wrong card. In
+          this order the mobile stacking is correct by construction, and the
+          desktop header strip is restored by placing the labels back onto
+          row 1 in CSS. */}
       <div className="partner-donation-grid">
-        <span className="partner-donation-label partner-donation-label--partner">
-          02 / Partners in the Field
-        </span>
-        <BlurRevealElement className="partner-card">
-          <div>
-            <div className="partner-card-topbar">
-              <span>{partner.role}</span>
-              <a href={partner.url} target="_blank" rel="noopener noreferrer">
-                {partner.urlLabel}
-              </a>
-            </div>
-            <p className="partner-card-heading">{partner.lead}</p>
-          </div>
-          <img className="partner-card-logo" src={springLogo} alt="Spring" />
-          <p className="partner-card-body">{partner.body}</p>
-        </BlurRevealElement>
-
         <span className="partner-donation-label partner-donation-label--donation">
-          03 / Direct Support
+          02 / Direct Support
         </span>
 
-        <BlurRevealElement className="donation-card" delay={0.1}>
+        <BlurRevealElement className="donation-card">
           <span id="donate" />
           <div className="donation-card-grain" aria-hidden="true" />
           <div className="donation-card-content">
@@ -57,6 +44,23 @@ export function PartnerDonationSection() {
               {donationSection.ctaLabel}
             </a>
           </div>
+        </BlurRevealElement>
+
+        <span className="partner-donation-label partner-donation-label--partner">
+          03 / Partners in the Field
+        </span>
+        <BlurRevealElement className="partner-card" delay={0.1}>
+          <div>
+            <div className="partner-card-topbar">
+              <span>{partner.role}</span>
+              <a href={partner.url} target="_blank" rel="noopener noreferrer">
+                {partner.urlLabel}
+              </a>
+            </div>
+            <p className="partner-card-heading">{partner.lead}</p>
+          </div>
+          <img className="partner-card-logo" src={springLogo} alt="Spring" />
+          <p className="partner-card-body">{partner.body}</p>
         </BlurRevealElement>
       </div>
     </section>
