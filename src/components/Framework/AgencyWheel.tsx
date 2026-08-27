@@ -43,14 +43,21 @@ const SPAN = (START - END) / agencySpectrum.levels.length;
    which is why the labels sit comfortably now. Plex Mono advances about
    0.6em per glyph, so the outer rail clears 23 chars ("DOES THE WORLD
    RESPOND?") at 338 (265 units) and the inner clears 19 ("Pathways &
-   volition") at 250 (196 units). Change a question or a title and these
+   volition") at 240 (189 units). Change a question or a title and these
    want rechecking — measure getComputedTextLength against getTotalLength.
+
+   TITLE_R sits at 240 rather than 250 so the title rides nearer the middle
+   of the VISIBLE colour. The blade runs from the apex to 300, but the core
+   gradient covers its inner third, so the colour a reader actually sees
+   spans roughly 140..300 and centres near 220. Pulling the rail all the way
+   in to 220 would shorten it to 173 units, which the longest title overruns
+   at mobile size — 240 is as close to centred as the text can afford.
 
    Concentric arcs rather than the reference's radial inner labels: at these
    angles radial text either runs upside down on the left of the fan or has
    to flip halfway across, and both read as mistakes rather than as design. */
 const LEVEL_R = 338;
-const TITLE_R = 250;
+const TITLE_R = 240;
 
 /** Depth of the ambient core, in the same units. */
 const CORE_R = 168;
