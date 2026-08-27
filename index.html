@@ -65,11 +65,17 @@
          content a crawler gets from this page today, since everything else
          is rendered by JavaScript — see the note in README/SEO. It is what
          lets a search engine understand this as an ORGANISATION with a
-         focus and a contact, rather than as an untitled blank page. -->
+         focus and a contact, rather than as an untitled blank page.
+
+         TODO: add a "sameAs" array of real profile URLs (LinkedIn, Instagram)
+         once those exist. sameAs is how a search engine confirms this is the
+         same organisation it sees elsewhere on the web, which is most of what
+         makes a brand-name search resolve to you. An EMPTY sameAs array
+         asserts nothing, so it is left out rather than shipped hollow. -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "NGO",
+        "@type": ["NGO", "ResearchOrganization"],
         "name": "Rasira Foundation",
         "url": "https://rasira-foundation.github.io/",
         "logo": "https://rasira-foundation.github.io/og-image.jpg",
@@ -79,13 +85,17 @@
         "areaServed": { "@type": "Country", "name": "Indonesia" },
         "knowsAbout": [
           "Youth workforce development",
+          "Applied anthropology",
           "Human capital research",
           "Field-based program design",
           "Program monitoring and evaluation",
-          "Anthropology",
+          "Possible selves",
+          "Career self-efficacy",
+          "Youth aspirations",
           "Youth employment",
           "First-generation jobseekers",
-          "Rural youth"
+          "Rural youth",
+          "Social mobility"
         ]
       }
     </script>
