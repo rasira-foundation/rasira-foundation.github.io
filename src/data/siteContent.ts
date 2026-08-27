@@ -44,74 +44,69 @@ export const frameworkBridgeText = 'Here is the system logic behind that work';
 export const systemFramework = {
   eyebrow: 'Public Framework',
   title: 'How We Think About the Work',
-  subtitle: 'Connects "what we do" to "how we think".',
-  /* Sits on the loop line beneath the diagram, breaking the dashed rule so
-     the line reads as labelled rather than merely decorative. */
-  loopLabel: 'Outcomes inform the next cycle',
-  /* Columns, not a flat list of boxes. The first stage holds TWO stacked
-   * nodes (01a Person Profile / 01b Opportunity Context) while the rest
-   * hold one each — so the diagram is four columns across but five nodes
-   * total, and a flat array could no longer describe it. `total` is the
-   * denominator shown in each node's step counter; it counts stages, not
-   * nodes, which is why 01a and 01b share the same one. */
-  total: '04',
-  columns: [
+  subtitle: 'Agency is observed, in how behaviour adapts.',
+  /* `columns`, `total` and `loopLabel` were removed with the four-stage
+     diagram they described. The section is carried by the Agency Spectrum
+     dial below instead — see the note in SystemFramework.tsx. */
+  note: 'This public framework communicates the system logic without disclosing proprietary dimensions, items, scoring models, weights, or decision rules.',
+};
+
+/* The Agency Spectrum dial that sits under the framework diagram.
+ *
+ * Ordered as a movement from inside the person outward into the world:
+ * whether they believe they can, whether the choice is theirs, whether they
+ * can see a route, and whether anything around them responds. The dial
+ * colours that sequence with the site's own dawn-to-dusk sky ramp, warm to
+ * cool, so the palette carries the same argument the copy does.
+ *
+ * Each level is identified by its question alone. There are no L1..L4 codes
+ * and no lever counts: the questions are the memorable part, and numbering
+ * them implied a scored ladder rather than four things looked at together.
+ *
+ * The levers are named without their originating researchers, and without
+ * the internal annotations that sat beside some of them. They read as a
+ * working vocabulary here rather than as a literature review or a scoring
+ * sheet. */
+export const agencySpectrum = {
+  centerLabel: 'Agency',
+  centerNote: ['observed as evidenced', 'adapting behaviour'],
+  levels: [
     {
-      nodes: [
-        {
-          tag: 'Input',
-          step: '01a',
-          title: 'Person Profile',
-          items: ['Capability', 'Orientation', 'Work Style', 'Agency & Adaptability'],
-        },
-        {
-          tag: 'Context',
-          step: '01b',
-          title: 'Opportunity Context',
-          items: ['Demand', 'Supports', 'Barriers', 'Access'],
-        },
+      id: 'l1',
+      question: 'CAN I?',
+      title: 'Capability beliefs',
+      levers: [
+        'Efficacy: for the work, for the process',
+        'Malleability belief',
+        'Psychological capital',
+        'Self-esteem',
       ],
     },
     {
-      nodes: [
-        {
-          tag: 'Process',
-          step: '02',
-          title: 'Evidence in Action',
-          items: ['Observed responses', 'Behaviour', 'Outputs'],
-        },
-      ],
+      id: 'l2',
+      question: 'WILL I?',
+      title: 'Ownership',
+      levers: ['Autonomy', 'Possible selves', 'Values', 'Agency thinking'],
     },
     {
-      pivot: true,
-      nodes: [
-        {
-          tag: 'Pivot',
-          step: '03',
-          title: 'Decisions & Development',
-          items: ['Program adjustment', 'Facilitator guidance', 'Pathway alignment'],
-        },
-      ],
+      id: 'l3',
+      question: 'HOW DO I?',
+      title: 'Pathways & volition',
+      levers: ['If-then plans', 'Mental contrasting', 'Pathways thinking', 'Proximal goals'],
     },
     {
-      /* The link INTO this stage runs both ways: outcomes feed back into
-         Decisions & Development rather than simply ending the sequence.
-         This is what the dashed return curve under the diagram used to
-         say — it was removed because it connected nothing once mobile
-         turned the stages into a swipe deck, and the relationship reads
-         more directly on the connector itself. */
-      feedback: true,
-      nodes: [
-        {
-          tag: 'Outcome',
-          step: '04',
-          title: 'Outcomes',
-          items: ['Learning', 'Transition', 'Performance', 'Mobility'],
-        },
+      id: 'l4',
+      question: 'DOES THE WORLD RESPOND?',
+      title: 'Standing',
+      levers: [
+        'Outcome expectations',
+        'Critical consciousness',
+        'Belonging',
+        'Collective efficacy',
+        'Proxy agency',
       ],
     },
   ],
-  note: 'This public framework communicates the system logic without disclosing proprietary dimensions, items, scoring models, weights, or decision rules.',
 };
 
 export const articleSection = {

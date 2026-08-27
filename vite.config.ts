@@ -6,6 +6,7 @@ import {
   pillarsSection,
   systemFramework,
   articleSection,
+  agencySpectrum,
   collabsSection,
   partnerSection,
   donationSection,
@@ -58,18 +59,6 @@ function prerenderContent(): Plugin {
         })
         .join('')
 
-      /* The columns are not a uniform type — some carry `pivot`, some
-         `feedback` — so the union defeats inference on flatMap. The node
-         shape itself IS uniform, which is all this needs. */
-      type Node = { tag: string; step: string; title: string; items: string[] }
-      const frameworkNodes = systemFramework.columns
-        .flatMap((c): Node[] => c.nodes)
-        .map(
-          (n) =>
-            `<section><h3>${esc(n.step)} · ${esc(n.title)}</h3>` +
-            `<p>${esc(n.tag)}: ${n.items.map((i) => esc(i)).join(', ')}</p></section>`,
-        )
-        .join('')
 
       /* Section order deliberately matches the order the React app renders
          in (articles, then pillars, then framework) rather than the order
@@ -81,6 +70,18 @@ function prerenderContent(): Plugin {
          Wrapped in <main> with the hero in <header>, which the live app
          does not currently have — see the note in App.tsx. Free to do here,
          since this markup is generated rather than woven into the layout. */
+      /* The dial's copy is worth prerendering in its own right: its levers
+         are the published vocabulary (possible selves, efficacy, belonging)
+         that this site should be findable on, and inside the SVG they would
+         otherwise reach a crawler only as arc labels, if at all. */
+      const agencyLevels = agencySpectrum.levels
+        .map(
+          (l) =>
+            `<section><h3>${esc(l.question)} ${esc(l.title)}</h3>` +
+            `<p>${l.levers.map((v) => esc(v)).join(', ')}</p></section>`,
+        )
+        .join('')
+
       const shell = `
     <main class="static-shell">
       <header>
@@ -102,8 +103,7 @@ function prerenderContent(): Plugin {
       <section>
         <h2>${esc(systemFramework.title)}</h2>
         <p>${esc(systemFramework.subtitle)}</p>
-        ${frameworkNodes}
-        <p>${esc(systemFramework.loopLabel)}</p>
+        ${agencyLevels}
         <p>${esc(systemFramework.note)}</p>
       </section>
 

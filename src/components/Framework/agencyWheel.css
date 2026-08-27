@@ -1,0 +1,287 @@
+/* ── AGENCY SPECTRUM DIAL ──
+   Sits under the framework diagram as a second lens on the same work: the
+   diagram describes the system, this describes what the system is reading.
+
+   Layout is readout-left, dial-right on desktop. That order is deliberate in
+   the markup too — the readout comes FIRST in the DOM so a screen reader and
+   a keyboard user meet the words before the graphic, and so the mobile stack
+   falls in the right order without needing to reverse anything. */
+.agency-wheel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: 36px;
+  align-items: center;
+  margin-top: 56px;
+}
+
+/* ── READOUT ── */
+.agency-readout-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  /* Tinted by whichever blade is active — the only place the dial's colour
+     escapes the graphic, which is what ties the two halves together. Darkened
+     against white by mixing toward ink: the raw sky colours are pale by
+     design and would not carry as text. */
+  color: color-mix(in srgb, var(--blade-active) 55%, var(--color-ink));
+  margin: 0 0 6px;
+  transition: color 0.4s var(--ease-soft);
+}
+
+.agency-readout-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  margin: 0 0 18px;
+}
+
+.agency-readout-levers {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agency-readout-levers li {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #2b2623;
+  padding-left: 16px;
+  position: relative;
+}
+
+/* A tick rather than a bullet: these are levers the framework can pull, not
+   an unordered list of topics. */
+.agency-readout-levers li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 1px;
+  background: var(--blade-active);
+  transition: background 0.4s var(--ease-soft);
+}
+
+
+/* ── DIAL ── */
+.agency-wheel-dial {
+  min-width: 0;
+}
+
+.agency-wheel-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* The wedge that catches the pointer. Transparent rather than absent: a path
+   with fill:none is not a hit target, so the blade would only respond on its
+   label. */
+.agency-hit {
+  fill: transparent;
+}
+
+/* Inactive blades wash toward the page colour. Painted with the page's own
+   white rather than a grey so they recede rather than dirty. */
+.agency-scrim {
+  fill: var(--color-cream);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 0.45s var(--ease-soft);
+}
+
+.agency-scrim.is-active {
+  opacity: 0;
+}
+
+/* ── ARC LABELS ── */
+.agency-blade-level,
+.agency-blade-title {
+  font-family: var(--font-mono);
+  pointer-events: none;
+  transition: fill 0.4s var(--ease-soft), opacity 0.4s var(--ease-soft);
+}
+
+.agency-blade-level {
+  /* Sized to the longest question, not to taste — see the rail arithmetic
+     in AgencyWheel.tsx. All four share one size so the ring reads as a set.
+
+     10.7 rather than 12 because the dial's column grew: the SVG now scales
+     up by about 1.09, so shrinking the user-unit size by the same factor
+     keeps the label at the size it was on screen while the fan itself gets
+     bigger. Growing the dial without this would have scaled the type with
+     it. */
+  font-size: 10.7px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  fill: var(--color-ink-faint);
+}
+
+/* Sits on the colour rather than outside it, so it needs to hold against a
+   mid-tone rather than against the page. */
+.agency-blade-title {
+  font-size: 10.7px;
+  letter-spacing: 0.02em;
+  fill: rgba(20, 18, 15, 0.5);
+}
+
+.agency-blade.is-active .agency-blade-level {
+  fill: var(--color-ink);
+}
+
+.agency-blade.is-active .agency-blade-title {
+  fill: var(--color-ink);
+}
+
+.agency-blade {
+  cursor: pointer;
+  outline: none;
+}
+
+/* Focus is drawn on the blade's own edge rather than as a browser outline
+   around the group's bounding box, which for a wedge is a rectangle wildly
+   larger than the shape. */
+.agency-blade:focus-visible .agency-hit {
+  fill: rgba(255, 255, 255, 0.22);
+  stroke: var(--color-ink);
+  stroke-width: 1.5;
+}
+
+/* ── CORE ── */
+.agency-core-word {
+  font-family: var(--font-serif);
+  /* Same compensation as the arc labels: down in user units so the dial can
+     grow without the wordmark growing with it. */
+  font-size: 31px;
+  font-weight: 400;
+  fill: var(--color-cream);
+  pointer-events: none;
+}
+
+/* Mono, not the serif the word above it uses. The line describes how
+   agency is read rather than naming it, so it belongs to the same register
+   as the arc labels and the readout — the serif is reserved for the word
+   itself. */
+.agency-core-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  fill: rgba(255, 255, 255, 0.62);
+  pointer-events: none;
+}
+
+/* ── MOBILE CONTROLS ──
+   Hidden entirely at desktop width, where the arc labels do the naming.
+   display:none also takes them out of the accessibility tree, so there is
+   no duplicated control for a screen reader to wade through there. */
+.agency-wheel-chips {
+  display: none;
+}
+
+.agency-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  border: 1px solid var(--color-line);
+  border-left: 3px solid var(--chip);
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+}
+
+.agency-chip.is-active {
+  background: var(--color-cream-deep);
+  border-color: var(--color-line);
+  border-left-color: var(--chip);
+}
+
+.agency-chip-q {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-faint);
+}
+
+.agency-chip.is-active .agency-chip-q {
+  color: var(--color-ink);
+}
+
+.agency-chip-t {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--color-ink);
+}
+
+/* ── MOBILE ──
+   The dial stacks above the readout. Note the DOM has the readout first, so
+   `order` does the swap rather than duplicating markup: on a phone the fan
+   should be seen before it is explained, because it is the thing that makes
+   someone want to read the rest. */
+@media (max-width: 860px) {
+  .agency-wheel {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-top: 40px;
+  }
+
+  .agency-wheel-dial {
+    order: -1;
+  }
+
+  /* The arc labels go, and the chips take over — see the note on
+     .agency-wheel-chips. Raising their size in user units instead does not
+     work: the rails are a fixed arc length, so bigger text just overruns
+     them (measured: -4px on the longest question, -18px on the longest
+     title before this change). */
+  .agency-blade-level,
+  .agency-blade-title {
+    display: none;
+  }
+
+  .agency-wheel-chips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .agency-core-word {
+    font-size: 40px;
+  }
+
+  .agency-core-note {
+    font-size: 13.5px;
+  }
+
+  .agency-readout-title {
+    font-size: 22px;
+  }
+
+  .agency-readout-levers li {
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agency-scrim,
+  .agency-blade-level,
+  .agency-blade-title,
+  .agency-readout-eyebrow,
+  .agency-readout-levers li::before {
+    transition: none;
+  }
+}

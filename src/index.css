@@ -193,7 +193,6 @@ button {
      title and a section title do not compete at phone width. */
   body .article-card-title,
   body .pillar-label,
-  body .framework-box-title,
   body .collabs-heading,
   body .article-detail-body h2,
   body .article-detail-body h3 {
@@ -211,7 +210,6 @@ button {
   body .hero-copy-paragraph,
   body .collabs-body,
   body .pillar-body,
-  body .framework-box-items,
   body .partner-card-body,
   body .donation-card-body {
     font-size: 15px;
@@ -250,7 +248,6 @@ button {
      this is a decision and not an omission. */
   body .article-card-category,
   body .article-detail-badge,
-  body .framework-box-meta,
   body .partner-donation-label,
   body .donation-card-topbar,
   body .hero-copy-tags {
