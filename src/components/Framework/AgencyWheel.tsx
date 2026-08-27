@@ -228,11 +228,19 @@ export function AgencyWheel() {
           <text className="agency-core-word" x={CX} y={CY - 74} textAnchor="middle">
             {agencySpectrum.centerLabel}
           </text>
-          {agencySpectrum.centerNote.map((line, i) => (
-            <text key={line} className="agency-core-note" x={CX} y={CY - 50 + i * 15} textAnchor="middle">
-              {line}
-            </text>
-          ))}
+          {/* One <text> with tspans rather than one <text> per line, and the
+              line gap in EM rather than user units. The note's size changes
+              between breakpoints, and a fixed 15-unit gap that looked right
+              at 7.6px collapsed into the line above it once the mobile size
+              grew — which is exactly what was overlapping "Agency". An em
+              gap scales with whatever size the stylesheet sets. */}
+          <text className="agency-core-note" x={CX} y={CY - 44} textAnchor="middle">
+            {agencySpectrum.centerNote.map((line, i) => (
+              <tspan key={line} x={CX} dy={i === 0 ? 0 : '1.4em'}>
+                {line}
+              </tspan>
+            ))}
+          </text>
 
           {/* Hit areas and labels last, so nothing painted above them can
               steal the pointer. */}
@@ -277,28 +285,6 @@ export function AgencyWheel() {
         </svg>
       </div>
 
-      {/* MOBILE CONTROLS. Not a duplicate for its own sake: at phone widths
-          the SVG scales to about half, which would put the arc labels near
-          6px. Bumping their size in user units cannot fix that, because the
-          rails are a fixed arc length and the text simply overruns them.
-          So below 860px the arc labels are hidden and the four questions
-          become real text at a real size, in buttons that are also far
-          better touch targets than a wedge slice. */}
-      <div className="agency-wheel-chips">
-        {agencySpectrum.levels.map((lvl, i) => (
-          <button
-            key={lvl.id}
-            type="button"
-            className={`agency-chip${lvl.id === activeId ? ' is-active' : ''}`}
-            style={{ ['--chip' as string]: BLADE[i] }}
-            aria-pressed={lvl.id === activeId}
-            onClick={() => setActiveId(lvl.id)}
-          >
-            <span className="agency-chip-q">{lvl.question}</span>
-            <span className="agency-chip-t">{lvl.title}</span>
-          </button>
-        ))}
-      </div>
     </motion.div>
   );
 }
