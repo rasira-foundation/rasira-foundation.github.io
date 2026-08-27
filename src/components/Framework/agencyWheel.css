@@ -27,82 +27,78 @@
 }
 
 /* ── READOUT ──
-   The dial's caption, not a panel beside it: centred on the same axis as the
-   apex and the "Agency" wordmark, and held to two lines. */
+   The dial's anchor, not a panel beside it: three centred rows sitting on
+   the same axis as the arc's base and the "Agency" wordmark.
+
+   Spec for this block arrived as Tailwind utilities. Translated to the
+   project's own tokens rather than transcribed, since there is no Tailwind
+   here — and the warm-biased neutrals read correctly against this page,
+   where a true grey (neutral-500/700) would sit cold against everything
+   around it. */
 .agency-wheel-readout {
-  /* Matches the dial's own cap so the caption is centred on exactly the axis
-     the wordmark sits on, and so line two has the full width of the fan to
-     stay on one line. */
+  /* Matches the dial's cap so the rows centre on exactly the axis the
+     wordmark sits on. */
   max-width: 1000px;
   margin: 0 auto;
   text-align: center;
 }
 
-.agency-readout-line {
-  display: flex;
-  flex-wrap: wrap;
-  /* Baseline, not centre: with a 10px label beside a 26px serif, centring
-     floats the label in the middle of the title's x-height and it reads as
-     a stray fragment. Sharing a baseline is what makes them one line. */
-  align-items: baseline;
-  justify-content: center;
-  gap: 12px;
+/* Row 1 — eyebrow. */
+.agency-readout-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+  margin: 0 0 4px;
+}
+
+/* The one piece of colour kept out of the neutral spec: the level code is
+   tinted by the active blade, so the caption still visibly answers the dial
+   when the reading moves. Everything else stays neutral as specified.
+   Mixed toward ink because the raw sky colours are pale by design and would
+   not carry as 11px text. */
+.agency-readout-level {
+  color: color-mix(in srgb, var(--blade-active) 60%, var(--color-ink));
+  transition: color 0.4s var(--ease-soft);
+}
+
+/* Row 2 — title. */
+.agency-readout-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--color-ink);
   margin: 0 0 12px;
 }
 
-/* A KICKER, and it has to be built like one. The questions run up to 23
-   characters, so tracked uppercase at 11px/500 made this label 187px wide
-   against the title's 110px — physically the largest thing on the line, and
-   competing with the heading it exists to introduce. Size alone could not
-   fix that, because the width comes from the character count. So all three
-   signals step down together: smaller, unbolded, and lightened well clear of
-   the title's ink. The title then wins on weight and darkness even though
-   the label still wins on width. */
-.agency-readout-q {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  /* Tinted by the active blade — the one place the dial's colour reaches
-     the caption. Mixed in JS rather than with CSS color-mix(); see the note
-     on kickerColor() in AgencyWheel.tsx for how the mix is made. It stays
-     clearly lighter than the levers below it (7.3:1) and the title
-     (18.7:1), so darkness ranks the three tiers correctly.
-
-     DELIBERATELY NOT TRANSITIONED. `transition: color` on a var()-driven
-     colour freezes it in Chrome: the token updates through all four blade
-     values while the resolved colour stays pinned to whichever it computed
-     first, so the tint silently never tracks the dial. Measured both ways —
-     with the transition the kicker held one colour across all four levels;
-     without it, all four resolve. Registering the token with @property and
-     transitioning the token instead did not rescue it either. The fade is
-     not worth a tint that does not change, and the scrims underneath still
-     carry the motion. */
-  color: var(--kicker);
+@media (min-width: 768px) {
+  .agency-readout-title {
+    font-size: 30px;
+  }
 }
 
-/* The dominant element in the caption, but deliberately held below the
-   section heading's 28px: this names a level within the section, not the
-   section, and matching that size would flatten the page's own hierarchy. */
-.agency-readout-t {
-  font-family: var(--font-serif);
-  font-weight: 500;
-  font-size: 25px;
-  line-height: 1.2;
-  color: var(--color-ink);
-}
-
-/* Body, not a label: larger than the kicker above it and set without
-   tracking. That inversion is intentional — a kicker is meant to be small
-   and quiet, while this is the line actually meant to be read. Kept a step
-   lighter than the title so the serif stays the darkest mark in the block. */
+/* Row 3 — levers as tags. */
 .agency-readout-levers {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: #5c554d;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  list-style: none;
   margin: 0;
+  padding: 0;
+}
+
+.agency-lever {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 4px 10px;
+  background: var(--color-cream-deep);
+  color: #4a443e;
+  border-radius: 2px;
 }
 
 /* ── DIAL ──
@@ -303,16 +299,15 @@
     font-size: 22px;
   }
 
-  .agency-readout-t {
-    font-size: 21px;
+  /* The tags wrap onto several rows at this width, which is what the flex
+     wrap is for; they just need a little less air between them. */
+  .agency-readout-levers {
+    gap: 6px;
   }
 
-  /* Two lines is a desktop promise, not a mobile one — at 375px the lever
-     line is far too long to hold, so it is allowed to wrap and the type
-     steps down rather than being squeezed. */
-  .agency-readout-levers {
-    font-size: 12px;
-    line-height: 1.7;
+  .agency-lever {
+    font-size: 11px;
+    padding: 3px 8px;
   }
 }
 
@@ -320,7 +315,7 @@
   .agency-scrim,
   .agency-blade-level,
   .agency-blade-title,
-  .agency-readout-q {
+  .agency-readout-level {
     transition: none;
   }
 }

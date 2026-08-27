@@ -140,22 +140,27 @@ export function AgencyWheel() {
         ['--kicker' as string]: kickerColor(BLADE[activeIndex]),
       }}
     >
-      {/* Two lines, centred beneath the dial's apex: the level on one, its
-          levers set inline on the other. A stacked list sat to one side of
-          the fan and read as a separate panel; this reads as the dial's own
-          caption, which is what it is.
+      {/* Three centred rows beneath the arc's base, anchoring the wheel:
+          eyebrow, title, then the levers as discrete tags. The levers were a
+          single dot-separated run; as tags each concept is its own object
+          you can actually pick out, which is what they are.
 
           aria-live so keyboard and screen-reader users hear what changed as
           focus crosses the dial, instead of the readout updating silently. */}
       <div className="agency-wheel-readout" aria-live="polite">
-        <h3 className="agency-readout-line">
-          <span className="agency-readout-q">{active.question}</span>
-          <span className="agency-readout-t">{active.title}</span>
-        </h3>
-        {/* Joined rather than a list. They are a vocabulary read across, not
-            an ordered set, and one flowing line is what keeps this to the
-            two lines the caption is meant to be. */}
-        <p className="agency-readout-levers">{active.levers.join(' · ')}</p>
+        <p className="agency-readout-eyebrow">
+          <span className="agency-readout-level">{active.level}</span>
+          <span aria-hidden="true"> · </span>
+          {active.question}
+        </p>
+        <h3 className="agency-readout-title">{active.title}</h3>
+        <ul className="agency-readout-levers">
+          {active.levers.map((lever) => (
+            <li key={lever} className="agency-lever">
+              {lever}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="agency-wheel-dial">
