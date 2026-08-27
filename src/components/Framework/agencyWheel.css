@@ -302,6 +302,21 @@
     font-size: 11.5px;
   }
 
+  /* Left-aligned on phones, not centred. Centred text under a full circle
+     reads as a caption belonging to the graphic; ranged left it lines up
+     with the section heading above and rejoins the page's own column. The
+     readout is already full width here — its 1000px cap never binds at this
+     size — so its left edge is the heading's left edge with nothing else to
+     set. */
+  .agency-wheel-readout {
+    text-align: left;
+  }
+
+  .agency-readout-line,
+  .agency-readout-levers {
+    justify-content: flex-start;
+  }
+
   .agency-readout-levers {
     gap: 6px;
   }
