@@ -44,11 +44,14 @@
 }
 
 @media (max-width: 640px) {
-  /* 60px of top padding rather than 40. The section sits closer to the
-     pillars panel above it on a phone than it does on desktop, and the full
-     circle needs a little more air above it than the half circle did. */
+  /* 130px of top padding rather than the 40 this started at. The section
+     sits much closer to the pillars panel above it on a phone than it does
+     on desktop, and the full circle is a heavier figure than the half circle
+     was — it needs real air above it to read as its own section rather than
+     as a continuation of the panel. Measured: this puts 162px between the
+     panel's bottom edge and the heading, up from 92. */
   .system-framework {
-    padding: 60px 16px 8px;
+    padding: 130px 16px 8px;
   }
 
   .framework-note {
