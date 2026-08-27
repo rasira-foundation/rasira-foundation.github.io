@@ -80,8 +80,14 @@
 }
 
 @media (max-width: 640px) {
+  /* 100px of top padding, up from 16. Second of the three mobile section
+     gaps held to the same VISIBLE ~140px. This one was the odd one out at
+     56px, because the framework note ends immediately above it and
+     contributes almost nothing — so unlike the other two, nearly the whole
+     gap has to come from this padding. See the matching notes in
+     systemFramework.css and partnerDonationSection.css. */
   .collabs-slot {
-    padding: 16px 16px 48px;
+    padding: 100px 16px 48px;
   }
 
   .collabs-card {

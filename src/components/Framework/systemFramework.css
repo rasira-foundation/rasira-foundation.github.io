@@ -44,14 +44,14 @@
 }
 
 @media (max-width: 640px) {
-  /* 130px of top padding rather than the 40 this started at. The section
-     sits much closer to the pillars panel above it on a phone than it does
-     on desktop, and the full circle is a heavier figure than the half circle
-     was — it needs real air above it to read as its own section rather than
-     as a continuation of the panel. Measured: this puts 162px between the
-     panel's bottom edge and the heading, up from 92. */
+  /* One of three section gaps on mobile that are deliberately set to the
+     same VISIBLE size — about 140px — rather than the same padding value.
+     They cannot share a number because each gap is composed differently:
+     this one already inherits 32px from the pillars section's own bottom
+     padding, so 108 here lands on 140. See the matching notes in
+     collabsSection.css and partnerDonationSection.css. */
   .system-framework {
-    padding: 130px 16px 8px;
+    padding: 108px 16px 8px;
   }
 
   .framework-note {
