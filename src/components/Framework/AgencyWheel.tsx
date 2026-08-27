@@ -21,16 +21,16 @@ import './agencyWheel.css';
    A WEDGE, not an annulus — the blades run to a point rather than stopping
    at an inner ring, which is what lets the dark core read as an ambient well
    bleeding out of the apex instead of as a drawn hole. */
-const CX = 336;
-const CY = 370;
-const R = 312;
-const VIEW_W = 672;
-const VIEW_H = 384;
+const CX = 352;
+const CY = 356;
+const R = 300;
+const VIEW_W = 704;
+const VIEW_H = 374;
 
-/** Centred on vertical and spanning 136 degrees, so it reads as a dial being
- *  looked down at rather than as half a pie. */
-const START = 158;
-const END = 22;
+/** A true half circle: the blades fan across the full 180 degrees and the
+ *  figure closes on a flat horizontal diameter. */
+const START = 180;
+const END = 0;
 const SPAN = (START - END) / agencySpectrum.levels.length;
 
 /* Two concentric label rails. The LONGER text goes on the LONGER arc: the
@@ -38,25 +38,31 @@ const SPAN = (START - END) / agencySpectrum.levels.length;
    take the outer rail and titles the inner one.
 
    Both radii are derived from the longest label rather than chosen by eye.
-   A 34-degree segment gives an arc of 0.593 * radius, and IBM Plex Mono
-   advances about 0.6em per glyph, so the outer rail has to clear
-   23 chars * 12px * 0.66 = 182 units ("DOES THE WORLD RESPOND?") and the
-   inner 19 * 12.5 * 0.62 = 147 ("Pathways & volition"). Hence 352 (209
-   units) and 268 (159 units). Change a question or a title and these want
-   recomputing — measure getComputedTextLength against getTotalLength.
+   Across a half circle each segment is 45 degrees, giving an arc of
+   0.785 * radius — half again the room of the 136-degree fan this replaced,
+   which is why the labels sit comfortably now. Plex Mono advances about
+   0.6em per glyph, so the outer rail clears 23 chars ("DOES THE WORLD
+   RESPOND?") at 338 (265 units) and the inner clears 19 ("Pathways &
+   volition") at 250 (196 units). Change a question or a title and these
+   want rechecking — measure getComputedTextLength against getTotalLength.
 
    Concentric arcs rather than the reference's radial inner labels: at these
    angles radial text either runs upside down on the left of the fan or has
    to flip halfway across, and both read as mistakes rather than as design. */
-const LEVEL_R = 352;
-const TITLE_R = 268;
+const LEVEL_R = 338;
+const TITLE_R = 250;
 
 /** Depth of the ambient core, in the same units. */
-const CORE_R = 176;
+const CORE_R = 168;
 
+/** Rounded to 2dp. sin(180 degrees) is 1.2e-16 rather than 0 in floating
+ *  point, so the flat diameter would otherwise emit a y of
+ *  355.99999999999994 into the path data. Visually identical, but it makes
+ *  the geometry unreadable when inspecting the DOM. */
 function pt(r: number, deg: number) {
   const rad = (deg * Math.PI) / 180;
-  return [CX + r * Math.cos(rad), CY - r * Math.sin(rad)] as const;
+  const round = (n: number) => Math.round(n * 100) / 100;
+  return [round(CX + r * Math.cos(rad)), round(CY - r * Math.sin(rad))] as const;
 }
 
 /** A pie wedge from the apex. a0 is the larger (leftmost) angle, so a0 -> a1

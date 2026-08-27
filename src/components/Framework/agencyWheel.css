@@ -115,12 +115,11 @@
   /* Sized to the longest question, not to taste — see the rail arithmetic
      in AgencyWheel.tsx. All four share one size so the ring reads as a set.
 
-     10.7 rather than 12 because the dial's column grew: the SVG now scales
-     up by about 1.09, so shrinking the user-unit size by the same factor
-     keeps the label at the size it was on screen while the fan itself gets
-     bigger. Growing the dial without this would have scaled the type with
-     it. */
-  font-size: 10.7px;
+     Sized against the viewBox, not against the screen: the dial renders
+     larger than its coordinate space, so the user-unit size has to be
+     smaller than the size wanted on screen. 11.2 here lands near 11.7px
+     rendered. */
+  font-size: 11.2px;
   font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -130,7 +129,7 @@
 /* Sits on the colour rather than outside it, so it needs to hold against a
    mid-tone rather than against the page. */
 .agency-blade-title {
-  font-size: 10.7px;
+  font-size: 11.2px;
   letter-spacing: 0.02em;
   fill: rgba(20, 18, 15, 0.5);
 }
@@ -162,7 +161,7 @@
   font-family: var(--font-serif);
   /* Same compensation as the arc labels: down in user units so the dial can
      grow without the wordmark growing with it. */
-  font-size: 31px;
+  font-size: 32px;
   font-weight: 400;
   fill: var(--color-cream);
   pointer-events: none;
