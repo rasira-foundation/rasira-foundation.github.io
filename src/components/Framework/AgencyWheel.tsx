@@ -90,6 +90,33 @@ function arc(a0: number, a1: number, radius: number) {
    one component's reading of an existing palette, not four new site colours. */
 const BLADE = ['#d99b73', '#e8c19f', '#cddbe5', '#a4b4c4'];
 
+/* The kicker's tint, precomputed rather than left to CSS color-mix().
+ *
+ * color-mix(in srgb, var(--blade-active) 30%, #4a443e) looks like the
+ * obvious way to write this, and it is broken here: when only a custom
+ * property feeding the mix changes, Chrome does not re-resolve the mix if
+ * the property carries a transition. The declaration text never changes, so
+ * the engine keeps the first computed value. Measured — the variable moved
+ * through all four blade colours while the kicker stayed frozen on the
+ * first one, which meant the tint silently never tracked the dial at all.
+ *
+ * Mixing here instead makes the value a plain rgb() that genuinely changes,
+ * so the transition has two endpoints to move between.
+ *
+ * The base is dark on purpose. The blades are pale by design, so the base
+ * sets the contrast floor: against a lighter grey all four tints failed
+ * WCAG AA (worst 3.55:1). #4a443e holds every blade above 4.5:1 at full
+ * 30% tint strength — verified 4.89:1 worst, 6.06:1 best. */
+const KICKER_BASE = [0x4a, 0x44, 0x3e];
+const KICKER_TINT = 0.3;
+
+function kickerColor(hex: string) {
+  const n = parseInt(hex.slice(1), 16);
+  const rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  const mixed = rgb.map((c, i) => Math.round(c * KICKER_TINT + KICKER_BASE[i] * (1 - KICKER_TINT)));
+  return `rgb(${mixed.join(', ')})`;
+}
+
 export function AgencyWheel() {
   const [activeId, setActiveId] = useState(agencySpectrum.levels[0].id);
   const active = agencySpectrum.levels.find((l) => l.id === activeId)!;
@@ -108,7 +135,10 @@ export function AgencyWheel() {
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={IN_VIEW}
       transition={SPRING}
-      style={{ ['--blade-active' as string]: BLADE[activeIndex] }}
+      style={{
+        ['--blade-active' as string]: BLADE[activeIndex],
+        ['--kicker' as string]: kickerColor(BLADE[activeIndex]),
+      }}
     >
       {/* Two lines, centred beneath the dial's apex: the level on one, its
           levers set inline on the other. A stacked list sat to one side of

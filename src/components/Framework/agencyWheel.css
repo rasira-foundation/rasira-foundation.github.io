@@ -41,39 +41,67 @@
 .agency-readout-line {
   display: flex;
   flex-wrap: wrap;
+  /* Baseline, not centre: with a 10px label beside a 26px serif, centring
+     floats the label in the middle of the title's x-height and it reads as
+     a stray fragment. Sharing a baseline is what makes them one line. */
   align-items: baseline;
   justify-content: center;
-  gap: 10px;
-  margin: 0 0 10px;
+  gap: 12px;
+  margin: 0 0 12px;
 }
 
+/* A KICKER, and it has to be built like one. The questions run up to 23
+   characters, so tracked uppercase at 11px/500 made this label 187px wide
+   against the title's 110px — physically the largest thing on the line, and
+   competing with the heading it exists to introduce. Size alone could not
+   fix that, because the width comes from the character count. So all three
+   signals step down together: smaller, unbolded, and lightened well clear of
+   the title's ink. The title then wins on weight and darkness even though
+   the label still wins on width. */
 .agency-readout-q {
   font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
-  /* Tinted by whichever blade is active — the only place the dial's colour
-     escapes the graphic, which is what ties the caption to the fan.
-     Darkened against white by mixing toward ink: the raw sky colours are
-     pale by design and would not carry as text. */
-  color: color-mix(in srgb, var(--blade-active) 55%, var(--color-ink));
-  transition: color 0.4s var(--ease-soft);
+  /* Tinted by the active blade — the one place the dial's colour reaches
+     the caption. Mixed in JS rather than with CSS color-mix(); see the note
+     on kickerColor() in AgencyWheel.tsx for how the mix is made. It stays
+     clearly lighter than the levers below it (7.3:1) and the title
+     (18.7:1), so darkness ranks the three tiers correctly.
+
+     DELIBERATELY NOT TRANSITIONED. `transition: color` on a var()-driven
+     colour freezes it in Chrome: the token updates through all four blade
+     values while the resolved colour stays pinned to whichever it computed
+     first, so the tint silently never tracks the dial. Measured both ways —
+     with the transition the kicker held one colour across all four levels;
+     without it, all four resolve. Registering the token with @property and
+     transitioning the token instead did not rescue it either. The fade is
+     not worth a tint that does not change, and the scrims underneath still
+     carry the motion. */
+  color: var(--kicker);
 }
 
+/* The dominant element in the caption, but deliberately held below the
+   section heading's 28px: this names a level within the section, not the
+   section, and matching that size would flatten the page's own hierarchy. */
 .agency-readout-t {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 26px;
+  font-size: 25px;
   line-height: 1.2;
   color: var(--color-ink);
 }
 
+/* Body, not a label: larger than the kicker above it and set without
+   tracking. That inversion is intentional — a kicker is meant to be small
+   and quiet, while this is the line actually meant to be read. Kept a step
+   lighter than the title so the serif stays the darkest mark in the block. */
 .agency-readout-levers {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.6;
-  color: #57514a;
+  color: #5c554d;
   margin: 0;
 }
 
