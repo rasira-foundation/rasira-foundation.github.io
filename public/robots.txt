@@ -1,0 +1,5 @@
+# Rasira Foundation
+User-agent: *
+Allow: /
+
+Sitemap: https://rasira-foundation.github.io/sitemap.xml

@@ -12,8 +12,83 @@
     <meta http-equiv="Expires" content="0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Rasira Foundation — a research-and-practice collective working on how young people understand themselves, imagine their futures, and build the confidence to move toward them." />
-    <title>Rasira Foundation</title>
+
+    <!-- ── SEO ──
+         The title leads with the name, then the two phrases this site
+         should actually be found on: what it is (a youth workforce
+         development research collective) and where (Indonesia). The name
+         alone was the whole title before, which only wins searches from
+         people who already know the name — no use for reaching funders or
+         partners who do not.
+
+         Under ~60 characters so Google does not truncate it, and the
+         description under ~155 for the same reason. The description is
+         written to be READ, not stuffed: it names the audience (rural
+         youth, first-generation jobseekers) and the method (field
+         research, measurement), which are the terms a programme officer
+         searches on. -->
+    <title>Rasira Foundation | Youth Workforce Research, Indonesia</title>
+    <meta
+      name="description"
+      content="Research-and-practice collective designing and measuring youth workforce programs in Indonesia — field research on rural and first-generation jobseekers."
+    />
+    <link rel="canonical" href="https://rasira-foundation.github.io/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+
+    <!-- Open Graph / Twitter. These are what render when the site is
+         pasted into LinkedIn, WhatsApp or Slack — which for an
+         organisation reaching funders and partners is a more common first
+         impression than a Google result. Without them the preview falls
+         back to a bare URL. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rasira Foundation" />
+    <meta property="og:url" content="https://rasira-foundation.github.io/" />
+    <meta property="og:title" content="Rasira Foundation | Youth Workforce Research, Indonesia" />
+    <meta
+      property="og:description"
+      content="Research-and-practice collective designing and measuring youth workforce programs in Indonesia — field research on rural and first-generation jobseekers."
+    />
+    <meta property="og:image" content="https://rasira-foundation.github.io/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="An empty Indonesian classroom, desks and chairs in rows." />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Rasira Foundation | Youth Workforce Research, Indonesia" />
+    <meta
+      name="twitter:description"
+      content="A research-and-practice collective designing and measuring youth workforce programs in Indonesia."
+    />
+    <meta name="twitter:image" content="https://rasira-foundation.github.io/og-image.jpg" />
+
+    <!-- Structured data. This is the one piece of real, machine-readable
+         content a crawler gets from this page today, since everything else
+         is rendered by JavaScript — see the note in README/SEO. It is what
+         lets a search engine understand this as an ORGANISATION with a
+         focus and a contact, rather than as an untitled blank page. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "NGO",
+        "name": "Rasira Foundation",
+        "url": "https://rasira-foundation.github.io/",
+        "logo": "https://rasira-foundation.github.io/og-image.jpg",
+        "image": "https://rasira-foundation.github.io/og-image.jpg",
+        "email": "hello@rasirafoundation.org",
+        "description": "A research-and-practice collective designing and measuring youth workforce programs in Indonesia, focused on rural youth, first-generation jobseekers, and young people without strong credentials.",
+        "areaServed": { "@type": "Country", "name": "Indonesia" },
+        "knowsAbout": [
+          "Youth workforce development",
+          "Human capital research",
+          "Field-based program design",
+          "Program monitoring and evaluation",
+          "Anthropology",
+          "Youth employment",
+          "First-generation jobseekers",
+          "Rural youth"
+        ]
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- The articles come from the Sheets gviz endpoint, and that request
