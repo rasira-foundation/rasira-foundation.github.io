@@ -157,6 +157,31 @@
       html.pre-mount body {
         background: linear-gradient(180deg, #ffffff 0%, #d8e2e9 100%);
       }
+
+      /* The prerendered copy the build writes into #root (see the plugin in
+         vite.config.ts). React's createRoot clears its container on first
+         render, so in a normal visit this is replaced the instant the app
+         mounts and is never seen.
+
+         It is styled anyway, because the case where it survives is the case
+         where it is the ONLY thing the visitor gets: JavaScript off, or the
+         bundle failing to load. Then it should read as a plain, legible
+         document rather than as full-bleed unstyled text.
+
+         Hidden during pre-mount only, so it does not flash ahead of the
+         splash. That hiding is deliberately keyed to a class a SCRIPT adds:
+         with JavaScript off the class never appears and the content simply
+         shows. The failsafe in the body covers the other case — script runs,
+         bundle does not. */
+      .static-shell {
+        max-width: 66ch;
+        margin: 0 auto;
+        padding: 56px 24px;
+        line-height: 1.6;
+      }
+      html.pre-mount .static-shell {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -164,8 +189,22 @@
     <script>
       // Set synchronously, before the module bundle is even requested, so
       // the very first paint uses the splash-coloured critical CSS above.
-      // main.tsx clears it once React has committed.
+      // App.tsx clears it once the splash has finished.
       document.documentElement.classList.add('pre-mount');
+
+      // Failsafe. `pre-mount` also hides the prerendered copy in #root, and
+      // the only thing that normally removes the class is the React app. If
+      // the bundle fails to load, or is blocked, nothing else ever would —
+      // and the visitor would sit looking at an empty gradient while the
+      // page's actual text was in the DOM the whole time. Six seconds is far
+      // longer than the app needs on any real connection, and by the time it
+      // fires in a healthy load React has already replaced #root, so there is
+      // nothing left for it to reveal.
+      setTimeout(function () {
+        if (document.querySelector('#root .static-shell')) {
+          document.documentElement.classList.remove('pre-mount');
+        }
+      }, 6000);
     </script>
     <!-- This site has never registered a service worker, but if a stale one
          from an earlier deploy (or a different tool) is still active in a

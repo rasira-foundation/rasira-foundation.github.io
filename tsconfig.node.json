@@ -19,5 +19,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["vite.config.ts"]
+  /* siteContent.ts is listed here as well as in tsconfig.app.json because
+     vite.config.ts imports it — the build injects the site's copy into
+     index.html as static HTML (see the prerender plugin). Without it in
+     this project the import resolves as an untyped module and every
+     callback parameter over that data becomes an implicit any. */
+  "include": ["vite.config.ts", "src/data/siteContent.ts"]
 }
