@@ -92,13 +92,45 @@
   border-radius: 2px;
 }
 
+/* The conic layer that colours the full circle. SVG has no conic gradient,
+   so it is a CSS one on an element behind the SVG, inset to sit exactly on
+   the circle: the disc spans (cx-r, cy-r) to (cx+r, cy+r), which in the
+   564-unit box is 32/564 = 5.67% in from each edge and 500/564 = 88.65%
+   across. Those percentages resolve against the dial wrapper, which is the
+   SVG's own box, so the two stay aligned at any size.
+
+   The ramp closes back to the first colour over the last quarter turn rather
+   than cutting to it, so the wheel has no seam — and the return reads as the
+   cycle the framework describes rather than as an accident. */
+.agency-wheel-conic {
+  position: absolute;
+  left: 5.67%;
+  top: 5.67%;
+  width: 88.65%;
+  height: 88.65%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #d99b73 0deg,
+    #e8c19f 90deg,
+    #cddbe5 180deg,
+    #a4b4c4 270deg,
+    #d99b73 360deg
+  );
+}
+
 /* ── DIAL ──
    The SVG is capped rather than left to fill 1180px. At full container
    width the half circle stands about 590px tall and takes over the
    section; 1000 keeps it clearly the largest thing here without crowding
    out the note below. */
 
+.agency-wheel-dial {
+  position: relative;
+}
+
 .agency-wheel-svg {
+  position: relative;
   display: block;
   width: 100%;
   max-width: 1000px;
@@ -239,17 +271,17 @@
      ("Pathways & volition") measures 19 * 16 * 0.62 = 189. Tracking is
      nearly removed here to buy those last few units back. Going bigger
      overruns the arc rather than looking bigger. */
+  /* The full circle's box is 564 units against the half circle's 668, so it
+     renders at a larger scale and the type steps down to match. The rails
+     are also twice as long here — 90 degrees a blade instead of 45 — so
+     nothing is close to overrunning any more. */
   .agency-blade-level {
-    /* 16.5, not 17.5. The outer rail lost length when it moved in toward the
-       rim (265 units -> 247), and the longest question measured 250 at the
-       old size. The tighter viewBox raises the render scale by about 6%, so
-       this still lands at the same size on screen. */
-    font-size: 16.5px;
-    letter-spacing: 0.02em;
+    font-size: 14px;
+    letter-spacing: 0.05em;
   }
 
   .agency-blade-title {
-    font-size: 15px;
+    font-size: 13px;
     letter-spacing: 0.01em;
   }
 
@@ -260,13 +292,14 @@
      at this size its descender reached into the note's ascender — measured
      at 1 unit of overlap. Raising the word rather than dropping the note
      keeps the note clear of the flat base below it. */
+  /* No lift needed here, unlike the half circle: the word is centred in the
+     disc rather than hung above a flat base, so it has room below it. */
   .agency-core-word {
-    font-size: 47px;
-    transform: translateY(-9px);
+    font-size: 34px;
   }
 
   .agency-core-note {
-    font-size: 16px;
+    font-size: 11.5px;
   }
 
   .agency-readout-levers {

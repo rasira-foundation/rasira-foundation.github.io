@@ -1,148 +1,183 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { agencySpectrum } from '../../data/siteContent';
 import { IN_VIEW, SPRING } from '../../lib/motion';
 import './agencyWheel.css';
 
 /* ── GEOMETRY ──
-   A fixed viewBox, unlike FrameworkLoop's measured one. That component
-   spanned a variable width and would have needed preserveAspectRatio="none"
-   to fill it, which stretches curves into ellipses. This is a radial figure:
-   it wants uniform scaling, which is exactly what the default
-   preserveAspectRatio already does, so a fixed coordinate space is both
-   correct and simpler.
+   Two configurations, not one with tweaks. Desktop draws a half circle;
+   below 860px it becomes a full one. That cannot live in CSS: the arcs, the
+   wedges and the label rails are all path data generated here, so the
+   breakpoint has to reach JavaScript.
 
-   The coordinate space is sized close to the dial's real rendered width on
-   desktop, so one user unit is roughly one pixel. That is not cosmetic: the
-   arc labels are set in this space, and in a much larger viewBox every font
-   size has to be inflated to survive the scale-down, which makes the numbers
-   impossible to reason about.
+   Both use a FIXED viewBox, unlike FrameworkLoop's measured one. That
+   component spanned a variable width and would have needed
+   preserveAspectRatio="none" to fill it, which stretches curves into
+   ellipses. A radial figure wants uniform scaling, which is what the default
+   preserveAspectRatio already does.
 
-   A WEDGE, not an annulus — the blades run to a point rather than stopping
-   at an inner ring, which is what lets the dark core read as an ambient well
-   bleeding out of the apex instead of as a drawn hole. */
-const CX = 334;
-const CY = 334;
-const R = 300;
-const VIEW_W = 668;
-const VIEW_H = 344;
+   Each coordinate space is sized near the dial's real rendered width, so one
+   user unit is roughly one pixel. That is not cosmetic: the arc labels are
+   set in this space, and in a much larger viewBox every font size has to be
+   inflated to survive the scale-down, which makes the numbers unreasonable
+   to work with.
 
-/** A true half circle: the blades fan across the full 180 degrees and the
- *  figure closes on a flat horizontal diameter. */
-const START = 180;
-const END = 0;
-const SPAN = (START - END) / agencySpectrum.levels.length;
+   WEDGES, not annuli — the blades run to a point rather than stopping at an
+   inner ring, which is what lets the dark core read as an ambient well
+   bleeding out of the centre rather than as a drawn hole. */
+type Geom = {
+  cx: number;
+  cy: number;
+  r: number;
+  viewW: number;
+  viewH: number;
+  /** Angle the first blade starts at, degrees, maths convention. */
+  start: number;
+  /** Total sweep, clockwise on screen. 180 for the half, 360 for the full. */
+  sweep: number;
+  levelR: number;
+  titleR: number;
+  coreR: number;
+  wordY: number;
+  noteY: number;
+};
 
-/* Two concentric label rails. The LONGER text goes on the LONGER arc: the
-   questions run up to 23 characters while no title exceeds 19, so questions
-   take the outer rail and titles the inner one.
+const HALF: Geom = {
+  cx: 334,
+  cy: 334,
+  r: 300,
+  viewW: 668,
+  viewH: 344,
+  start: 180,
+  sweep: 180,
+  /* The label rails. The LONGER text goes on the LONGER arc: the questions
+     run up to 23 characters and no title exceeds 19, so questions take the
+     outer rail and titles the inner.
 
-   LEVEL_R sits 14 units off the rim rather than 38. That gap was the widest
-   thing in the drawing — the labels ride outside the arc — so it, not the
-   fan, was setting how much of the viewBox the fan could occupy. Closing it
-   lets the coordinate space shrink around the figure (704x374 -> 668x344),
-   which takes the fan from 85% of the box to 90% and therefore renders it
-   larger at the same container width, on both breakpoints. Type sizes are
-   stepped down to match the new scale so nothing on screen changes size.
+     levelR sits 14 units off the rim. That gap is the widest thing in the
+     drawing — the labels ride outside the arc — so it, not the fan, sets how
+     much of the viewBox the fan can occupy; keeping it tight is what lets
+     the figure render large. titleR sits at 240 rather than mid-blade
+     because the core gradient covers the inner third, so the colour a reader
+     actually sees spans roughly 140..300. */
+  levelR: 314,
+  titleR: 240,
+  coreR: 168,
+  wordY: -74,
+  noteY: -44,
+};
 
-   Both radii are derived from the longest label rather than chosen by eye.
-   Across a half circle each segment is 45 degrees, giving an arc of
-   0.785 * radius — half again the room of the 136-degree fan this replaced,
-   which is why the labels sit comfortably now. Plex Mono advances about
-   0.6em per glyph, so the outer rail clears 23 chars ("DOES THE WORLD
-   RESPOND?") at 338 (265 units) and the inner clears 19 ("Pathways &
-   volition") at 240 (189 units). Change a question or a title and these
-   want rechecking — measure getComputedTextLength against getTotalLength.
+/* The full circle gives each blade 90 degrees instead of 45, so the rails
+   are twice as long and the labels sit easily. It also uses a phone's
+   vertical space, which a 2:1 half circle cannot. */
+const FULL: Geom = {
+  cx: 282,
+  cy: 282,
+  r: 250,
+  viewW: 564,
+  viewH: 564,
+  /* Starts at twelve o'clock and runs clockwise, so the four blades read in
+     order from the top the way a dial is read. */
+  start: 90,
+  sweep: 360,
+  levelR: 264,
+  titleR: 185,
+  coreR: 140,
+  /* Centred in the disc rather than hung above a flat base. */
+  wordY: -6,
+  noteY: 20,
+};
 
-   TITLE_R sits at 240 rather than 250 so the title rides nearer the middle
-   of the VISIBLE colour. The blade runs from the apex to 300, but the core
-   gradient covers its inner third, so the colour a reader actually sees
-   spans roughly 140..300 and centres near 220. Pulling the rail all the way
-   in to 220 would shorten it to 173 units, which the longest title overruns
-   at mobile size — 240 is as close to centred as the text can afford.
+const COMPACT_QUERY = '(max-width: 860px)';
 
-   Concentric arcs rather than the reference's radial inner labels: at these
-   angles radial text either runs upside down on the left of the fan or has
-   to flip halfway across, and both read as mistakes rather than as design. */
-const LEVEL_R = 314;
-const TITLE_R = 240;
+function useGeom(): Geom {
+  /* Read synchronously in the initialiser rather than in an effect, so the
+     first paint already has the right shape. An effect would render the half
+     circle and swap it a frame later, which is visible. */
+  const [compact, setCompact] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(COMPACT_QUERY).matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(COMPACT_QUERY);
+    const update = () => setCompact(mq.matches);
+    update();
+    /* A window resize listener as well as the media query listener,
+       deliberately. The `change` event does not fire under Chrome's device
+       emulation, so the shape stayed a full circle after resizing back to a
+       desktop width even though mq.matches had correctly flipped to false —
+       caught while verifying this. A plain resize listener covers that, and
+       the two are idempotent so double-firing costs nothing. Same fallback
+       the loop component needed for ResizeObserver. */
+    mq.addEventListener('change', update);
+    window.addEventListener('resize', update);
+    return () => {
+      mq.removeEventListener('change', update);
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+  return compact ? FULL : HALF;
+}
 
-/** Depth of the ambient core, in the same units. */
-const CORE_R = 168;
-
-/** Rounded to 2dp. sin(180 degrees) is 1.2e-16 rather than 0 in floating
- *  point, so the flat diameter would otherwise emit a y of
- *  355.99999999999994 into the path data. Visually identical, but it makes
- *  the geometry unreadable when inspecting the DOM. */
-function pt(r: number, deg: number) {
+const polar = (g: Geom, r: number, deg: number) => {
   const rad = (deg * Math.PI) / 180;
   const round = (n: number) => Math.round(n * 100) / 100;
-  return [round(CX + r * Math.cos(rad)), round(CY - r * Math.sin(rad))] as const;
+  return [round(g.cx + r * Math.cos(rad)), round(g.cy - r * Math.sin(rad))] as const;
+};
+
+/** A pie wedge from the centre. a0 is the larger angle, so a0 -> a1 runs
+ *  clockwise on screen, hence sweep 1. largeArc is set for spans over 180,
+ *  which the full circle's blades never are but a future one might be. */
+function wedge(g: Geom, a0: number, a1: number, radius = g.r) {
+  const [x0, y0] = polar(g, radius, a0);
+  const [x1, y1] = polar(g, radius, a1);
+  const largeArc = Math.abs(a0 - a1) > 180 ? 1 : 0;
+  return `M ${g.cx} ${g.cy} L ${x0} ${y0} A ${radius} ${radius} 0 ${largeArc} 1 ${x1} ${y1} Z`;
 }
 
-/** A pie wedge from the apex. a0 is the larger (leftmost) angle, so a0 -> a1
- *  runs clockwise on screen, hence sweep 1. */
-function wedge(a0: number, a1: number, radius = R) {
-  const [x0, y0] = pt(radius, a0);
-  const [x1, y1] = pt(radius, a1);
-  return `M ${CX} ${CY} L ${x0} ${y0} A ${radius} ${radius} 0 0 1 ${x1} ${y1} Z`;
-}
-
-/** The invisible rail a label is set along, left to right. */
-function arc(a0: number, a1: number, radius: number) {
-  const [x0, y0] = pt(radius, a0);
-  const [x1, y1] = pt(radius, a1);
-  return `M ${x0} ${y0} A ${radius} ${radius} 0 0 1 ${x1} ${y1}`;
+/** The invisible rail a label is set along.
+ *
+ *  Flipped for blades whose midpoint sits below the horizon. Text follows a
+ *  path's direction, so on the bottom of a circle a clockwise rail runs
+ *  right to left and the label comes out upside down. Drawing that rail
+ *  counter-clockwise instead puts it the right way up. The radius is nudged
+ *  outward when flipped because the glyphs then grow toward the centre
+ *  rather than away from it, and these labels belong outside the rim. */
+function labelArc(g: Geom, a0: number, a1: number, radius: number, flip: boolean, lift = 0) {
+  if (!flip) {
+    const [x0, y0] = polar(g, radius, a0);
+    const [x1, y1] = polar(g, radius, a1);
+    return `M ${x0} ${y0} A ${radius} ${radius} 0 0 1 ${x1} ${y1}`;
+  }
+  const rr = radius + lift;
+  const [x0, y0] = polar(g, rr, a1);
+  const [x1, y1] = polar(g, rr, a0);
+  return `M ${x0} ${y0} A ${rr} ${rr} 0 0 0 ${x1} ${y1}`;
 }
 
 /* ── PALETTE ──
-   The site's own sky, read left to right as dawn to dusk. The ordering is
-   the component's argument rather than decoration: agency moves from inside
-   the person ("can I?") outward into the world ("does the world respond?"),
-   so the ramp runs warm and close to cool and distant. Two of these are
-   already global tokens; the other two are lifted from ProductionGradient3D's
-   stops, which is where this ramp actually lives. Kept local because they are
-   one component's reading of an existing palette, not four new site colours. */
+   The site's own sky, read as dawn to dusk. The ordering is the component's
+   argument rather than decoration: agency moves from inside the person
+   ("can I?") outward into the world ("does the world respond?"), so the ramp
+   runs warm and close to cool and distant. Two of these are already global
+   tokens; the other two are lifted from ProductionGradient3D's stops, which
+   is where this ramp actually lives. Kept local because they are one
+   component's reading of an existing palette, not four new site colours. */
 const BLADE = ['#d99b73', '#e8c19f', '#cddbe5', '#a4b4c4'];
 
-/* The kicker's tint, precomputed rather than left to CSS color-mix().
- *
- * color-mix(in srgb, var(--blade-active) 30%, #4a443e) looks like the
- * obvious way to write this, and it is broken here: when only a custom
- * property feeding the mix changes, Chrome does not re-resolve the mix if
- * the property carries a transition. The declaration text never changes, so
- * the engine keeps the first computed value. Measured — the variable moved
- * through all four blade colours while the kicker stayed frozen on the
- * first one, which meant the tint silently never tracked the dial at all.
- *
- * Mixing here instead makes the value a plain rgb() that genuinely changes,
- * so the transition has two endpoints to move between.
- *
- * The base is dark on purpose. The blades are pale by design, so the base
- * sets the contrast floor: against a lighter grey all four tints failed
- * WCAG AA (worst 3.55:1). #4a443e holds every blade above 4.5:1 at full
- * 30% tint strength — verified 4.89:1 worst, 6.06:1 best. */
-const KICKER_BASE = [0x4a, 0x44, 0x3e];
-const KICKER_TINT = 0.3;
-
-function kickerColor(hex: string) {
-  const n = parseInt(hex.slice(1), 16);
-  const rgb = [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  const mixed = rgb.map((c, i) => Math.round(c * KICKER_TINT + KICKER_BASE[i] * (1 - KICKER_TINT)));
-  return `rgb(${mixed.join(', ')})`;
-}
-
 export function AgencyWheel() {
+  const g = useGeom();
+  const isFull = g.sweep === 360;
   const [activeId, setActiveId] = useState(agencySpectrum.levels[0].id);
   const active = agencySpectrum.levels.find((l) => l.id === activeId)!;
   const activeIndex = agencySpectrum.levels.findIndex((l) => l.id === activeId);
+  const span = g.sweep / agencySpectrum.levels.length;
 
-  const [fanLeftX] = pt(R, START);
-  const [fanRightX] = pt(R, END);
+  const [fanLeftX] = polar(g, g.r, 180);
+  const [fanRightX] = polar(g, g.r, 0);
 
   return (
     <motion.div
-      className="agency-wheel"
+      className={`agency-wheel${isFull ? ' agency-wheel--full' : ''}`}
       /* Objects rather than variant labels. A child using labels inherits
          them from any animating motion ancestor, which is what silently
          froze body copy elsewhere in this codebase. */
@@ -150,18 +185,11 @@ export function AgencyWheel() {
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={IN_VIEW}
       transition={SPRING}
-      style={{
-        ['--blade-active' as string]: BLADE[activeIndex],
-        ['--kicker' as string]: kickerColor(BLADE[activeIndex]),
-      }}
+      style={{ ['--blade-active' as string]: BLADE[activeIndex] }}
     >
-      {/* Three centred rows beneath the arc's base, anchoring the wheel:
-          eyebrow, title, then the levers as discrete tags. The levers were a
-          single dot-separated run; as tags each concept is its own object
-          you can actually pick out, which is what they are.
-
-          aria-live so keyboard and screen-reader users hear what changed as
-          focus crosses the dial, instead of the readout updating silently. */}
+      {/* Three centred rows beneath the dial, anchoring the wheel. aria-live
+          so keyboard and screen-reader users hear what changed as focus
+          crosses the blades, instead of the readout updating silently. */}
       <div className="agency-wheel-readout" aria-live="polite">
         <p className="agency-readout-eyebrow">{active.question}</p>
         <h3 className="agency-readout-title">{active.title}</h3>
@@ -175,89 +203,105 @@ export function AgencyWheel() {
       </div>
 
       <div className="agency-wheel-dial">
+        {/* The full circle's colour is a CONIC gradient, and it has to be a
+            CSS one on an element behind the SVG, because SVG has no conic
+            gradient of its own. It cannot be the linear gradient the half
+            circle uses either: there the blades run left to right so a
+            horizontal ramp lands on them in order, but around a circle the
+            blades are quadrants and a horizontal ramp would put the coolest
+            colour on the second blade and the warmest on the fourth,
+            reversing the argument the palette is making. */}
+        {isFull && <div className="agency-wheel-conic" aria-hidden="true" />}
+
         <svg
           className="agency-wheel-svg"
-          viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+          viewBox={`0 0 ${g.viewW} ${g.viewH}`}
           role="group"
           aria-label="Agency spectrum: four levels running from capability beliefs to standing"
         >
           <defs>
-            {/* One continuous sky across the whole fan rather than four
-                banded fills. The blades are told apart by their labels and
-                their hover state, not by hard colour edges — which is what
-                keeps this reading as a spectrum rather than as a pie chart.
-                Anchored to the fan's actual left and right extremes in user
-                space so the ramp lands identically at every size. */}
-            <linearGradient
-              id="agency-sky"
-              gradientUnits="userSpaceOnUse"
-              x1={fanLeftX}
-              y1={0}
-              x2={fanRightX}
-              y2={0}
-            >
-              {BLADE.map((c, i) => (
-                <stop key={c} offset={i / (BLADE.length - 1)} stopColor={c} />
-              ))}
-            </linearGradient>
+            {!isFull && (
+              /* One continuous sky across the whole fan rather than four
+                 banded fills. The blades are told apart by their labels and
+                 their hover state, not by hard colour edges, which is what
+                 keeps this reading as a spectrum rather than a pie chart.
+                 Anchored to the fan's real extremes in user space so the ramp
+                 lands identically at every size. */
+              <linearGradient
+                id="agency-sky"
+                gradientUnits="userSpaceOnUse"
+                x1={fanLeftX}
+                y1={0}
+                x2={fanRightX}
+                y2={0}
+              >
+                {BLADE.map((c, i) => (
+                  <stop key={c} offset={i / (BLADE.length - 1)} stopColor={c} />
+                ))}
+              </linearGradient>
+            )}
 
             {/* The ambient well. The page is almost entirely white, so this
                 deep core is the one high-contrast moment in the section. It
                 fades to nothing rather than ending on an edge, so it reads as
-                depth under the fan and not as a shape sitting on top of it. */}
-            <radialGradient id="agency-core" gradientUnits="userSpaceOnUse" cx={CX} cy={CY} r={CORE_R}>
+                depth under the dial and not as a shape sitting on top. */}
+            <radialGradient id="agency-core" gradientUnits="userSpaceOnUse" cx={g.cx} cy={g.cy} r={g.coreR}>
               <stop offset="0" stopColor="#14120f" stopOpacity="0.97" />
               <stop offset="0.5" stopColor="#1a1714" stopOpacity="0.9" />
               <stop offset="1" stopColor="#2b2621" stopOpacity="0" />
             </radialGradient>
 
-            {/* Everything is clipped to the fan so neither the core nor a
-                scrim can spill past the rim. */}
             <clipPath id="agency-clip">
-              <path d={wedge(START, END)} />
+              {isFull ? (
+                <circle cx={g.cx} cy={g.cy} r={g.r} />
+              ) : (
+                <path d={wedge(g, g.start, g.start - g.sweep)} />
+              )}
             </clipPath>
           </defs>
 
           <g clipPath="url(#agency-clip)">
-            <path d={wedge(START, END)} fill="url(#agency-sky)" />
+            {!isFull && <path d={wedge(g, g.start, g.start - g.sweep)} fill="url(#agency-sky)" />}
 
-            {/* Scrims above the sky, below the core: inactive blades wash
+            {/* Scrims above the colour, below the core: inactive blades wash
                 out toward the page while the active one holds full colour.
-                This is the reaction — the fan visibly resolves around
+                This is the reaction — the dial visibly resolves around
                 whichever level is being read. */}
             {agencySpectrum.levels.map((lvl, i) => (
               <path
                 key={`scrim-${lvl.id}`}
                 className={`agency-scrim${lvl.id === activeId ? ' is-active' : ''}`}
-                d={wedge(START - i * SPAN, START - (i + 1) * SPAN)}
+                d={wedge(g, g.start - i * span, g.start - (i + 1) * span)}
               />
             ))}
 
-            <path d={wedge(START, END, CORE_R * 2)} fill="url(#agency-core)" pointerEvents="none" />
+            <circle cx={g.cx} cy={g.cy} r={g.coreR * 2} fill="url(#agency-core)" pointerEvents="none" />
           </g>
 
-          <text className="agency-core-word" x={CX} y={CY - 74} textAnchor="middle">
+          <text className="agency-core-word" x={g.cx} y={g.cy + g.wordY} textAnchor="middle">
             {agencySpectrum.centerLabel}
           </text>
-          {/* One <text> with tspans rather than one <text> per line, and the
-              line gap in EM rather than user units. The note's size changes
-              between breakpoints, and a fixed 15-unit gap that looked right
-              at 7.6px collapsed into the line above it once the mobile size
-              grew — which is exactly what was overlapping "Agency". An em
-              gap scales with whatever size the stylesheet sets. */}
-          <text className="agency-core-note" x={CX} y={CY - 44} textAnchor="middle">
+          {/* One <text> with tspans, and the line gap in EM rather than user
+              units. The note's size changes between breakpoints, and a fixed
+              unit gap that looked right at one size collapsed into the line
+              above it at another. */}
+          <text className="agency-core-note" x={g.cx} y={g.cy + g.noteY} textAnchor="middle">
             {agencySpectrum.centerNote.map((line, i) => (
-              <tspan key={line} x={CX} dy={i === 0 ? 0 : '1.4em'}>
+              <tspan key={line} x={g.cx} dy={i === 0 ? 0 : '1.4em'}>
                 {line}
               </tspan>
             ))}
           </text>
 
-          {/* Hit areas and labels last, so nothing painted above them can
-              steal the pointer. */}
+          {/* Hit areas and labels last, so nothing painted above can steal
+              the pointer from them. */}
           {agencySpectrum.levels.map((lvl, i) => {
-            const a0 = START - i * SPAN;
-            const a1 = START - (i + 1) * SPAN;
+            const a0 = g.start - i * span;
+            const a1 = g.start - (i + 1) * span;
+            const mid = (a0 + a1) / 2;
+            /* Below the horizon the label has to be drawn along a reversed
+               rail or it comes out upside down. */
+            const flip = Math.sin((mid * Math.PI) / 180) < 0;
             const isActive = lvl.id === activeId;
             return (
               <g
@@ -277,9 +321,9 @@ export function AgencyWheel() {
                   }
                 }}
               >
-                <path className="agency-hit" d={wedge(a0, a1)} />
-                <path id={`agency-level-${lvl.id}`} d={arc(a0, a1, LEVEL_R)} fill="none" />
-                <path id={`agency-title-${lvl.id}`} d={arc(a0, a1, TITLE_R)} fill="none" />
+                <path className="agency-hit" d={wedge(g, a0, a1)} />
+                <path id={`agency-level-${lvl.id}`} d={labelArc(g, a0, a1, g.levelR, flip, 20)} fill="none" />
+                <path id={`agency-title-${lvl.id}`} d={labelArc(g, a0, a1, g.titleR, flip, 14)} fill="none" />
                 <text className="agency-blade-level">
                   <textPath href={`#agency-level-${lvl.id}`} startOffset="50%" textAnchor="middle">
                     {lvl.question}
@@ -295,7 +339,6 @@ export function AgencyWheel() {
           })}
         </svg>
       </div>
-
     </motion.div>
   );
 }

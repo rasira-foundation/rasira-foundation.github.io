@@ -44,8 +44,11 @@
 }
 
 @media (max-width: 640px) {
+  /* 60px of top padding rather than 40. The section sits closer to the
+     pillars panel above it on a phone than it does on desktop, and the full
+     circle needs a little more air above it than the half circle did. */
   .system-framework {
-    padding: 40px 16px 8px;
+    padding: 60px 16px 8px;
   }
 
   .framework-note {
