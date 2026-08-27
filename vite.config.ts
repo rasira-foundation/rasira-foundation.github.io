@@ -71,13 +71,28 @@ function prerenderContent(): Plugin {
         )
         .join('')
 
+      /* Section order deliberately matches the order the React app renders
+         in (articles, then pillars, then framework) rather than the order
+         that reads most naturally on its own. When a crawler fetches the
+         raw HTML and then renders the JavaScript, it sees both versions;
+         keeping the sequence identical means the two agree about what this
+         page is and in what order, with no reshuffle to explain.
+
+         Wrapped in <main> with the hero in <header>, which the live app
+         does not currently have — see the note in App.tsx. Free to do here,
+         since this markup is generated rather than woven into the layout. */
       const shell = `
-    <div class="static-shell">
+    <main class="static-shell">
       <header>
         <h1>${esc(heroIntro.title)}</h1>
         <p>${esc(heroIntro.paragraph)}</p>
         <p>${tags}</p>
       </header>
+
+      <section>
+        <h2>${esc(articleSection.title)}</h2>
+        <p>${esc(articleSection.subtitle)}</p>
+      </section>
 
       <section>
         <h2>${esc(pillarsSection.title)}</h2>
@@ -90,11 +105,6 @@ function prerenderContent(): Plugin {
         ${frameworkNodes}
         <p>${esc(systemFramework.loopLabel)}</p>
         <p>${esc(systemFramework.note)}</p>
-      </section>
-
-      <section>
-        <h2>${esc(articleSection.title)}</h2>
-        <p>${esc(articleSection.subtitle)}</p>
       </section>
 
       <section>
@@ -113,7 +123,7 @@ function prerenderContent(): Plugin {
         <p>${esc(donationSection.lead)}</p>
         <p>${esc(donationSection.body)}</p>
       </section>
-    </div>`
+    </main>`
 
       return html.replace('<div id="root"></div>', `<div id="root">${shell}\n    </div>`)
     },

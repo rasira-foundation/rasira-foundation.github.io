@@ -56,7 +56,25 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
             Framer drives any transform value on an element it writes the
             whole `transform` property itself each frame, so a separate
             CSS `transform: scale()` would just be overwritten. */}
-        <motion.img src={pillarsImage} alt="" className="pillars-image" style={{ y: imageY, scale: 1.1 }} />
+        {/* lazy + async decode. This file is ~936KB and sits well below the
+            fold, so eager-loading it competes for bandwidth with everything
+            above it on exactly the mid-range mobile connections most of our
+            readers are on — and Core Web Vitals is a ranking signal, so that
+            cost is an SEO cost too. Deferring it is free here: the layout
+            does not depend on the image arriving, because the wrapper's
+            height comes from CSS either way (aspect-ratio on desktop, a
+            fixed 75vh on mobile), so nothing reflows when it lands and the
+            parallax has a stable box to measure from the start.
+
+            The asset itself is untouched — same file, same resolution. */}
+        <motion.img
+          src={pillarsImage}
+          alt=""
+          className="pillars-image"
+          loading="lazy"
+          decoding="async"
+          style={{ y: imageY, scale: 1.1 }}
+        />
       </div>
 
       {/* Outside the panel and above it, matching how every other section
