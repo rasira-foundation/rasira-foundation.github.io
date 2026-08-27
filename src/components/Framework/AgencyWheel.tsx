@@ -21,11 +21,11 @@ import './agencyWheel.css';
    A WEDGE, not an annulus — the blades run to a point rather than stopping
    at an inner ring, which is what lets the dark core read as an ambient well
    bleeding out of the apex instead of as a drawn hole. */
-const CX = 352;
-const CY = 356;
+const CX = 334;
+const CY = 334;
 const R = 300;
-const VIEW_W = 704;
-const VIEW_H = 374;
+const VIEW_W = 668;
+const VIEW_H = 344;
 
 /** A true half circle: the blades fan across the full 180 degrees and the
  *  figure closes on a flat horizontal diameter. */
@@ -36,6 +36,14 @@ const SPAN = (START - END) / agencySpectrum.levels.length;
 /* Two concentric label rails. The LONGER text goes on the LONGER arc: the
    questions run up to 23 characters while no title exceeds 19, so questions
    take the outer rail and titles the inner one.
+
+   LEVEL_R sits 14 units off the rim rather than 38. That gap was the widest
+   thing in the drawing — the labels ride outside the arc — so it, not the
+   fan, was setting how much of the viewBox the fan could occupy. Closing it
+   lets the coordinate space shrink around the figure (704x374 -> 668x344),
+   which takes the fan from 85% of the box to 90% and therefore renders it
+   larger at the same container width, on both breakpoints. Type sizes are
+   stepped down to match the new scale so nothing on screen changes size.
 
    Both radii are derived from the longest label rather than chosen by eye.
    Across a half circle each segment is 45 degrees, giving an arc of
@@ -56,7 +64,7 @@ const SPAN = (START - END) / agencySpectrum.levels.length;
    Concentric arcs rather than the reference's radial inner labels: at these
    angles radial text either runs upside down on the left of the fan or has
    to flip halfway across, and both read as mistakes rather than as design. */
-const LEVEL_R = 338;
+const LEVEL_R = 314;
 const TITLE_R = 240;
 
 /** Depth of the ambient core, in the same units. */

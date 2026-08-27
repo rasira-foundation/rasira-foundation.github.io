@@ -68,7 +68,7 @@
 .agency-readout-title {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: 24px;
+  font-size: 22.6px;
   line-height: 1.2;
   color: var(--color-ink);
   margin: 0 0 12px;
@@ -153,7 +153,7 @@
      SMALLER than the size wanted on screen. At the 1000px cap the SVG
      scales by about 1.42, so 8.2 units lands near 11.7px rendered — the
      same on-screen size the labels had before the dial grew. */
-  font-size: 8.2px;
+  font-size: 7.8px;
   font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -163,7 +163,7 @@
 /* Sits on the colour rather than outside it, so it needs to hold against a
    mid-tone rather than against the page. */
 .agency-blade-title {
-  font-size: 8.2px;
+  font-size: 7.8px;
   letter-spacing: 0.02em;
   fill: rgba(20, 18, 15, 0.5);
 }
@@ -195,7 +195,7 @@
   font-family: var(--font-serif);
   /* Same compensation as the arc labels: down in user units so the dial can
      grow without the wordmark growing with it. */
-  font-size: 24px;
+  font-size: 22.6px;
   font-weight: 400;
   fill: var(--color-cream);
   pointer-events: none;
@@ -207,7 +207,7 @@
    itself. */
 .agency-core-note {
   font-family: var(--font-mono);
-  font-size: 7.6px;
+  font-size: 7.2px;
   letter-spacing: 0.04em;
   /* Raised from 0.62. This line sits over the darkest part of the core, so
      it is not colliding with the blur so much as competing with it: at 9px
@@ -249,7 +249,11 @@
      nearly removed here to buy those last few units back. Going bigger
      overruns the arc rather than looking bigger. */
   .agency-blade-level {
-    font-size: 17.5px;
+    /* 16.5, not 17.5. The outer rail lost length when it moved in toward the
+       rim (265 units -> 247), and the longest question measured 250 at the
+       old size. The tighter viewBox raises the render scale by about 6%, so
+       this still lands at the same size on screen. */
+    font-size: 16.5px;
     letter-spacing: 0.02em;
   }
 
@@ -266,12 +270,12 @@
      at 1 unit of overlap. Raising the word rather than dropping the note
      keeps the note clear of the flat base below it. */
   .agency-core-word {
-    font-size: 50px;
+    font-size: 47px;
     transform: translateY(-9px);
   }
 
   .agency-core-note {
-    font-size: 17px;
+    font-size: 16px;
   }
 
   .agency-readout-levers {
@@ -284,19 +288,20 @@
   }
 }
 
-/* Just short of the section's 16px gutter, not level with it. At an exact
-   full bleed the rightmost question ("DOES THE WORLD RESPOND?") overran the
-   viewport by 2px and html's overflow-x:clip was shaving the glyph — the
-   outer labels ride beyond the arc, so the widest thing here is the label
-   ring, not the fan. Pulling back 4px costs about 2% of the dial and buys a
-   margin on both sides.
+/* A pixel short of the section's 16px gutter. Full bleed now measures clean
+   — the tighter label ring bought back the 2px the rightmost question used
+   to lose to html's overflow-x:clip — but it clears by only 2px, which is
+   inside the variance of font fallback and device rounding. One pixel of
+   inset costs nothing visible and takes that risk off the table.
 
-   This is also why the bleed cannot simply be deepened: -24px at this
-   breakpoint would push 8px past each edge and clip both end labels. */
+   It also cannot go the other way: a -24px inset here sits 8px past each
+   viewport edge and would clip both end labels rather than enlarging
+   anything, since the widest thing in this drawing is the label ring rather
+   than the fan. */
 @media (max-width: 640px) {
   .agency-wheel-dial {
-    margin-inline: -12px;
-    width: calc(100% + 24px);
+    margin-inline: -15px;
+    width: calc(100% + 30px);
   }
 }
 
