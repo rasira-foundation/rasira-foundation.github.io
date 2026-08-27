@@ -8,77 +8,86 @@
    falls in the right order without needing to reverse anything. */
 .agency-wheel {
   display: grid;
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
-  gap: 36px;
-  align-items: center;
+  gap: 30px;
   margin-top: 56px;
 }
 
-/* ── READOUT ── */
-.agency-readout-eyebrow {
+/* Dial above readout at EVERY width, rather than side by side on desktop
+   and stacked on mobile. Two things fall out of one change: the dial stops
+   sharing the row with the readout and can use the full container, going
+   from 732px to 1000px; and desktop and mobile now present the same way
+   instead of being two different compositions.
+
+   The readout still comes FIRST in the DOM — words before graphic for a
+   screen reader — and is moved below visually. Safe to do here because
+   nothing in the readout is focusable, so this cannot desynchronise the
+   tab order from what is on screen. */
+.agency-wheel-dial {
+  order: -1;
+}
+
+/* ── READOUT ──
+   The dial's caption, not a panel beside it: centred on the same axis as the
+   apex and the "Agency" wordmark, and held to two lines. */
+.agency-wheel-readout {
+  /* Matches the dial's own cap so the caption is centred on exactly the axis
+     the wordmark sits on, and so line two has the full width of the fan to
+     stay on one line. */
+  max-width: 1000px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.agency-readout-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 10px;
+}
+
+.agency-readout-q {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   /* Tinted by whichever blade is active — the only place the dial's colour
-     escapes the graphic, which is what ties the two halves together. Darkened
-     against white by mixing toward ink: the raw sky colours are pale by
-     design and would not carry as text. */
+     escapes the graphic, which is what ties the caption to the fan.
+     Darkened against white by mixing toward ink: the raw sky colours are
+     pale by design and would not carry as text. */
   color: color-mix(in srgb, var(--blade-active) 55%, var(--color-ink));
-  margin: 0 0 6px;
   transition: color 0.4s var(--ease-soft);
 }
 
-.agency-readout-title {
+.agency-readout-t {
   font-family: var(--font-serif);
   font-weight: 500;
   font-size: 26px;
   line-height: 1.2;
   color: var(--color-ink);
-  margin: 0 0 18px;
 }
 
 .agency-readout-levers {
-  list-style: none;
-  margin: 0 0 18px;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.agency-readout-levers li {
   font-family: var(--font-mono);
-  font-size: 14px;
-  line-height: 1.5;
-  color: #2b2623;
-  padding-left: 16px;
-  position: relative;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #57514a;
+  margin: 0;
 }
 
-/* A tick rather than a bullet: these are levers the framework can pull, not
-   an unordered list of topics. */
-.agency-readout-levers li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.62em;
-  width: 7px;
-  height: 1px;
-  background: var(--blade-active);
-  transition: background 0.4s var(--ease-soft);
-}
-
-
-/* ── DIAL ── */
-.agency-wheel-dial {
-  min-width: 0;
-}
+/* ── DIAL ──
+   The SVG is capped rather than left to fill 1180px. At full container
+   width the half circle stands about 590px tall and takes over the
+   section; 1000 keeps it clearly the largest thing here without crowding
+   out the note below. */
 
 .agency-wheel-svg {
   display: block;
   width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
   height: auto;
   overflow: visible;
 }
@@ -117,9 +126,10 @@
 
      Sized against the viewBox, not against the screen: the dial renders
      larger than its coordinate space, so the user-unit size has to be
-     smaller than the size wanted on screen. 11.2 here lands near 11.7px
-     rendered. */
-  font-size: 11.2px;
+     SMALLER than the size wanted on screen. At the 1000px cap the SVG
+     scales by about 1.42, so 8.2 units lands near 11.7px rendered — the
+     same on-screen size the labels had before the dial grew. */
+  font-size: 8.2px;
   font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -129,7 +139,7 @@
 /* Sits on the colour rather than outside it, so it needs to hold against a
    mid-tone rather than against the page. */
 .agency-blade-title {
-  font-size: 11.2px;
+  font-size: 8.2px;
   letter-spacing: 0.02em;
   fill: rgba(20, 18, 15, 0.5);
 }
@@ -161,7 +171,7 @@
   font-family: var(--font-serif);
   /* Same compensation as the arc labels: down in user units so the dial can
      grow without the wordmark growing with it. */
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 400;
   fill: var(--color-cream);
   pointer-events: none;
@@ -173,7 +183,7 @@
    itself. */
 .agency-core-note {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 7.6px;
   letter-spacing: 0.04em;
   fill: rgba(255, 255, 255, 0.62);
   pointer-events: none;
@@ -226,26 +236,22 @@
 }
 
 /* ── MOBILE ──
-   The dial stacks above the readout. Note the DOM has the readout first, so
-   `order` does the swap rather than duplicating markup: on a phone the fan
-   should be seen before it is explained, because it is the thing that makes
-   someone want to read the rest. */
+   The composition is already dial-above-readout at every width, so nothing
+   needs reordering here. What changes is how the blades are labelled. */
 @media (max-width: 860px) {
   .agency-wheel {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 22px;
     margin-top: 40px;
   }
 
-  .agency-wheel-dial {
-    order: -1;
-  }
-
-  /* The arc labels go, and the chips take over — see the note on
-     .agency-wheel-chips. Raising their size in user units instead does not
-     work: the rails are a fixed arc length, so bigger text just overruns
-     them (measured: -4px on the longest question, -18px on the longest
-     title before this change). */
+  /* The arc labels go and the chips take over. Raising the labels in user
+     units instead does not work: the rails are a fixed arc length, so
+     bigger text simply overruns them. Concretely, the SVG scales to about
+     0.49 here, so holding the desktop label at a readable 11px would need
+     roughly 22 user units, and the longest question at that size measures
+     ~334 units against a 265-unit rail. There is no size that is both
+     readable and inside the arc, which is why this is a different
+     mechanism rather than a smaller version of the same one. */
   .agency-blade-level,
   .agency-blade-title {
     display: none;
@@ -255,23 +261,30 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin-top: 4px;
   }
 
+  /* The core text is inside the SVG, so it shrinks with the dial. These are
+     the desktop values scaled back up by the ratio between the two scales
+     (about 1.42 down to about 0.49), which lands them at roughly the same
+     size on screen as on desktop. */
   .agency-core-word {
-    font-size: 40px;
+    font-size: 62px;
   }
 
   .agency-core-note {
-    font-size: 13.5px;
-  }
-
-  .agency-readout-title {
     font-size: 22px;
   }
 
-  .agency-readout-levers li {
-    font-size: 13px;
+  .agency-readout-t {
+    font-size: 21px;
+  }
+
+  /* Two lines is a desktop promise, not a mobile one — at 375px the lever
+     line is far too long to hold, so it is allowed to wrap and the type
+     steps down rather than being squeezed. */
+  .agency-readout-levers {
+    font-size: 12px;
+    line-height: 1.7;
   }
 }
 
@@ -279,8 +292,7 @@
   .agency-scrim,
   .agency-blade-level,
   .agency-blade-title,
-  .agency-readout-eyebrow,
-  .agency-readout-levers li::before {
+  .agency-readout-q {
     transition: none;
   }
 }
