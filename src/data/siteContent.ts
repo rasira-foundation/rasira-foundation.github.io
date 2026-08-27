@@ -1,7 +1,7 @@
 // Copy pulled directly from the design brief / mockups. Update freely —
 // this file is the only place page copy lives outside the Sheet-fed articles.
 
-export const CONTACT_EMAIL = 'hello@rasirafoundation.org';
+export const CONTACT_EMAIL = 'rasira.foundation@gmail.com';
 
 export const heroIntro = {
   // No "Rasira" in the title itself — the header logo right above it
