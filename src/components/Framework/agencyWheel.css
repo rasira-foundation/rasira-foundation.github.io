@@ -54,15 +54,6 @@
   margin: 0 0 4px;
 }
 
-/* The one piece of colour kept out of the neutral spec: the level code is
-   tinted by the active blade, so the caption still visibly answers the dial
-   when the reading moves. Everything else stays neutral as specified.
-   Mixed toward ink because the raw sky colours are pale by design and would
-   not carry as 11px text. */
-.agency-readout-level {
-  color: color-mix(in srgb, var(--blade-active) 60%, var(--color-ink));
-  transition: color 0.4s var(--ease-soft);
-}
 
 /* Row 2 — title. */
 .agency-readout-title {
@@ -309,7 +300,7 @@
   .agency-scrim,
   .agency-blade-level,
   .agency-blade-title,
-  .agency-readout-level {
+  .agency-readout-eyebrow {
     transition: none;
   }
 }

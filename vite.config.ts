@@ -77,7 +77,7 @@ function prerenderContent(): Plugin {
       const agencyLevels = agencySpectrum.levels
         .map(
           (l) =>
-            `<section><h3>${esc(l.level)} · ${esc(l.question)} ${esc(l.title)}</h3>` +
+            `<section><h3>${esc(l.question)} ${esc(l.title)}</h3>` +
             `<p>${l.levers.map((v) => esc(v)).join(', ')}</p></section>`,
         )
         .join('')

@@ -163,11 +163,7 @@ export function AgencyWheel() {
           aria-live so keyboard and screen-reader users hear what changed as
           focus crosses the dial, instead of the readout updating silently. */}
       <div className="agency-wheel-readout" aria-live="polite">
-        <p className="agency-readout-eyebrow">
-          <span className="agency-readout-level">{active.level}</span>
-          <span aria-hidden="true"> · </span>
-          {active.question}
-        </p>
+        <p className="agency-readout-eyebrow">{active.question}</p>
         <h3 className="agency-readout-title">{active.title}</h3>
         <ul className="agency-readout-levers">
           {active.levers.map((lever) => (

@@ -59,9 +59,9 @@ export const systemFramework = {
  * colours that sequence with the site's own dawn-to-dusk sky ramp, warm to
  * cool, so the palette carries the same argument the copy does.
  *
- * Each level carries a short code alongside its question. The codes were
- * dropped at one point and are back by request; the lever COUNTS ("4 levers
- * · 1 gauge") stay gone, since those did read as a scoring sheet.
+ * Each level is identified by its question alone. The L1..L4 codes and the
+ * lever counts are both gone: numbering them implied a scored ladder rather
+ * than four things looked at together.
  *
  * The levers are named without their originating researchers, and without
  * the internal annotations that sat beside some of them. They read as a
@@ -73,7 +73,6 @@ export const agencySpectrum = {
   levels: [
     {
       id: 'l1',
-      level: 'L1',
       question: 'CAN I?',
       title: 'Capability beliefs',
       levers: [
@@ -85,21 +84,18 @@ export const agencySpectrum = {
     },
     {
       id: 'l2',
-      level: 'L2',
       question: 'WILL I?',
       title: 'Ownership',
       levers: ['Autonomy', 'Possible selves', 'Values', 'Agency thinking'],
     },
     {
       id: 'l3',
-      level: 'L3',
       question: 'HOW DO I?',
       title: 'Pathways & volition',
       levers: ['If-then plans', 'Mental contrasting', 'Pathways thinking', 'Proximal goals'],
     },
     {
       id: 'l4',
-      level: 'L4',
       question: 'DOES THE WORLD RESPOND?',
       title: 'Standing',
       levers: [
