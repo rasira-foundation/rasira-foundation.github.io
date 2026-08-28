@@ -62,6 +62,33 @@
   opacity: 1;
 }
 
+/* ── MOBILE ──
+   Larger, but not one pixel taller than the line already reserves.
+
+   0.98em is measured, not chosen. Stepping the height up while watching the
+   heading's total height, the three lines hold at 104px right up to 1.0em
+   and start growing at 1.05 — so 1.0 is the ceiling where the strip is
+   still living inside the space the font's own inline box already occupies,
+   and 0.98 sits just under it so a different font fallback cannot tip it
+   over. That is a 48% increase on the 0.66em it was, for no change to the
+   line height at all.
+
+   Desktop keeps 0.66em deliberately. It has the same headroom in em terms,
+   but at a 72px heading the strip would become a 71px photograph sitting in
+   the sentence — big enough to stop reading as a piece of set type and
+   start reading as an image someone dropped in. The constraint on a phone
+   is space; on desktop it is proportion. */
+@media (max-width: 860px) {
+  .hero-eyes {
+    height: 0.98em;
+    width: calc(0.98em * 3.04);
+    /* Re-centred on the line for the taller box: at 0.66em the strip sat
+       near the x-height, and keeping the same offset at 0.98 would hang it
+       below the baseline. */
+    vertical-align: -0.16em;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* The cycle itself is stopped in the component; this covers the case
      where the setting changes after mount and one fade is already running. */
