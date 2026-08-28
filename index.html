@@ -191,6 +191,26 @@
         display: none;
       }
     </style>
+
+    <!-- Google Analytics (GA4).
+         Deliberately LAST in the head, not first as Google's snippet
+         suggests. The tag is async either way, so its position changes only
+         the priority the browser gives it — and everything above it here is
+         on the critical rendering path: the font preload, the async
+         stylesheet, and the inline critical CSS that paints the splash
+         colour on the first frame. Putting a third-party origin's DNS,
+         TCP and TLS ahead of those would delay first paint to buy nothing,
+         since the measurement is identical a few hundred milliseconds
+         later. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CNB6CMXVV5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-CNB6CMXVV5');
+    </script>
   </head>
   <body>
     <div id="root"></div>
