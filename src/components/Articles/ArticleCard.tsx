@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Article } from '../../lib/sheets';
 import { navigateToArticle } from '../../hooks/useHashRoute';
+import { safeUrl } from '../../lib/sheets';
 import { track } from '../../lib/analytics';
 import { getAsciiArt } from './asciiArt';
 
@@ -29,7 +30,7 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
     <>
       {variant === 'image-overlay' && (
         <>
-          <img className="article-card-image" src={article.coverImage!} alt="" loading="lazy" />
+          <img className="article-card-image" src={safeUrl(article.coverImage)} alt="" loading="lazy" />
           <div className="article-card-scrim" aria-hidden="true" />
           <span className="article-card-category article-card-category--on-image">{article.category}</span>
           <div className="article-card-image-foot">
@@ -126,7 +127,7 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
   if (article.externalUrl) {
     return (
       <motion.a
-        href={article.externalUrl}
+        href={safeUrl(article.externalUrl)}
         target="_blank"
         rel="noopener noreferrer"
         onClick={() => trackClick('external')}

@@ -4,6 +4,7 @@ import { useArticles } from './useArticles';
 import { useDelayedFlag } from '../../hooks/useDelayedFlag';
 import { navigateHome } from '../../hooks/useHashRoute';
 import { parseMarkdownLite } from '../../lib/markdown';
+import { safeUrl } from '../../lib/sheets';
 import './articleDetail.css';
 import { track } from '../../lib/analytics';
 
@@ -143,7 +144,7 @@ export function ArticleDetail({ slug }: { slug: string }) {
 
       {article.coverImage && (
         <div className="article-detail-hero">
-          <img src={article.coverImage} alt="" />
+          <img src={safeUrl(article.coverImage)} alt="" />
         </div>
       )}
 

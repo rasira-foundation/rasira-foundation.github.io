@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { resolveImageUrl } from './sheets';
+import { resolveImageUrl, safeUrl } from './sheets';
 
 // Standalone `![alt](url)` on its own line — same Drive-link handling as
 // the Cover Image column (see resolveImageUrl in sheets.ts), so a Drive
@@ -39,7 +39,7 @@ export function parseMarkdownLite(content: string): ReactNode[] {
     if (imageMatch) {
       const [, alt, url] = imageMatch;
       blocks.push(
-        <img key={key++} className="article-detail-inline-image" src={resolveImageUrl(url) ?? url} alt={alt} loading="lazy" />,
+        <img key={key++} className="article-detail-inline-image" src={safeUrl(resolveImageUrl(url) ?? url)} alt={alt} loading="lazy" />,
       );
       i++;
       continue;

@@ -141,3 +141,32 @@ function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '');
 }
+
+/**
+ * Allow only http(s) URLs through to an href or src.
+ *
+ * Article rows come from a Google Sheet, and anyone who can edit that Sheet
+ * can put anything in the Link or Cover Image column. A value of
+ * `javascript:...` pasted there would end up in an anchor's href and run on
+ * click — stored XSS, arriving through a spreadsheet rather than a form.
+ * `data:` is refused for the same reason: a data: document navigated to from
+ * a link inherits nothing useful but is a standard phishing shape.
+ *
+ * This is not defence against a hostile stranger — it takes Sheet access to
+ * exploit. It is defence against a content editor pasting something odd, and
+ * against that Sheet ever being shared more widely than it is today.
+ */
+export function safeUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
+  const trimmed = url.trim();
+  try {
+    /* Parsed rather than pattern-matched. A regex on the raw string is
+       fooled by leading control characters and by casing —
+       "java\tscript:" and "JaVaScript:" both survive most hand-written
+       checks, and the URL parser normalises them away. */
+    const parsed = new URL(trimmed, window.location.origin);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? trimmed : undefined;
+  } catch {
+    return undefined;
+  }
+}

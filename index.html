@@ -40,6 +40,21 @@
          existing CNAME file is ignored and is not required". public/CNAME
          was added here on that mistaken assumption and removed again; the
          domain has to be entered in Settings > Pages. -->
+    <!-- Referrer policy. Without it, following the outbound link to Spring
+         or any link in an article sends this site's full URL as the
+         referrer. strict-origin-when-cross-origin keeps the path internally
+         but sends only the origin outward, and nothing at all when leaving
+         HTTPS for HTTP.
+
+         Set here as a meta rather than a header because GitHub Pages serves
+         a fixed header set and gives no way to add to it. The same is true
+         of the security headers that CANNOT be expressed this way —
+         X-Frame-Options and Strict-Transport-Security are header-only, and
+         frame-ancestors is ignored in a meta CSP — so clickjacking
+         protection is not available on this host. That is an accepted
+         limitation of static hosting here, not an oversight: the site takes
+         no input, holds no session and has nothing to steal by framing it. -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <link rel="canonical" href="https://rasira.foundation/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
