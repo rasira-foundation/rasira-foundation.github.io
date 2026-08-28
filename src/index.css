@@ -35,12 +35,17 @@
   --color-atmos-orange: #dfaa83; /* constellation bottom == articles top */
 
   --font-serif: 'Fraunces', 'Iowan Old Style', ui-serif, Georgia, serif;
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* No webfont. Inter was downloaded for seven small UI elements — the body
+     default, a footer link, and five bits of article chrome — none of them
+     display text, so it was a network request to make buttons and captions
+     look marginally different from the system's own UI face. The stack below
+     is what every one of those already fell back to. */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Editorial stack — scoped to the Article Hub / Article Detail (frog.co/designmind treatment) */
   --font-editorial-serif: 'Newsreader', 'Iowan Old Style', ui-serif, Georgia, serif;
-  --font-editorial-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-editorial-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-editorial-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   /* Translucent ink instead of a flat cool gray — reads as one subtle,
      warm-neutral stroke used identically for every grid divider and the
