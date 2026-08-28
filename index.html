@@ -32,7 +32,13 @@
       name="description"
       content="Research-and-practice collective designing and measuring youth workforce programs in Indonesia — field research on rural and first-generation jobseekers."
     />
-    <link rel="canonical" href="https://rasira-foundation.github.io/" />
+    <!-- The custom domain is declared by public/CNAME, which Vite copies into
+         dist/ and the Pages workflow uploads with the rest of the artifact.
+         It lives in the repo rather than only in the Pages settings UI so the
+         domain survives a redeploy: this site is published from a build
+         artifact, not from a branch, so a CNAME written by the settings page
+         alone would not be part of what gets uploaded. -->
+    <link rel="canonical" href="https://rasira.foundation/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
     <!-- Open Graph / Twitter. These are what render when the site is
@@ -42,13 +48,13 @@
          back to a bare URL. -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Rasira Foundation" />
-    <meta property="og:url" content="https://rasira-foundation.github.io/" />
+    <meta property="og:url" content="https://rasira.foundation/" />
     <meta property="og:title" content="Rasira Foundation | Youth Workforce Research, Indonesia" />
     <meta
       property="og:description"
       content="Research-and-practice collective designing and measuring youth workforce programs in Indonesia — field research on rural and first-generation jobseekers."
     />
-    <meta property="og:image" content="https://rasira-foundation.github.io/og-image.jpg" />
+    <meta property="og:image" content="https://rasira.foundation/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="An empty Indonesian classroom, desks and chairs in rows." />
@@ -59,7 +65,7 @@
       name="twitter:description"
       content="A research-and-practice collective designing and measuring youth workforce programs in Indonesia."
     />
-    <meta name="twitter:image" content="https://rasira-foundation.github.io/og-image.jpg" />
+    <meta name="twitter:image" content="https://rasira.foundation/og-image.jpg" />
 
     <!-- Structured data. This is the one piece of real, machine-readable
          content a crawler gets from this page today, since everything else
@@ -77,9 +83,9 @@
         "@context": "https://schema.org",
         "@type": ["NGO", "ResearchOrganization"],
         "name": "Rasira Foundation",
-        "url": "https://rasira-foundation.github.io/",
-        "logo": "https://rasira-foundation.github.io/og-image.jpg",
-        "image": "https://rasira-foundation.github.io/og-image.jpg",
+        "url": "https://rasira.foundation/",
+        "logo": "https://rasira.foundation/og-image.jpg",
+        "image": "https://rasira.foundation/og-image.jpg",
         "email": "hi@rasira.foundation",
         "description": "A research-and-practice collective designing and measuring youth workforce programs in Indonesia, focused on rural youth, first-generation jobseekers, and young people without strong credentials.",
         "areaServed": { "@type": "Country", "name": "Indonesia" },
