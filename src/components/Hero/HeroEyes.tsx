@@ -16,8 +16,14 @@ const EYES = Object.keys(MODULES)
   .sort()
   .map((k) => MODULES[k]);
 
-/** How long each pair of eyes holds before the next fades in. */
-const HOLD_MS = 2600;
+/** How long each pair of eyes holds before the next fades in.
+ *
+ *  Down from 2600. The cycle needed to move quicker without any single pair
+ *  becoming hard to take in, so most of the saving comes out of the CROSSFADE
+ *  rather than out of this — see heroEyes.css, where the fade drops 0.9s to
+ *  0.55s. Settled time, which is the part you actually look at, only falls
+ *  from 1700ms to 1250ms while the loop gets a third shorter. */
+const HOLD_MS = 1800;
 
 /**
  * The strip of eyes set into the hero headline, between "who" and "they

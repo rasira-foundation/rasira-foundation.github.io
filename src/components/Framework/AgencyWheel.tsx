@@ -170,6 +170,18 @@ const BLADE = ['#d99b73', '#e8c19f', '#cddbe5', '#a4b4c4'];
    like the same gesture rather than three animations that happen to overlap. */
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
+/* Beat two does NOT use the curve above, and the reason is measurable. On
+   EASE_OUT the wipe is 90% finished after 0.60s of its 1.60s and then the
+   last tenth crawls for a full second — at the halfway mark it is already
+   96% done. That is why it read as slow and jerky at once: a burst, then a
+   second of motion too small to see.
+
+   This curve spreads the distance across the time instead. Over 1.15s it
+   reaches 90% at 0.74s with a 0.41s tail, and passes the halfway mark at
+   76%. Shorter overall, yet visibly moving for more of its length, which is
+   what "faster and smoother" actually asks for. */
+const EASE_SWEEP = [0.4, 0.05, 0.25, 1] as const;
+
 export function AgencyWheel() {
   const g = useGeom();
   const isFull = g.sweep === 360;
@@ -334,17 +346,21 @@ export function AgencyWheel() {
         transition={
           revealed
             ? {
-                duration: 2.2,
+                duration: 1.75,
                 /* core in | hold | spectrum out — 0.5s, 0.1s, 1.6s.
                    Beat one and the hold were 0.78s and 0.32s, which put the
                    spectrum's first movement 1.1s after the trigger. That is
                    long enough to read as the animation having finished, so
                    the part people were waiting for looked like it never came.
-                   Both are cut roughly in half. The 1.6s second beat is
-                   untouched — it is the one that was too FAST before, and
-                   shortening it again would undo that. */
-                times: [0, 0.227, 0.273, 1],
-                ease: [EASE_OUT, 'linear', EASE_OUT],
+                   Both were cut roughly in half.
+
+                   The second beat is 1.15s, down from 1.6s, and on
+                   EASE_SWEEP rather than EASE_OUT. Shortening it does not
+                   repeat the earlier mistake of making it too fast: the
+                   problem then was that almost nothing moved after the first
+                   half second, and the new curve fixes that directly. */
+                times: [0, 0.286, 0.343, 1],
+                ease: [EASE_OUT, 'linear', EASE_SWEEP],
               }
             : { duration: 0 }
         }

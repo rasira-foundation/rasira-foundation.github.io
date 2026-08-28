@@ -55,7 +55,11 @@
      rather than swapping means there is no flash of paper between photos,
      and no layout work — every frame occupies the same box the whole time. */
   opacity: 0;
-  transition: opacity 0.9s var(--ease-soft);
+  /* 0.55s, down from 0.9s. The fade is where a cycling strip loses its
+     legibility: while it runs, two faces are superimposed and neither reads.
+     Cutting it buys most of the speed-up and gives back clarity at the same
+     time, which is why it took a bigger cut than HOLD_MS did. */
+  transition: opacity 0.55s var(--ease-soft);
 }
 
 .hero-eyes-photo.is-current {
