@@ -69,18 +69,29 @@
 }
 
 @media (max-width: 860px) {
-  /* Same balancing act as above, different numbers, because the pieces
-     either side are sized differently on a phone. 82 here and 26 on
-     .collabs-slot put the star ~76px from the lever chips above it and the
-     same from the heading's ink below. */
-  .constellation-divider-slot {
-    padding: 138px 16px 0;
-  }
-
   /* Held back rather than left to fill the narrower column, so the star
      keeps the size it was drawn at instead of shrinking to a speck. */
   .constellation-divider {
     max-width: 260px;
+  }
+}
+
+/* 640, NOT the 860 used above for the figure's own width — and the
+   difference is a bug fix.
+
+   This padding exists to balance against .system-framework's bottom padding
+   and .collabs-slot's top padding, and BOTH of those switch at 640. Sharing
+   the 860 breakpoint meant that between 641 and 860 the slot had already
+   taken its phone value while its neighbours still had their desktop ones,
+   leaving the star 32px below the chips and 108px above the heading. The
+   figure's max-width can switch wherever it likes; this cannot. */
+@media (max-width: 640px) {
+  /* Same balancing act as the desktop rule, different numbers, because the
+     pieces either side are sized differently here. 38 against .collabs-slot's
+     26 puts the star ~132px from the lever chips above and the same from the
+     heading's ink below. */
+  .constellation-divider-slot {
+    padding: 38px 16px 0;
   }
 }
 

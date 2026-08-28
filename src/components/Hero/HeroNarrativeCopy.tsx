@@ -59,7 +59,6 @@ function Words({ text }: { text: string }) {
  * the trigger). */
 export function HeroNarrativeCopy() {
   const paragraphWords = heroIntro.paragraph.split(' ').length;
-  const tagText = heroIntro.tags.join(' / ');
 
   return (
     <motion.div
@@ -89,15 +88,26 @@ export function HeroNarrativeCopy() {
           hand-picked delay: delayChildren is the paragraph's own settle
           time, so the two lines stay in sequence however the copy is
           edited. Same reveal as the paragraph, so the whole block reads as
-          one continuous pass rather than two effects. */}
-      <motion.p
+          one continuous pass rather than two effects.
+
+          A LIST of chips, not a slash-joined sentence. These are three
+          separate disciplines, and the chip form says so — the same form the
+          agency dial's levers use lower down, so the two read as one device
+          rather than two ways of listing things. Staggering is per chip now
+          rather than per word: a tag broken across its own words animated as
+          three unrelated pieces of one label. */}
+      <motion.ul
         className="hero-copy-tags"
         variants={containerVariants(settleTime(paragraphWords))}
         initial="hidden"
         animate="visible"
       >
-        <Words text={tagText} />
-      </motion.p>
+        {heroIntro.tags.map((tag) => (
+          <motion.li key={tag} className="hero-tag" variants={wordVariants}>
+            {tag}
+          </motion.li>
+        ))}
+      </motion.ul>
     </motion.div>
   );
 }

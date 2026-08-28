@@ -33,8 +33,11 @@
      this one already inherits 32px from the pillars section's own bottom
      padding, so 108 here lands on 140. See the matching notes in
      collabsSection.css and partnerDonationSection.css. */
+  /* Even top and bottom. The 8px bottom dated from when .framework-note
+     closed the section and carried its own margin; with the note gone the
+     section ended hard against whatever followed. */
   .system-framework {
-    padding: 108px 16px 8px;
+    padding: 108px 16px;
   }
 
 }

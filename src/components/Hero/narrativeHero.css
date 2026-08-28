@@ -133,13 +133,35 @@
   color: inherit;
 }
 
+/* Chips, matching .agency-lever in agencyWheel.css. Deliberately the same
+   values rather than an approximation: this and the dial's levers are the
+   same kind of thing — a short list of terms — and the page should only have
+   one way of drawing that.
+
+   Uppercase and the 0.1em tracking are gone with it. They were doing the work
+   of separating the terms when they ran together as one slashed line; the
+   chips do that now, and setting them in sentence case makes three long
+   phrases far quicker to read. */
 .hero-copy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-tag {
   font-family: var(--font-mono);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #4a4a4a;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 4px 10px;
+  background: var(--color-cream-deep);
+  color: #4a443e;
+  border-radius: 2px;
+  /* The reveal blurs and fades each chip, and both are ignored on a plain
+     inline box. */
+  display: inline-block;
 }
 
 @media (max-width: 720px) {
@@ -178,6 +200,12 @@
   .hero-copy-paragraph,
   .hero-copy-tags {
     text-align: left;
+  }
+
+  /* text-align does nothing to a flex row, so the chips need their own
+     justification to range left with the copy above them. */
+  .hero-copy-tags {
+    justify-content: flex-start;
   }
 
   /* The negative margin lifts the whole copy block — title, paragraph and

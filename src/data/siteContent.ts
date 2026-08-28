@@ -16,7 +16,9 @@ export const heroIntro = {
   titleAfter: 'they could become',
   paragraph:
     'Human capital potential starts at believing what is possible. We are a research-and-practice collective working on that layer.',
-  tags: ['anthropology', 'workforce development', 'field-based program design'],
+  /* Sentence case, matching the dial's levers. These were lowercase only
+     because the CSS uppercased them; as chips they are set as written. */
+  tags: ['Anthropology', 'Workforce development', 'Field-based program design'],
 };
 
 /* Heads the three-column panel. Sits INSIDE that panel rather than above
