@@ -191,7 +191,6 @@ export function AgencyWheel() {
      and a diagram that redraws itself every time it passes the viewport
      reads as a glitch rather than as craft. */
   const [revealed, setRevealed] = useState(false);
-  const [revealFailsafe, setRevealFailsafe] = useState(false);
   const dialRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -206,8 +205,18 @@ export function AgencyWheel() {
       const el = dialRef.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
-      const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
-      if (visible > 0 && visible / Math.min(r.height, window.innerHeight) >= 0.3) {
+      /* Keyed on the dial's own CENTRE crossing three quarters of the way
+         up the viewport, not on a fraction of it being visible.
+
+         The fraction test fired far too early: at 30% of a 515px dial that
+         is 154px, reached while the dial is still pinned to the bottom edge
+         of the screen. The reveal then played out down there over a second
+         and a half while the reader was still scrolling, and was finished
+         before the figure ever reached the middle of the screen — which is
+         why it looked like there was no animation at all. Waiting for the
+         centre means it starts when the dial is actually being looked at. */
+      const centre = r.top + r.height / 2;
+      if (centre < window.innerHeight * 0.75 && r.bottom > 0) {
         setRevealed(true);
       }
     };
@@ -220,19 +229,16 @@ export function AgencyWheel() {
     };
   }, [revealed]);
 
-  useEffect(() => {
-    /* 20s, not the 3.5 this started at. The short timer was a real bug: the
-       dial sits well below the fold, so on any normal visit it expired
-       before the reader ever arrived, stripped the mask, and left nothing
-       to animate — the reveal was being cancelled by its own safety net.
-
-       This is only for an environment where neither the observer nor the
-       scroll check ever runs, so it should be long enough that a real
-       reader always triggers the reveal first, and short enough that a
-       broken one is not staring at a masked figure forever. */
-    const id = window.setTimeout(() => setRevealFailsafe(true), 20000);
-    return () => window.clearTimeout(id);
-  }, []);
+  /* The timed failsafe is GONE, not lengthened again. Any fixed delay is a
+     race against how long someone spends reading the page above this, and
+     20s lost that race often enough to be the reason the reveal looked
+     broken. It was also solving a problem the trigger no longer has: the
+     check above runs on mount, on scroll and on resize, so the only way it
+     never fires is if the dial is never on screen — in which case there is
+     nobody to show it to. And in the one scenario it was really guarding
+     against, an animation loop that never ticks, every other reveal on this
+     page is stuck at opacity 0 too; the dial would not be the visible
+     problem. */
   const active = agencySpectrum.levels.find((l) => l.id === activeId)!;
   const activeIndex = agencySpectrum.levels.findIndex((l) => l.id === activeId);
   const span = g.sweep / agencySpectrum.levels.length;
@@ -285,12 +291,14 @@ export function AgencyWheel() {
           variable set per breakpoint in the stylesheet. */}
       <motion.div
         ref={dialRef}
-        className={`agency-wheel-dial${revealFailsafe ? ' is-reveal-failsafe' : ''}`}
+        className="agency-wheel-dial"
         initial={{ ['--reveal' as string]: '46%' }}
         animate={{ ['--reveal' as string]: revealed ? '160%' : '46%' }}
-        onViewportEnter={() => setRevealed(true)}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+        /* No onViewportEnter. It fired on first intersection, which is the
+           same too-early moment the scroll check used to use — and being
+           first, it won. The scroll check above is the single trigger now. */
+        viewport={{ once: true, amount: 0.75 }}
+        transition={{ duration: 1.7, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
       >
         {/* The full circle's colour is a CONIC gradient, and it has to be a
             CSS one on an element behind the SVG, because SVG has no conic

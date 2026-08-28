@@ -163,16 +163,6 @@
   );
 }
 
-/* The failsafe, applied by a timer in the component. Higher specificity than
-   the rule above, and it drops the mask outright rather than setting the
-   variable the rule reads — so it wins without needing an animation frame to
-   take effect. See the note in AgencyWheel.tsx for why animating to the end
-   value would not have been protection at all. */
-.agency-wheel-dial.is-reveal-failsafe {
-  -webkit-mask-image: none;
-  mask-image: none;
-}
-
 .agency-wheel-svg {
   position: relative;
   display: block;
