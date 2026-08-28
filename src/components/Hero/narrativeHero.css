@@ -63,7 +63,9 @@
    makes the content edge land on the container edge. */
 .hero-copy {
   max-width: calc(var(--container-max) + 48px);
-  margin: 50px auto 0;
+  /* 20px, down from 50 — the block sits 30px higher on desktop. The phone
+     override below sets its own negative margin and is unaffected. */
+  margin: 20px auto 0;
   text-align: left;
   padding: 3.5vh 24px 4vh;
 }
@@ -186,6 +188,16 @@
 
   .hero-title {
     margin-bottom: 24px;
+    /* The same three-line shape as desktop, but the measure is in EM here
+       rather than px. The heading is clamp(28px, 8vw, 34px) at this
+       breakpoint, so a fixed measure that shapes correctly on a 375px phone
+       breaks on a 320 or a 430; an em measure rides the clamp and holds the
+       break at all three.
+
+       9.9em is the window's middle. It has to clear "Helping young people"
+       (9.57em) and stay under "imagine who [eyes] they" (10.2em), which is
+       what pulls "they" down onto the last line where it belongs. */
+    max-width: 9.9em;
   }
 
   /* No font-size here any more. It was 16px, which silently overrode the
