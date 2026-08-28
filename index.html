@@ -143,10 +143,10 @@
          trick lets the second link download without blocking (print styles
          are irrelevant to screen rendering), then onload promotes it to
          all. The noscript copy keeps it working with JS disabled. -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap"
       media="print"
       onload="this.media='all'; this.onload=null;"
     />
@@ -166,10 +166,11 @@
          is meant to remove. Fetching it from the markup means it is normally
          already in place by the time that check runs.
 
-         Fraunces is the hero headline, the largest text on the first screen,
-         so it is the LCP element and the one whose fallback swap is most
-         visible. It is the variable font, so this single file covers every
-         weight the page uses.
+         Newsreader now sets the hero headline, the largest text on the first
+         screen, so it is the LCP element and the one whose fallback swap is
+         most visible. It is the variable font, so this single file covers
+         every weight the page uses — and since it also sets the article
+         routes, this one preload now serves both.
 
          crossorigin is REQUIRED, not decorative: fonts are fetched in CORS
          mode, and a preload without it is treated as a different request, so
@@ -197,10 +198,10 @@
       as="font"
       type="font/woff2"
       crossorigin
-      href="https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeP2Xz5c.woff2"
+      href="https://fonts.gstatic.com/s/newsreader/v26/cY9AfjOCX1hbuyalUrK4397yjIJFJpc.woff2"
     />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
     </noscript>
 
     <!-- CRITICAL CSS — inline on purpose, so it applies on the very first

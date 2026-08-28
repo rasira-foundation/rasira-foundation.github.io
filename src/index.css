@@ -34,7 +34,12 @@
   --color-atmos-apricot: #e8c19f; /* constellation mid */
   --color-atmos-orange: #dfaa83; /* constellation bottom == articles top */
 
-  --font-serif: 'Fraunces', 'Iowan Old Style', ui-serif, Georgia, serif;
+  /* Newsreader, not Fraunces. The site was carrying two serifs — this one
+     for the page, Newsreader for the article routes — for no reason a reader
+     could see, so the page adopts the article face and Fraunces goes.
+     --font-editorial-serif below is now the same stack; kept as a separate
+     token because it is scoped to the Article Hub and may diverge again. */
+  --font-serif: 'Newsreader', 'Iowan Old Style', ui-serif, Georgia, serif;
   /* No webfont. Inter was downloaded for seven small UI elements — the body
      default, a footer link, and five bits of article chrome — none of them
      display text, so it was a network request to make buttons and captions
@@ -221,7 +226,7 @@ button {
     line-height: 1.6;
   }
 
-  /* The SERIF body copy holds at 16px. These two are Newsreader/Fraunces,
+  /* The SERIF body copy holds at 16px. These two are Newsreader,
      not mono, so they were never part of the mismatch — dropping them too
      would just shrink the card headings for no reason. */
   body .partner-card-heading,
