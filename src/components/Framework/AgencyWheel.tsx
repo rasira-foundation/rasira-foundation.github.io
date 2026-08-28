@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { agencySpectrum } from '../../data/siteContent';
 import { IN_VIEW, SPRING } from '../../lib/motion';
@@ -192,8 +192,45 @@ export function AgencyWheel() {
      reads as a glitch rather than as craft. */
   const [revealed, setRevealed] = useState(false);
   const [revealFailsafe, setRevealFailsafe] = useState(false);
+  const dialRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const id = window.setTimeout(() => setRevealFailsafe(true), 3500);
+    if (revealed) return;
+    /* A scroll-position check beside Framer's viewport callback, and it is
+       the one that usually wins. The callback rides on
+       IntersectionObserver, which does not fire in a document the browser
+       considers hidden — a backgrounded tab, some embedded views — and in
+       that state the dial would sit masked until the failsafe gave up.
+       Reading the rect on scroll costs nothing and works regardless. */
+    const check = () => {
+      const el = dialRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const visible = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+      if (visible > 0 && visible / Math.min(r.height, window.innerHeight) >= 0.3) {
+        setRevealed(true);
+      }
+    };
+    check();
+    window.addEventListener('scroll', check, { passive: true });
+    window.addEventListener('resize', check);
+    return () => {
+      window.removeEventListener('scroll', check);
+      window.removeEventListener('resize', check);
+    };
+  }, [revealed]);
+
+  useEffect(() => {
+    /* 20s, not the 3.5 this started at. The short timer was a real bug: the
+       dial sits well below the fold, so on any normal visit it expired
+       before the reader ever arrived, stripped the mask, and left nothing
+       to animate — the reveal was being cancelled by its own safety net.
+
+       This is only for an environment where neither the observer nor the
+       scroll check ever runs, so it should be long enough that a real
+       reader always triggers the reveal first, and short enough that a
+       broken one is not staring at a masked figure forever. */
+    const id = window.setTimeout(() => setRevealFailsafe(true), 20000);
     return () => window.clearTimeout(id);
   }, []);
   const active = agencySpectrum.levels.find((l) => l.id === activeId)!;
@@ -247,6 +284,7 @@ export function AgencyWheel() {
           flat base, the full circle's is the middle of the box — so it is a
           variable set per breakpoint in the stylesheet. */}
       <motion.div
+        ref={dialRef}
         className={`agency-wheel-dial${revealFailsafe ? ' is-reveal-failsafe' : ''}`}
         initial={{ ['--reveal' as string]: '46%' }}
         animate={{ ['--reveal' as string]: revealed ? '160%' : '46%' }}
