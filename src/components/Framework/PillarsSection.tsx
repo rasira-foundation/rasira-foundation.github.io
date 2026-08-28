@@ -38,6 +38,7 @@ export function PillarsSection({ heroDone }: PillarsSectionProps) {
   return (
     <motion.section
       className="pillars-section"
+      data-section="how_we_work"
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={SPRING}
       /* Always none on the SECTION. Its box is dragged upward by the

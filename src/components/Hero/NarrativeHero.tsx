@@ -46,7 +46,7 @@ export function NarrativeHero({ splashDone, showMorphIntro, onMorphComplete }: N
   const fieldFilter = useMotionTemplate`blur(${blurPx}px) grayscale(${grayscaleAmt}) brightness(${brightnessAmt})`;
 
   return (
-    <section className="narrative-hero">
+    <section className="narrative-hero" data-section="hero">
       {/* The full-bleed background photo used to live here, but now
           renders in App.tsx (see HeroBackground.tsx) as a sibling of
           SiteHeader instead of a descendant of this section — see that

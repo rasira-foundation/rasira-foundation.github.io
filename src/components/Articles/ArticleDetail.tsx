@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useArticles } from './useArticles';
 import { useDelayedFlag } from '../../hooks/useDelayedFlag';
 import { navigateHome } from '../../hooks/useHashRoute';
 import { parseMarkdownLite } from '../../lib/markdown';
 import './articleDetail.css';
+import { track } from '../../lib/analytics';
 
 const entrance = {
   initial: { opacity: 0, y: 18, filter: 'blur(10px)' },
@@ -43,6 +44,29 @@ export function ArticleDetailSkeleton() {
 export function ArticleDetail({ slug }: { slug: string }) {
   const { articles, loading } = useArticles();
   const article = articles.find((a) => a.slug === slug);
+
+  /* The funnel's last step, and deliberately NOT fired on mount. On mount
+     the article may still be loading or may not exist at all, and counting
+     those as reads would put a floor under the number that has nothing to
+     do with anyone reading.
+
+     Guarded by the last slug reported rather than by the effect's deps.
+     Observed firing twice for a single open: StrictMode double-invokes
+     effects in dev, and separately the articles array gets a new identity
+     whenever the store republishes, which changes `article` by reference
+     without the visitor having opened anything. Either would inflate the
+     count. Comparing the slug is immune to both, and still reports a second
+     view when someone genuinely moves from one article to another. */
+  const reported = useRef<string | null>(null);
+  useEffect(() => {
+    if (!article || reported.current === article.slug) return;
+    reported.current = article.slug;
+    track('article_view', {
+      article_slug: article.slug,
+      article_title: article.title,
+      article_category: article.category,
+    });
+  }, [article]);
   const showSkeleton = useDelayedFlag(loading);
 
   useEffect(() => {

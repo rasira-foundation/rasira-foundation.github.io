@@ -15,6 +15,7 @@ import { ProductionGradient3D } from './components/shared/ProductionGradient3D';
 import { useHashRoute } from './hooks/useHashRoute';
 import { useScrollRestoration } from './hooks/useScrollRestoration';
 import { PageBackground } from './components/shared/PageBackground';
+import { initSectionTracking, rescanSections, track, trackPageView } from './lib/analytics';
 
 const SPLASH_SEEN_KEY = 'rasira-splash-seen';
 const MORPH_INTRO_SEEN_KEY = 'rasira-hero-intro-seen';
@@ -50,12 +51,56 @@ function App() {
   // full 12px and simply stayed there. Scale and opacity alone carry the
   // depth read without ever destroying the content.
 
+  /* When the page began, so the splash can report how long it actually
+     held someone. Read once at mount rather than from performance.now() at
+     completion, so a slow bundle is counted as part of the wait — that is
+     the number worth knowing. */
+  const startedAt = useRef(performance.now());
+
   const handleSplashComplete = useCallback(() => {
+    /* Whether the splash ran at all is the more interesting half: it only
+       shows once per session, so a returning visitor skips it entirely, and
+       a splash_complete with skipped=true is what distinguishes "sat
+       through the intro" from "came straight in". */
+    track('splash_complete', {
+      duration_seconds: Math.round((performance.now() - startedAt.current) / 100) / 10,
+      skipped: false,
+    });
     sessionStorage.setItem(SPLASH_SEEN_KEY, '1');
     setShowSplash(false);
   }, []);
 
+  /* The splash is skipped outright on a second visit within the session,
+     so there is no completion handler to hang this off. */
+  useEffect(() => {
+    if (sessionStorage.getItem(SPLASH_SEEN_KEY) === '1') {
+      track('splash_complete', { duration_seconds: 0, skipped: true });
+    }
+    initSectionTracking();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* GA4 sends one page_view on load and nothing after. Opening an article
+     only changes the hash, so without this every article read would be
+     folded into the homepage and the article count would always be zero. */
+  useEffect(() => {
+    if (route.view === 'article') {
+      trackPageView(`/article/${route.slug}`, `Article: ${route.slug}`);
+    } else {
+      trackPageView('/', 'Rasira Foundation | Home');
+    }
+    /* The tree swaps between the two views, so the observed elements are
+       replaced and have to be picked up again. */
+    const id = window.setTimeout(rescanSections, 300);
+    return () => window.clearTimeout(id);
+  }, [route]);
+
   const handleMorphComplete = useCallback(() => {
+    /* The funnel's second step. Fired when the hero intro finishes rather
+       than when React mounts, because that is the first moment the visitor
+       can actually read anything — the gap between splash_complete and this
+       is where someone who bounced during the intro disappears. */
+    track('home_view');
     sessionStorage.setItem(MORPH_INTRO_SEEN_KEY, '1');
     setShowMorphIntro(false);
   }, []);

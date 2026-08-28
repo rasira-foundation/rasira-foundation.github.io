@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import type { Article } from '../../lib/sheets';
 import { navigateToArticle } from '../../hooks/useHashRoute';
+import { track } from '../../lib/analytics';
 import { getAsciiArt } from './asciiArt';
 
 type CardVariant = 'ascii' | 'text-only' | 'image-overlay' | 'bottom-text';
@@ -92,6 +93,19 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
   // Scroll-driven blur reveal that replays in both directions. The
   // heroDone gate lives on the parent section's own opacity, so these
   // stay invisible during the intro regardless of what the observer does.
+  /* Fired before navigating, not after: the hash change unmounts this card,
+     and an event queued after that races the teardown. `position` is the
+     card's place in the grid, which is what tells you whether the top row
+     is doing all the work or people are reading down. */
+  const trackClick = (destination: 'internal' | 'external') =>
+    track('article_click', {
+      article_slug: article.slug,
+      article_title: article.title,
+      article_category: article.category,
+      position: index + 1,
+      destination,
+    });
+
   const motionProps = {
     className: `article-card article-card--${variant}`,
     initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
@@ -111,14 +125,27 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
   // affordances like "open in new tab" and the status-bar preview work).
   if (article.externalUrl) {
     return (
-      <motion.a href={article.externalUrl} target="_blank" rel="noopener noreferrer" {...motionProps}>
+      <motion.a
+        href={article.externalUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackClick('external')}
+        {...motionProps}
+      >
         {content}
       </motion.a>
     );
   }
 
   return (
-    <motion.button type="button" onClick={() => navigateToArticle(article.slug)} {...motionProps}>
+    <motion.button
+      type="button"
+      onClick={() => {
+        trackClick('internal');
+        navigateToArticle(article.slug);
+      }}
+      {...motionProps}
+    >
       {content}
     </motion.button>
   );

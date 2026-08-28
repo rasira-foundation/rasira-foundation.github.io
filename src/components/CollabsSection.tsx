@@ -18,7 +18,7 @@ export function CollabsSection() {
 
   return (
     <motion.div
-      className="collabs-card"
+      className="collabs-card" data-section="collaborate"
       initial={{ opacity: 0, filter: 'blur(8px)', y: 24 }}
       whileInView={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
       viewport={IN_VIEW}

@@ -30,6 +30,7 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
   return (
     <motion.section
       className="system-framework"
+      data-section="agency_framework"
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={SPRING}
       style={{ pointerEvents: heroDone ? 'auto' : 'none' }}

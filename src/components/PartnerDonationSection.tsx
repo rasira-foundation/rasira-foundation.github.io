@@ -10,7 +10,7 @@ export function PartnerDonationSection() {
   const { partner } = partnerSection;
 
   return (
-    <section className="partner-donation-section">
+    <section className="partner-donation-section" data-section="partner_and_support">
       {/* Direct Support comes FIRST in the DOM, and that is what puts it on
           the left on desktop and first in the stack on mobile — the two
           have to agree, so the order is set here rather than by reordering

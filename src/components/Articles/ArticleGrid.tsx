@@ -175,6 +175,7 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
     <motion.section
       ref={sectionRef}
       className={isExpanded ? 'article-hub article-hub--expanded' : 'article-hub'}
+      data-section="articles"
       animate={{ opacity: heroDone ? 1 : 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       /* top must be 0 while expanded. .article-hub--expanded switches this

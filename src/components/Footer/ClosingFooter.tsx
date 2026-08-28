@@ -83,7 +83,7 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
   }
 
   return (
-    <footer className="closing-footer closing-footer--dark" ref={footerRef}>
+    <footer className="closing-footer closing-footer--dark" data-section="footer" ref={footerRef}>
       {/* SKY — everything the sunset happens in. Splitting the footer into
           sky + base is what guarantees the wordmark below sits on flat
           charcoal like the reference, WITHOUT having to guess at what
