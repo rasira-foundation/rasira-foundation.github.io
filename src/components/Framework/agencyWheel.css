@@ -137,16 +137,40 @@
      has written the property, renders: fully visible rather than clipped
      away. */
   --reveal-origin: 50% 95%;
-  clip-path: circle(var(--reveal, 125%) at var(--reveal-origin));
+  /* A FEATHERED radial mask, not a clip-path circle. clip-path has a hard
+     boundary, so the reveal read as a crisp ring sweeping outward — you saw
+     the edge itself rather than the figure arriving. A radial-gradient mask
+     puts a soft band at the leading edge, so the colour dissolves into view
+     instead of being uncovered by a moving line.
+
+     The feather is 34%, which is wide on purpose: at anything tight the
+     band still reads as an edge, just a blurrier one. Percentages here
+     resolve against the distance to the farthest corner, so --reveal
+     finishing past 100% guarantees the trailing feather clears the box
+     entirely and no soft edge is left parked over the artwork. */
+  --reveal-feather: 34%;
+  -webkit-mask-image: radial-gradient(
+    circle at var(--reveal-origin),
+    #000 0,
+    #000 calc(var(--reveal, 160%) - var(--reveal-feather)),
+    transparent var(--reveal, 160%)
+  );
+  mask-image: radial-gradient(
+    circle at var(--reveal-origin),
+    #000 0,
+    #000 calc(var(--reveal, 160%) - var(--reveal-feather)),
+    transparent var(--reveal, 160%)
+  );
 }
 
 /* The failsafe, applied by a timer in the component. Higher specificity than
-   the rule above, and it sets clip-path directly rather than the variable
-   the rule reads — so it wins outright and needs no animation frame to take
-   effect. See the note in AgencyWheel.tsx for why animating to the end value
-   would not have been protection at all. */
+   the rule above, and it drops the mask outright rather than setting the
+   variable the rule reads — so it wins without needing an animation frame to
+   take effect. See the note in AgencyWheel.tsx for why animating to the end
+   value would not have been protection at all. */
 .agency-wheel-dial.is-reveal-failsafe {
-  clip-path: none;
+  -webkit-mask-image: none;
+  mask-image: none;
 }
 
 .agency-wheel-svg {
@@ -367,11 +391,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* No wipe. Removing the clip entirely rather than shortening it: a fast
-     radial wipe is still a radial wipe, and this one sweeps the full width
-     of the figure. */
+  /* No wipe. Removing the mask entirely rather than shortening it: a fast
+     radial reveal is still a radial reveal, and this one sweeps the full
+     width of the figure. */
   .agency-wheel-dial {
-    clip-path: none;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
   .agency-scrim,

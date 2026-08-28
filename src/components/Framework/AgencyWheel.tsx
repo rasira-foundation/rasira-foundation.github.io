@@ -236,23 +236,23 @@ export function AgencyWheel() {
           mask would leave that layer untouched and the wipe would only
           apply to half the drawing. A clip-path on the wrapper catches both.
 
-          It starts at 24% rather than 0 so the core is already inside the
-          circle on the first frame: "Agency" reads immediately and the
-          spectrum grows out from under it, which is the order asked for. A
-          wipe from nothing would instead reveal the word a sliver at a time,
-          which looks like a loading bar rather than a diagram drawing
-          itself.
+          It starts at 46%, not 0, and that number is the feather's width plus
+          enough to clear the core: the soft band has to begin already past
+          "Agency" so the word arrives whole rather than dissolving in from
+          one side. It finishes at 160% so the trailing edge of the feather
+          travels fully off the artwork — stopping at 100% would park a soft
+          gradient over the rim.
 
           The origin differs by shape — the half circle's centre is at its
           flat base, the full circle's is the middle of the box — so it is a
           variable set per breakpoint in the stylesheet. */}
       <motion.div
         className={`agency-wheel-dial${revealFailsafe ? ' is-reveal-failsafe' : ''}`}
-        initial={{ ['--reveal' as string]: '24%' }}
-        animate={{ ['--reveal' as string]: revealed ? '125%' : '24%' }}
+        initial={{ ['--reveal' as string]: '46%' }}
+        animate={{ ['--reveal' as string]: revealed ? '160%' : '46%' }}
         onViewportEnter={() => setRevealed(true)}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
       >
         {/* The full circle's colour is a CONIC gradient, and it has to be a
             CSS one on an element behind the SVG, because SVG has no conic
