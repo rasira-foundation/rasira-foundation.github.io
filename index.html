@@ -150,6 +150,55 @@
       media="print"
       onload="this.media='all'; this.onload=null;"
     />
+    <!-- The two FONT FILES the intro actually needs, preloaded directly.
+         Preloading the stylesheet above is not the same thing: it gets the
+         @font-face rules early, but a browser does not fetch a font file
+         until something using it is laid out. Here that is React rendering
+         text, which cannot happen before the bundle parses — measured at
+         ~650ms on a warm connection — so the fonts started downloading only
+         after that.
+
+         Square Peg is the one that mattered. HeroPaperStrips deliberately
+         WAITS for it before typing (see FONT_WAIT_CAP_MS there, capped at
+         1200ms) rather than typing in a fallback and swapping mid-word. So
+         every millisecond of that fetch was dead time on screen, and on a
+         cold cache it could approach the full cap — which is the delay this
+         is meant to remove. Fetching it from the markup means it is normally
+         already in place by the time that check runs.
+
+         Fraunces is the hero headline, the largest text on the first screen,
+         so it is the LCP element and the one whose fallback swap is most
+         visible. It is the variable font, so this single file covers every
+         weight the page uses.
+
+         crossorigin is REQUIRED, not decorative: fonts are fetched in CORS
+         mode, and a preload without it is treated as a different request, so
+         the file downloads twice and the preload achieves nothing.
+
+         The trade-off, stated plainly: 86KB fetched at high priority
+         alongside a 117KB bundle, so on a very slow connection these compete
+         with the JavaScript. Worth it because both faces are on the first
+         screen and one of them actively blocks the intro.
+
+         These URLs are version-pinned by Google (the v38/v7 in the path).
+         If Google ships a new version the URL changes, the preload misses,
+         and the browser logs an unused-preload warning and fetches the real
+         file normally. Wasted bytes, not a broken page — but it is why these
+         are worth re-checking if that warning ever appears in the console. -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="https://fonts.gstatic.com/s/squarepeg/v7/y83eW48Nzw6ZlUHc-phrNDbhHVXoBPA.woff2"
+    />
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeP2Xz5c.woff2"
+    />
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Square+Peg&display=swap" />
     </noscript>

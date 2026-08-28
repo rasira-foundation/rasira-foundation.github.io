@@ -39,8 +39,6 @@ export function SystemFramework({ heroDone }: SystemFrameworkProps) {
         <SectionHeading title={systemFramework.title} subtitle={systemFramework.subtitle} />
 
         <AgencyWheel />
-
-        <p className="framework-note">{systemFramework.note}</p>
       </div>
     </motion.section>
   );

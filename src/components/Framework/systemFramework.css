@@ -25,23 +25,6 @@
    section is carried by the Agency Spectrum dial now, whose styles live in
    agencyWheel.css. See the note in SystemFramework.tsx for why. */
 
-.framework-note {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.7;
-  color: #2b2623;
-  padding: 16px 20px;
-  border-left: 2px solid var(--color-dawn-orange);
-  /* Was a translucent cream, which only registered as a callout because
-     the page was beige — on white it would have been white on white, with
-     nothing but the orange edge to mark it. */
-  background: var(--color-cream-deep);
-  border-radius: 0 4px 4px 0;
-  max-width: 640px;
-  /* The note used to inherit its separation from the diagram card's
-     margin-bottom. That card is gone, so the gap is stated here. */
-  margin-top: 56px;
-}
 
 @media (max-width: 640px) {
   /* One of three section gaps on mobile that are deliberately set to the
@@ -54,7 +37,4 @@
     padding: 108px 16px 8px;
   }
 
-  .framework-note {
-    margin-top: 36px;
-  }
 }

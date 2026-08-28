@@ -1,0 +1,100 @@
+/* ── CONSTELLATION DIVIDER ──
+   See ConstellationDivider.tsx for the figure itself. Everything here is
+   weight and colour: the ornament has to sit BELOW the copy it separates in
+   the visual hierarchy, or it stops being a divider and becomes an
+   illustration competing with the heading beside it. */
+
+.constellation-divider-slot {
+  /* BLOCK, not flex, and that is a bug fix rather than a preference.
+
+     As a flex container this collapsed the figure to zero height. An SVG is a
+     replaced element, so as a flex item with height:auto it is stretched
+     against the container's cross size — while the container's height is
+     itself derived from that item. The circularity resolves to 0, the slot
+     rendered 8px of its own padding and nothing else, and the divider was
+     laid out correctly in the flow while being invisible. Centring with
+     margin auto on the child needs no flex context and cannot collapse. */
+  display: block;
+  /* Asymmetric so that the RESULT is symmetric. What sits either side
+     contributes unequally: above is the dial's lever row, ending at the
+     section's own small padding, while below are .collabs-slot and its card
+     with insets of their own. So this is the difference rather than a round
+     number.
+
+     Measured to the heading's INK, not its box — line-height leading hides
+     several pixels the eye does not count, and equalising box-to-box leaves
+     the rule visibly low. */
+  padding: 114px 24px 0;
+}
+
+.constellation-divider {
+  display: block;
+  margin: 0 auto;
+  /* Belt and braces with the block layout above. An explicit ratio gives the
+     element a definite height derived from its own width, so it can never
+     again depend on how an ancestor resolves its cross size. Matches the
+     viewBox exactly. */
+  aspect-ratio: 500 / 40;
+  width: 100%;
+  /* Held well under the 576px text column it sits above. An ornament as wide
+     as the paragraph reads as a rule; narrower, it reads as a mark. */
+  max-width: 460px;
+  height: auto;
+  overflow: visible;
+  /* Both rules stop in open space, and a round cap on a hairline still reads
+     as a deliberate end point. Fading the outer eighth lets them dissolve
+     into the page instead, which is what makes this sit quietly under the
+     heading rather than underlining it. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+
+/* Sized against the viewBox rather than the screen: 500 units render at
+   460px, so a stroke of 1 lands just under a physical pixel. Hairlines
+   throughout — at this scale anything heavier reads as a drawn rule rather
+   than a stitched one. */
+.constellation-rule {
+  stroke: var(--color-line);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+/* A step stronger than the rule. The star is the accent and has to survive at
+   a hairline against a near-white page, where --color-line alone goes to
+   nothing. Still well under the body copy's weight. */
+.constellation-star {
+  stroke: var(--color-ink-faint);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+@media (max-width: 860px) {
+  /* Same balancing act as above, different numbers, because the pieces
+     either side are sized differently on a phone. 82 here and 26 on
+     .collabs-slot put the star ~76px from the lever chips above it and the
+     same from the heading's ink below. */
+  .constellation-divider-slot {
+    padding: 138px 16px 0;
+  }
+
+  /* Held back rather than left to fill the narrower column, so the star
+     keeps the size it was drawn at instead of shrinking to a speck. */
+  .constellation-divider {
+    max-width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The whole point of this ornament is the draw-on, so there is nothing to
+     shorten — it simply arrives complete.
+
+     Framer implements pathLength as stroke-dasharray/dashoffset written
+     inline, so the drawing state has to be cleared rather than overridden
+     with a different animation, and inline styles need !important to beat. */
+  .constellation-divider * {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

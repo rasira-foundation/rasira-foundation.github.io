@@ -6,6 +6,7 @@ import { NarrativeHero } from './components/Hero/NarrativeHero';
 import { PillarsSection } from './components/Framework/PillarsSection';
 import { SystemFramework } from './components/Framework/SystemFramework';
 import { CollabsSection } from './components/CollabsSection';
+import { ConstellationDivider } from './components/shared/ConstellationDivider';
 import { PartnerDonationSection } from './components/PartnerDonationSection';
 import { ArticleGrid } from './components/Articles/ArticleGrid';
 import { ArticleDetail } from './components/Articles/ArticleDetail';
@@ -180,6 +181,11 @@ function App() {
             <PillarsSection heroDone={!showMorphIntro} />
           </div>
           <SystemFramework heroDone={!showMorphIntro} />
+          {/* One rule, opening the Collabs block rather than bracketing it.
+              A second below turned out to be one mark too many: it sat
+              between two blocks that already read as separate, and the pair
+              framed the copy like a plaque instead of just starting it. */}
+          <ConstellationDivider />
           <div className="collabs-slot">
             <CollabsSection />
           </div>

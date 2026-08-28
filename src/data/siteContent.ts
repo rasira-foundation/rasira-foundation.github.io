@@ -126,7 +126,7 @@ export const collabsSection = {
   body: "Whether you run programs, fund research, or design tools — if you're working on what young Indonesians believe is possible for them, we want to know you.",
   ctaLabel: 'Reach out →',
   ctaMailto: `mailto:${CONTACT_EMAIL}`,
-  supportPrompt: 'Or support our field work directly ↓',
+  supportPrompt: 'Or support the field work ↓',
 };
 
 export const partnerSection = {

@@ -11,7 +11,10 @@
   width: 100%;
   max-width: 576px;
   margin: 0 auto;
-  padding: 8px 24px 64px;
+  /* Even top and bottom. It was 8/64, which sat the heading almost against
+     the card's top edge while leaving a deep well under the support link —
+     the block read as having slipped upward inside its own box. */
+  padding: 64px 24px;
   text-align: center;
 }
 
@@ -86,8 +89,12 @@
      contributes almost nothing — so unlike the other two, nearly the whole
      gap has to come from this padding. See the matching notes in
      systemFramework.css and partnerDonationSection.css. */
+  /* Top padding down from 100. It used to open the section on its own; the
+     constellation rule above does that now, and the two together left the
+     rule sitting much closer to what was above it than to this heading. See
+     the arithmetic in constellationDivider.css. */
   .collabs-slot {
-    padding: 100px 16px 48px;
+    padding: 26px 16px 48px;
   }
 
   .collabs-card {
