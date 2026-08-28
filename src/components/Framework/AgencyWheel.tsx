@@ -334,9 +334,16 @@ export function AgencyWheel() {
         transition={
           revealed
             ? {
-                duration: 2.7,
-                /* core in | hold | spectrum out — 0.78s, 0.32s, 1.6s. */
-                times: [0, 0.29, 0.41, 1],
+                duration: 2.2,
+                /* core in | hold | spectrum out — 0.5s, 0.1s, 1.6s.
+                   Beat one and the hold were 0.78s and 0.32s, which put the
+                   spectrum's first movement 1.1s after the trigger. That is
+                   long enough to read as the animation having finished, so
+                   the part people were waiting for looked like it never came.
+                   Both are cut roughly in half. The 1.6s second beat is
+                   untouched — it is the one that was too FAST before, and
+                   shortening it again would undo that. */
+                times: [0, 0.227, 0.273, 1],
                 ease: [EASE_OUT, 'linear', EASE_OUT],
               }
             : { duration: 0 }
@@ -435,7 +442,7 @@ export function AgencyWheel() {
             className="agency-core-group"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 12 }}
-            transition={{ duration: 0.8, ease: EASE_OUT }}
+            transition={{ duration: 0.5, ease: EASE_OUT }}
           >
             <circle
               clipPath="url(#agency-clip)"
