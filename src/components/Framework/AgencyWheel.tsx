@@ -165,6 +165,11 @@ function labelArc(g: Geom, a0: number, a1: number, radius: number, flip: boolean
    component's reading of an existing palette, not four new site colours. */
 const BLADE = ['#d99b73', '#e8c19f', '#cddbe5', '#a4b4c4'];
 
+/* One curve for the whole sequence: a long, decelerating tail. Named because
+   the core's float, the mask's first beat and its second all have to feel
+   like the same gesture rather than three animations that happen to overlap. */
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+
 export function AgencyWheel() {
   const g = useGeom();
   const isFull = g.sweep === 360;
@@ -279,26 +284,63 @@ export function AgencyWheel() {
           mask would leave that layer untouched and the wipe would only
           apply to half the drawing. A clip-path on the wrapper catches both.
 
-          It starts at 46%, not 0, and that number is the feather's width plus
-          enough to clear the core: the soft band has to begin already past
-          "Agency" so the word arrives whole rather than dissolving in from
-          one side. It finishes at 160% so the trailing edge of the feather
-          travels fully off the artwork — stopping at 100% would park a soft
-          gradient over the rim.
+          It finishes at 160% so the trailing edge of the feather travels
+          fully off the artwork — stopping at 100% would park a soft gradient
+          over the rim.
 
           The origin differs by shape — the half circle's centre is at its
           flat base, the full circle's is the middle of the box — so it is a
-          variable set per breakpoint in the stylesheet. */}
+          variable set per breakpoint in the stylesheet.
+
+          TWO BEATS, not one grow. The mask opens to 32%, holds, then runs to
+          160% — and the FEATHER is animated alongside it, 8% for the first
+          beat and widening to 34% only during the second. That second value
+          is the one doing the work, and it is why one number could not serve
+          both beats.
+
+          The core's dark well fades out at radius 168 user units, which on
+          desktop is 251px rendered against a 766px gradient line — call it
+          33%. Past that there is nothing left to hide the spectrum's colour.
+          A 34% feather held at a 46% reveal put its soft band out to 352px,
+          so a third of the fan was already glowing through while the core was
+          supposedly arriving alone. Narrowing to 8% puts beat one's trailing
+          edge at 245px, inside the well, so nothing but the core is on screen
+          — and 32%/8% is the pair that satisfies BOTH shapes: it clears the
+          wordmark and stops short of the colour on the half circle (solid to
+          184px, core needs 139, colour starts at 251) and on the full circle
+          alike (solid to 63px, core needs 56, colour starts at 92).
+
+          Widening the feather during beat two cannot soften what beat one
+          already set, because the solid edge is reveal minus feather and
+          reveal grows faster: 24% to 126%, monotonic the whole way.
+
+          It starts at 0 rather than partway, which is the cost of this: if
+          frames are never served the dial stays blank instead of showing a
+          stub. Accepted on the same grounds the timed failsafe was dropped —
+          in that scenario every reveal on this page is stuck at opacity 0 and
+          the dial is not the visible problem. */}
       <motion.div
         ref={dialRef}
         className="agency-wheel-dial"
-        initial={{ ['--reveal' as string]: '46%' }}
-        animate={{ ['--reveal' as string]: revealed ? '160%' : '46%' }}
+        initial={{ ['--reveal' as string]: '0%', ['--reveal-feather' as string]: '8%' }}
+        animate={{
+          ['--reveal' as string]: revealed ? ['0%', '32%', '32%', '160%'] : '0%',
+          ['--reveal-feather' as string]: revealed ? ['8%', '8%', '8%', '34%'] : '8%',
+        }}
         /* No onViewportEnter. It fired on first intersection, which is the
            same too-early moment the scroll check used to use — and being
            first, it won. The scroll check above is the single trigger now. */
         viewport={{ once: true, amount: 0.75 }}
-        transition={{ duration: 1.7, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
+        transition={
+          revealed
+            ? {
+                duration: 2.7,
+                /* core in | hold | spectrum out — 0.78s, 0.32s, 1.6s. */
+                times: [0, 0.29, 0.41, 1],
+                ease: [EASE_OUT, 'linear', EASE_OUT],
+              }
+            : { duration: 0 }
+        }
       >
         {/* The full circle's colour is a CONIC gradient, and it has to be a
             CSS one on an element behind the SVG, because SVG has no conic
@@ -372,23 +414,52 @@ export function AgencyWheel() {
               />
             ))}
 
-            <circle cx={g.cx} cy={g.cy} r={g.coreR * 2} fill="url(#agency-core)" pointerEvents="none" />
           </g>
 
-          <text className="agency-core-word" x={g.cx} y={g.cy + g.wordY} textAnchor="middle">
-            {agencySpectrum.centerLabel}
-          </text>
-          {/* One <text> with tspans, and the line gap in EM rather than user
-              units. The note's size changes between breakpoints, and a fixed
-              unit gap that looked right at one size collapsed into the line
-              above it at another. */}
-          <text className="agency-core-note" x={g.cx} y={g.cy + g.noteY} textAnchor="middle">
-            {agencySpectrum.centerNote.map((line, i) => (
-              <tspan key={line} x={g.cx} dy={i === 0 ? 0 : '1.4em'}>
-                {line}
-              </tspan>
-            ))}
-          </text>
+          {/* ── PHASE ONE ──
+              The core is its own group now, lifted out of the clipped one so
+              it can arrive before anything else does. It carries its own clip
+              because it used to inherit the parent's.
+
+              It floats: a short rise and a fade, rather than the mask simply
+              uncovering something that was already sitting there. The mask
+              opening to 46% underneath this is doing the other half of the
+              work — the well and the word land together, and only then does
+              the spectrum start growing past them.
+
+              The drift is 12 USER UNITS, not pixels. The viewBox renders about
+              1.5x on desktop, so this is roughly 18px on screen there and
+              rather less on a phone, which is the right way round: the smaller
+              the figure, the smaller the move should be. */}
+          <motion.g
+            className="agency-core-group"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: revealed ? 1 : 0, y: revealed ? 0 : 12 }}
+            transition={{ duration: 0.8, ease: EASE_OUT }}
+          >
+            <circle
+              clipPath="url(#agency-clip)"
+              cx={g.cx}
+              cy={g.cy}
+              r={g.coreR * 2}
+              fill="url(#agency-core)"
+              pointerEvents="none"
+            />
+            <text className="agency-core-word" x={g.cx} y={g.cy + g.wordY} textAnchor="middle">
+              {agencySpectrum.centerLabel}
+            </text>
+            {/* One <text> with tspans, and the line gap in EM rather than user
+                units. The note's size changes between breakpoints, and a fixed
+                unit gap that looked right at one size collapsed into the line
+                above it at another. */}
+            <text className="agency-core-note" x={g.cx} y={g.cy + g.noteY} textAnchor="middle">
+              {agencySpectrum.centerNote.map((line, i) => (
+                <tspan key={line} x={g.cx} dy={i === 0 ? 0 : '1.4em'}>
+                  {line}
+                </tspan>
+              ))}
+            </text>
+          </motion.g>
 
           {/* Hit areas and labels last, so nothing painted above can steal
               the pointer from them. */}

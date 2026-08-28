@@ -147,18 +147,24 @@
      band still reads as an edge, just a blurrier one. Percentages here
      resolve against the distance to the farthest corner, so --reveal
      finishing past 100% guarantees the trailing feather clears the box
-     entirely and no soft edge is left parked over the artwork. */
+     entirely and no soft edge is left parked over the artwork.
+
+     Framer overrides this inline during the reveal — it runs at 8% for the
+     first beat so the core can arrive without the spectrum's colour bleeding
+     through behind it, and widens to 34% only as the wipe travels out. The
+     34% declared here is what a browser renders with no animation at all,
+     which alongside the 160% fallback below is the whole figure, unmasked. */
   --reveal-feather: 34%;
   -webkit-mask-image: radial-gradient(
     circle at var(--reveal-origin),
     #000 0,
-    #000 calc(var(--reveal, 160%) - var(--reveal-feather)),
+    #000 calc(var(--reveal, 160%) - var(--reveal-feather, 34%)),
     transparent var(--reveal, 160%)
   );
   mask-image: radial-gradient(
     circle at var(--reveal-origin),
     #000 0,
-    #000 calc(var(--reveal, 160%) - var(--reveal-feather)),
+    #000 calc(var(--reveal, 160%) - var(--reveal-feather, 34%)),
     transparent var(--reveal, 160%)
   );
 }
@@ -387,6 +393,14 @@
   .agency-wheel-dial {
     -webkit-mask-image: none;
     mask-image: none;
+  }
+
+  /* And no float. The core group's entrance is written inline by Framer, so
+     it takes !important to overrule — without this a reduced-motion visitor
+     would get a dial with no wipe but a wordmark still drifting up into it. */
+  .agency-core-group {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
   .agency-scrim,
