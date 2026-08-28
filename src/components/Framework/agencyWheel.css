@@ -46,7 +46,7 @@
 /* Row 1 — eyebrow. */
 .agency-readout-eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -254,7 +254,7 @@
      SMALLER than the size wanted on screen. At the 1000px cap the SVG
      scales by about 1.42, so 8.2 units lands near 11.7px rendered — the
      same on-screen size the labels had before the dial grew. */
-  font-size: 7.8px;
+  font-size: 8px;
   font-weight: 500;
   letter-spacing: 0.07em;
   text-transform: uppercase;
@@ -264,7 +264,7 @@
 /* Sits on the colour rather than outside it, so it needs to hold against a
    mid-tone rather than against the page. */
 .agency-blade-title {
-  font-size: 7.8px;
+  font-size: 8px;
   letter-spacing: 0.02em;
   fill: rgba(20, 18, 15, 0.5);
 }
@@ -294,10 +294,10 @@
 /* ── CORE ── */
 .agency-core-word {
   font-family: var(--font-serif);
+  font-weight: 500;
   /* Same compensation as the arc labels: down in user units so the dial can
      grow without the wordmark growing with it. */
-  font-size: 22.6px;
-  font-weight: 400;
+  font-size: 22px;
   fill: var(--color-cream);
   pointer-events: none;
 }
@@ -308,7 +308,7 @@
    itself. */
 .agency-core-note {
   font-family: var(--font-mono);
-  font-size: 7.2px;
+  font-size: 8px;
   letter-spacing: 0.04em;
   /* Raised from 0.62. This line sits over the darkest part of the core, so
      it is not colliding with the blur so much as competing with it: at 9px

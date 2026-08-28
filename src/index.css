@@ -219,21 +219,16 @@ button {
      more room between lines to stay comfortable at this size. */
   body .hero-copy-paragraph,
   body .collabs-body,
-  body .pillar-body,
-  body .partner-card-body,
-  body .donation-card-body {
+  body .pillar-body {
     font-size: 15px;
     line-height: 1.6;
   }
 
-  /* The SERIF body copy holds at 16px. These two are Newsreader,
-     not mono, so they were never part of the mismatch — dropping them too
-     would just shrink the card headings for no reason. */
-  body .partner-card-heading,
-  body .donation-card-heading {
-    font-size: 16px;
-    line-height: 1.5;
-  }
+  /* The four card blocks that used to be pinned here — both card headings
+     and both card bodies — are gone from this block deliberately. They are
+     now set like .article-detail-body, 19px/1.8, and the point of that is
+     that they match the articles at EVERY width; overriding them on a phone
+     would undo it. */
 
   /* Captions and metadata — dates, read times, bylines, the footer clock
      row. These were 11px, which is the floor for a BADGE (short, uppercase,

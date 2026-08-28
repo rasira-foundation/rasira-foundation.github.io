@@ -18,7 +18,7 @@
    card — see the comment in PartnerDonationSection.tsx. */
 .partner-donation-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   /* Was var(--color-ink-faint) (38%-alpha) — solid dark charcoal instead. */
@@ -119,11 +119,18 @@
   color: var(--color-dawn-orange);
 }
 
+/* Newsreader at the article body's exact treatment — 19px/1.8, the same as
+   .article-detail-body. These cards carry the longest prose on the homepage,
+   and setting them like the articles makes the two read as one publication
+   rather than as a landing page with an article section bolted on.
+
+   Weight 500 stays. At 400 this lead line would be identical to the body
+   below it apart from colour, and the two paragraphs would run together. */
 .partner-card-heading {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 16px;
-  line-height: 1.4;
+  font-size: 19px;
+  line-height: 1.8;
   color: var(--color-ink);
 }
 
@@ -134,9 +141,9 @@
 }
 
 .partner-card-body {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.8;
   color: #383330;
 }
 
@@ -198,20 +205,22 @@
   letter-spacing: 0;
 }
 
+/* Same treatment as .partner-card-heading above, and the same reason for
+   holding weight 500. */
 .donation-card-heading {
   font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.6;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.8;
   color: #f5f5f4;
 }
 
 /* Was 60%-alpha cream — 9.5:1 at this solid neutral-300 instead, well
    past AAA, since this line was the faintest text on the whole page. */
 .donation-card-body {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  line-height: 1.6;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.8;
   color: #d6d3d1;
   margin-top: 12px;
 }

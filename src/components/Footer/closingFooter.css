@@ -272,7 +272,7 @@
 .closing-footer-meta-left,
 .closing-footer-meta-right {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
   /* 6.42:1 against the sunset's mid-orange, up from #4a4642's 4.96:1.
      That passed AA on paper, but this block also carries a slight blur

@@ -26,7 +26,7 @@ export function PartnerDonationSection() {
           row 1 in CSS. */}
       <div className="partner-donation-grid">
         <span className="partner-donation-label partner-donation-label--donation">
-          02 / Direct Support
+          Direct Support
         </span>
 
         <BlurRevealElement className="donation-card">
@@ -59,7 +59,7 @@ export function PartnerDonationSection() {
         </BlurRevealElement>
 
         <span className="partner-donation-label partner-donation-label--partner">
-          03 / Partners in the Field
+          Partners in the Field
         </span>
         <BlurRevealElement className="partner-card" delay={0.1}>
           <div>

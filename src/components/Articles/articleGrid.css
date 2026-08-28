@@ -38,6 +38,22 @@
   }
 }
 
+/* 720, matching .hero-copy's own breakpoint in narrativeHero.css rather
+   than a round number of its own. The hero drops to a 16px gutter there
+   while this stayed at 24 at every width, so on a phone the panel's border
+   sat 8px inside the hero copy above it — the two are the first things a
+   reader sees stacked, and a near-miss reads worse than an obvious indent.
+
+   Only the horizontal padding is restated. The vertical values differ
+   between the base and 768 rules and one of them is a calc, so setting the
+   shorthand here would mean duplicating them to change something else. */
+@media (max-width: 720px) {
+  .article-hub {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
 /* Expanding to the full card list makes this section taller than the
    viewport, and a sticky element that doesn't fit pins its top at 0 and
    leaves its bottom permanently below the fold — the Show Less button
@@ -297,7 +313,7 @@
 
 .article-card-title {
   font-family: var(--font-editorial-serif);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 22px;
   line-height: 1.22;
   color: var(--color-ink);
@@ -319,7 +335,7 @@
 
 .article-card-meta {
   font-family: var(--font-editorial-mono);
-  font-size: 11px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--color-ink-faint);
@@ -463,9 +479,19 @@
   background: #1c1917;
   border: 1px solid rgba(var(--color-page-rgb), 0.18);
   box-shadow: 0 1px 3px rgba(20, 18, 15, 0.08);
-  font-family: var(--font-editorial-sans);
+  /* Mono, matching .collabs-cta and .donation-cta. This was the editorial
+     sans, which stopped being Inter when that family was dropped and so
+     started rendering in the platform UI face — the one button on the page
+     set in a different typeface from the other two primary CTAs.
+
+     weight 600 goes with it: the mono is requested at 400 and 500 only, so
+     600 would have been synthesised into a fake bold. 500 matches the other
+     CTAs, which never set a weight and so take the family's own 400 — the
+     step up is kept here because this button carries a border and a shadow
+     the others do not, and reads lighter without it. */
+  font-family: var(--font-mono);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-cream);
   cursor: pointer;
   transition: background 0.2s var(--ease-soft);

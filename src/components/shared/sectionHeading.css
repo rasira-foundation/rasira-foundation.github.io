@@ -13,7 +13,7 @@
 .section-heading-title {
   font-family: var(--font-serif);
   font-weight: 500;
-  font-size: 28px;
+  font-size: 30px;
   line-height: 1.2;
   color: var(--color-ink);
   /* The pair is one block: the title sits close to its subtitle and the
