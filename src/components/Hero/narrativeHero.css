@@ -82,7 +82,21 @@
   line-height: 1.08;
   letter-spacing: -0.025em;
   color: #1c1917;
-  max-width: 900px;
+  /* 680, not 900. The measure is set to shape the headline into three
+     lines — "Helping young people" / "imagine who [eyes]" / "they could
+     become" — rather than to fill the column. At 900 it broke into two,
+     with the eye strip stranded mid-line between "who" and "they".
+
+     680 is derived from the longest of the three intended lines: "Helping
+     young people" measures about 640px at the 72px cap, so the measure has
+     to clear that and stay under the ~725px that "imagine who [eyes] they"
+     would need to keep "they" on line two. Anywhere in 650..720 gives the
+     same break; 680 sits in the middle of that window so a font swap or a
+     copy tweak does not immediately reshape it.
+
+     No effect on phones, where the container is far narrower than this and
+     the cap never binds. */
+  max-width: 680px;
   margin: 0 0 40px;
 }
 
