@@ -4,7 +4,11 @@
 .collabs-slot {
   display: flex;
   justify-content: center;
-  padding: 0 24px 64px;
+  /* Even top and bottom. The 0 top dated from when this section opened
+     straight off the one above it; the constellation rule sits between them
+     now, and the slot should hold the card symmetrically rather than pin it
+     to its own top edge. */
+  padding: 64px 24px;
 }
 
 .collabs-card {
@@ -103,7 +107,7 @@
      rule sitting much closer to what was above it than to this heading. See
      the arithmetic in constellationDivider.css. */
   .collabs-slot {
-    padding: 26px 16px 48px;
+    padding: 64px 16px;
   }
 
   .collabs-card {

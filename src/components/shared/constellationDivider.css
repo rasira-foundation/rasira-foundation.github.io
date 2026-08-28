@@ -24,7 +24,7 @@
      Measured to the heading's INK, not its box — line-height leading hides
      several pixels the eye does not count, and equalising box-to-box leaves
      the rule visibly low. */
-  padding: 114px 24px 0;
+  padding: 181px 24px 0;
 }
 
 .constellation-divider {
@@ -91,7 +91,7 @@
      26 puts the star ~132px from the lever chips above and the same from the
      heading's ink below. */
   .constellation-divider-slot {
-    padding: 38px 16px 0;
+    padding: 0 16px;
   }
 }
 
