@@ -6,7 +6,14 @@ export const CONTACT_EMAIL = 'rasira.foundation@gmail.com';
 export const heroIntro = {
   // No "Rasira" in the title itself — the header logo right above it
   // already carries the name, so repeating it here would just be noise.
+  //
+  // Split in two because the eye strip sits INSIDE the sentence, between
+  // "who" and "they". `title` is kept as the whole line for anything that
+  // needs the plain string — the prerendered HTML and the document outline
+  // both want the sentence, not two fragments.
   title: 'Helping young people imagine who they could become',
+  titleBefore: 'Helping young people imagine who',
+  titleAfter: 'they could become',
   paragraph:
     'Human capital potential starts at believing what is possible. We are a research-and-practice collective working on that layer.',
   tags: ['anthropology', 'workforce development', 'field-based program design'],

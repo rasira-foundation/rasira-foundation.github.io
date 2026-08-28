@@ -1,0 +1,71 @@
+/* ── EYES STRIP ──
+   A torn paper scrap with a pair of eyes in it, set inline in the hero
+   headline between "who" and "they could become".
+
+   Sized in EM throughout, so it scales with the headline's own clamp rather
+   than needing its own breakpoints — at every viewport it stays the same
+   size relative to the words on either side of it, which is the only
+   relationship that matters for something sitting mid-sentence. */
+.hero-eyes {
+  position: relative;
+  display: inline-block;
+  /* 3.04 is the scrap's own aspect ratio; deriving the width from the
+     height keeps the paper undistorted whatever the height becomes. */
+  height: 0.66em;
+  width: calc(0.66em * 3.04);
+  /* Nudged down off the baseline so the eyes sit on the x-height rather
+     than riding up level with the caps around them. */
+  vertical-align: -0.07em;
+  margin: 0 0.12em;
+}
+
+/* The scrap itself, behind the photo. Its torn silhouette is what the photo
+   is masked to, so the two edges agree. */
+.hero-eyes-paper {
+  position: absolute;
+  inset: 0;
+  background: url('../../assets/textures/paper-scrap.png') center / 100% 100% no-repeat;
+}
+
+/* Sized with explicit width/height, NOT by insets alone. An <img> is a
+   replaced element, and for those `width: auto` resolves to the image's
+   INTRINSIC width rather than to what the left/right insets imply — so
+   insetting all four sides and leaving width auto rendered each photo at its
+   real 900px and spilled it across the whole hero. The percentages here are
+   just the insets restated (100 - 3 - 3, 100 - 14 - 8) so the two agree. */
+.hero-eyes-photo {
+  position: absolute;
+  /* A rim of paper shows around the photo, so it reads as a photograph laid
+     on the scrap rather than as the scrap being a photograph. Deeper at the
+     top, where the tear is most pronounced. */
+  top: 14%;
+  left: 3%;
+  width: 94%;
+  height: 78%;
+  object-fit: cover;
+  /* Masked to the same torn shape, so the photo's edges are torn too
+     instead of ending on a clean rectangle inside a ragged one. */
+  -webkit-mask-image: url('../../assets/textures/paper-scrap.png');
+  mask-image: url('../../assets/textures/paper-scrap.png');
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  /* All frames are stacked; only the current one is opaque. Crossfading
+     rather than swapping means there is no flash of paper between photos,
+     and no layout work — every frame occupies the same box the whole time. */
+  opacity: 0;
+  transition: opacity 0.9s var(--ease-soft);
+}
+
+.hero-eyes-photo.is-current {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The cycle itself is stopped in the component; this covers the case
+     where the setting changes after mount and one fade is already running. */
+  .hero-eyes-photo {
+    transition: none;
+  }
+}

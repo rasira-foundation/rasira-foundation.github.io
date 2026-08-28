@@ -1,6 +1,7 @@
 import { Fragment } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { heroIntro } from '../../data/siteContent';
+import { HeroEyes } from './HeroEyes';
 
 /** Per-word timing, shared by the paragraph and the tag line below it.
  * Named constants rather than inline numbers because the tags' start is
@@ -67,7 +68,13 @@ export function HeroNarrativeCopy() {
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
     >
-      <h1 className="hero-title">{heroIntro.title}</h1>
+      {/* The strip is a real inline element in the heading, not a
+          background — it has to sit in the text flow and wrap with it, so
+          that the line breaks fall around it the way they would around a
+          word. */}
+      <h1 className="hero-title">
+        {heroIntro.titleBefore} <HeroEyes /> {heroIntro.titleAfter}
+      </h1>
 
       <motion.p
         className="hero-copy-paragraph"
