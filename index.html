@@ -32,12 +32,14 @@
       name="description"
       content="Research-and-practice collective designing and measuring youth workforce programs in Indonesia — field research on rural and first-generation jobseekers."
     />
-    <!-- The custom domain is declared by public/CNAME, which Vite copies into
-         dist/ and the Pages workflow uploads with the rest of the artifact.
-         It lives in the repo rather than only in the Pages settings UI so the
-         domain survives a redeploy: this site is published from a build
-         artifact, not from a branch, so a CNAME written by the settings page
-         alone would not be part of what gets uploaded. -->
+    <!-- The custom domain is set in the repository's Pages settings, NOT by a
+         CNAME file. That distinction matters and is easy to get wrong: a
+         CNAME file in the repo does claim the domain when Pages publishes
+         from a branch, but this site publishes from a GitHub Actions
+         artifact, and GitHub's docs are explicit that in that mode "any
+         existing CNAME file is ignored and is not required". public/CNAME
+         was added here on that mistaken assumption and removed again; the
+         domain has to be entered in Settings > Pages. -->
     <link rel="canonical" href="https://rasira.foundation/" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
 
