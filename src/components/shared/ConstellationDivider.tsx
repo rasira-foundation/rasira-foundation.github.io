@@ -31,9 +31,15 @@ function starPath(x: number, y: number, r: number, spokes: number): string {
 
 /* Both rules are drawn FROM the centre outward — the left one runs right to
    left — so pathLength makes them travel away from the star rather than
-   toward it. */
-const LEFT_RULE = 'M 214 20 L 30 20';
-const RIGHT_RULE = 'M 286 20 L 470 20';
+   toward it.
+
+   92 units each, half their original 184. The viewBox is unchanged at 500
+   wide, so the figure simply occupies less of it rather than being scaled;
+   that keeps the star's size and the stroke weights exactly as they were.
+   The ends now fall at 24.4% and 75.6% of the box, which is why the fade in
+   the stylesheet moved with them. */
+const LEFT_RULE = 'M 214 20 L 122 20';
+const RIGHT_RULE = 'M 286 20 L 378 20';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 const FAILSAFE_MS = 5000;

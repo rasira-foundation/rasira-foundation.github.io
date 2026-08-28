@@ -114,6 +114,13 @@
     text-align: left;
     padding-left: 0;
     padding-right: 0;
+    /* No padding of its own, top or bottom. .collabs-slot already provides
+       64px on both sides of this card, so the card's own 64s were a second
+       helping of the same gap. The top one cost double, too: every pixel
+       below the constellation rule has to be matched above it to keep the
+       star centred. */
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   .collabs-body {

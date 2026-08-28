@@ -419,7 +419,7 @@
 }
 
 .closing-footer-mail {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--color-ink);
   text-decoration: none;

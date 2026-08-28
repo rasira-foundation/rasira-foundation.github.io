@@ -50,9 +50,10 @@
     margin-bottom: 24px;
   }
 
-  /* Matches the section-heading step in the shared mobile scale. */
+  /* Fixed 24 rather than the shared clamp, which resolved to its 20px floor
+     at every phone width narrower than 480 — i.e. at every real phone. */
   .section-heading-title {
-    font-size: clamp(20px, 5vw, 24px);
+    font-size: 24px;
     line-height: 1.25;
   }
 

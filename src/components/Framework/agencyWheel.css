@@ -58,8 +58,8 @@
 /* Row 2 — title. */
 .agency-readout-title {
   font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: 22.6px;
+  font-weight: 500;
+  font-size: 20px;
   line-height: 1.2;
   color: var(--color-ink);
   margin: 0 0 12px;
@@ -68,6 +68,7 @@
 @media (min-width: 768px) {
   .agency-readout-title {
     font-size: 30px;
+    font-weight: 400;
   }
 }
 
@@ -359,7 +360,7 @@
      are also twice as long here — 90 degrees a blade instead of 45 — so
      nothing is close to overrunning any more. */
   .agency-blade-level {
-    font-size: 14px;
+    font-size: 13px;
     letter-spacing: 0.05em;
   }
 
@@ -382,7 +383,7 @@
   }
 
   .agency-core-note {
-    font-size: 11.5px;
+    font-size: 11px;
   }
 
   /* Left-aligned on phones, not centred. Centred text under a full circle

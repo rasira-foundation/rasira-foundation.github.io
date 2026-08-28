@@ -191,7 +191,12 @@ button {
      backstop: the longest single words in these headings still fit at
      320px, but a future edit should not be able to push a glyph past the
      viewport edge. */
-  body .hero-title,
+  body .hero-title {
+    font-size: 36px;
+    line-height: 1.15;
+    overflow-wrap: break-word;
+  }
+
   body .article-detail-title {
     font-size: clamp(28px, 8vw, 34px);
     line-height: 1.15;
@@ -206,7 +211,7 @@ button {
   body .collabs-heading,
   body .article-detail-body h2,
   body .article-detail-body h3 {
-    font-size: clamp(20px, 5vw, 24px);
+    font-size: 24px;
     line-height: 1.25;
   }
 
@@ -224,11 +229,26 @@ button {
     line-height: 1.6;
   }
 
-  /* The four card blocks that used to be pinned here — both card headings
-     and both card bodies — are gone from this block deliberately. They are
-     now set like .article-detail-body, 19px/1.8, and the point of that is
-     that they match the articles at EVERY width; overriding them on a phone
-     would undo it. */
+  /* Sized against .collabs-body, the mono paragraph a section above, rather
+     than against .article-detail-body as on desktop. On a phone the two sit
+     close enough together to be compared directly, and at the article's 19px
+     the serif was visibly the louder of the two.
+
+     17 is the balance point, and the two faces cannot be matched exactly
+     because they disagree about where their mass sits. Measured against mono
+     at 15px: Newsreader at 17 has 95% of its x-height but 109% of its cap
+     height; at 19 those are 105% and 122%, which is what read as too big,
+     since this copy is cap-heavy. 16 would land 103%/91% — closer on caps,
+     further on the x-height that dominates a lowercase-heavy paragraph.
+
+     1.6 leading rather than the desktop 1.8, matching the mono's own. */
+  body .partner-card-heading,
+  body .partner-card-body,
+  body .donation-card-heading,
+  body .donation-card-body {
+    font-size: 17px;
+    line-height: 1.6;
+  }
 
   /* Captions and metadata — dates, read times, bylines, the footer clock
      row. These were 11px, which is the floor for a BADGE (short, uppercase,
@@ -250,12 +270,20 @@ button {
      label rather than as running text, so the floor that applies to prose
      does not apply here — and raising them would crowd the titles they
      sit above. Listed explicitly rather than left implicit so it is clear
-     this is a decision and not an omission. */
+     this is a decision and not an omission.
+
+     .hero-copy-tags was in this list and is not any more. It was an overline
+     — one tracked, uppercase line — and is now a row of chips set in
+     sentence case at 12px. Left here it kept stamping them with 11px and
+     0.08em of tracking on a phone, which is precisely the treatment the chip
+     form replaced. */
+  /* The hero chips and the dial's eyebrow join the badge step at 11px. */
+  body .hero-tag,
+  body .agency-readout-eyebrow,
   body .article-card-category,
   body .article-detail-badge,
   body .partner-donation-label,
-  body .donation-card-topbar,
-  body .hero-copy-tags {
+  body .donation-card-topbar {
     font-size: 11px;
     letter-spacing: 0.08em;
     line-height: 1.4;

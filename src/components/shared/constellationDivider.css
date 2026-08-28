@@ -42,11 +42,16 @@
   height: auto;
   overflow: visible;
   /* Both rules stop in open space, and a round cap on a hairline still reads
-     as a deliberate end point. Fading the outer eighth lets them dissolve
-     into the page instead, which is what makes this sit quietly under the
-     heading rather than underlining it. */
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+     as a deliberate end point. Fading the ends lets them dissolve into the
+     page instead, which is what makes this sit quietly under the heading
+     rather than underlining it.
+
+     The stops track the rule ends, which sit at 24.4% and 75.6% of the box
+     since the rules were halved — see ConstellationDivider.tsx. At the old
+     12%/88% the fade fell entirely outside the shortened lines and did
+     nothing at all, leaving two hard round caps. */
+  -webkit-mask-image: linear-gradient(90deg, transparent 23%, #000 30%, #000 70%, transparent 77%);
+  mask-image: linear-gradient(90deg, transparent 23%, #000 30%, #000 70%, transparent 77%);
 }
 
 /* Sized against the viewBox rather than the screen: 500 units render at

@@ -281,16 +281,21 @@
 /* Mobile only — supersedes the 480px padding tweak below with the
    fuller mobile pass (section padding, grid gap, logo centering). */
 @media (max-width: 640px) {
-  /* Third of the three mobile section gaps held to the same VISIBLE ~140px.
-     This one already inherits 48px from .collabs-slot's bottom padding plus
-     the label's own offset, so 28 here lands on 140. See the matching notes
-     in systemFramework.css and collabsSection.css. */
+  /* 64 top and bottom, matching .system-framework and .collabs-slot. The
+     three mobile sections used to be tuned individually to land on the same
+     VISIBLE ~140px gap — this one was 28/40 — but that scheme depended on
+     each section's neighbours never changing, and they have. A flat 64 on
+     every section is the simpler contract now. */
   .partner-donation-section {
-    padding: 28px 16px 40px;
+    padding: 64px 16px;
   }
 
   .partner-donation-grid {
     gap: 16px;
+    /* No top padding. The section already carries 64px of its own here, and
+       the grid's 24 was stacking a second gap on top of that before the
+       first label. */
+    padding-top: 0;
   }
 
   .partner-card,
