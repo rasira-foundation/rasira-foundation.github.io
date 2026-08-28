@@ -127,6 +127,26 @@
 
 .agency-wheel-dial {
   position: relative;
+  /* The scroll reveal. --reveal is driven by Framer (see AgencyWheel.tsx)
+     and grows the visible circle from the core outward.
+
+     The origin is the DIAL's centre, which is not the box's centre: the half
+     circle's centre sits on its flat base, so 95% down rather than 50%. The
+     full circle overrides this below. The fallback in the var() matters —
+     it is what a browser without the animation, or a frame before Framer
+     has written the property, renders: fully visible rather than clipped
+     away. */
+  --reveal-origin: 50% 95%;
+  clip-path: circle(var(--reveal, 125%) at var(--reveal-origin));
+}
+
+/* The failsafe, applied by a timer in the component. Higher specificity than
+   the rule above, and it sets clip-path directly rather than the variable
+   the rule reads — so it wins outright and needs no animation frame to take
+   effect. See the note in AgencyWheel.tsx for why animating to the end value
+   would not have been protection at all. */
+.agency-wheel-dial.is-reveal-failsafe {
+  clip-path: none;
 }
 
 .agency-wheel-svg {
@@ -258,6 +278,8 @@
   .agency-wheel-dial {
     margin-inline: -24px;
     width: calc(100% + 48px);
+    /* The full circle's centre is the middle of its box, not its base. */
+    --reveal-origin: 50% 50%;
   }
 
   .agency-wheel-svg {
@@ -345,6 +367,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* No wipe. Removing the clip entirely rather than shortening it: a fast
+     radial wipe is still a radial wipe, and this one sweeps the full width
+     of the figure. */
+  .agency-wheel-dial {
+    clip-path: none;
+  }
+
   .agency-scrim,
   .agency-blade-level,
   .agency-blade-title,

@@ -169,6 +169,33 @@ export function AgencyWheel() {
   const g = useGeom();
   const isFull = g.sweep === 360;
   const [activeId, setActiveId] = useState(agencySpectrum.levels[0].id);
+
+  /* The reveal is state-driven rather than a bare whileInView, for two
+     reasons.
+     
+     FAILSAFE. The initial clip hides all but the core, and Framer writes it
+     as an inline custom property that the stylesheet's fallback cannot beat.
+     So if the reveal never runs — an IntersectionObserver that does not
+     fire, an animation frame loop that never ticks — the dial would sit
+     permanently clipped to a stub, which is worse than no animation at all.
+
+     The timer therefore drops the clip through a CLASS rather than by
+     animating to the end value. Animating would be no protection: it needs
+     the same frame loop that may be the thing that failed, which is exactly
+     what was observed while building this — the timer fired, the state
+     changed, and the clip stayed at 24% because no frames were being
+     served. A class setting clip-path:none needs nothing but the cascade.
+
+     ONCE, not every entry. The rest of the page re-runs its reveals on each
+     scroll-by, but those are fades; this is a wipe across the whole figure,
+     and a diagram that redraws itself every time it passes the viewport
+     reads as a glitch rather than as craft. */
+  const [revealed, setRevealed] = useState(false);
+  const [revealFailsafe, setRevealFailsafe] = useState(false);
+  useEffect(() => {
+    const id = window.setTimeout(() => setRevealFailsafe(true), 3500);
+    return () => window.clearTimeout(id);
+  }, []);
   const active = agencySpectrum.levels.find((l) => l.id === activeId)!;
   const activeIndex = agencySpectrum.levels.findIndex((l) => l.id === activeId);
   const span = g.sweep / agencySpectrum.levels.length;
@@ -203,7 +230,30 @@ export function AgencyWheel() {
         </ul>
       </div>
 
-      <div className="agency-wheel-dial">
+      {/* The reveal wipes outward from the core rather than fading the whole
+          figure in. It sits on the CONTAINER, not on the SVG, because the
+          full circle's colour is a CSS conic layer behind the SVG — an SVG
+          mask would leave that layer untouched and the wipe would only
+          apply to half the drawing. A clip-path on the wrapper catches both.
+
+          It starts at 24% rather than 0 so the core is already inside the
+          circle on the first frame: "Agency" reads immediately and the
+          spectrum grows out from under it, which is the order asked for. A
+          wipe from nothing would instead reveal the word a sliver at a time,
+          which looks like a loading bar rather than a diagram drawing
+          itself.
+
+          The origin differs by shape — the half circle's centre is at its
+          flat base, the full circle's is the middle of the box — so it is a
+          variable set per breakpoint in the stylesheet. */}
+      <motion.div
+        className={`agency-wheel-dial${revealFailsafe ? ' is-reveal-failsafe' : ''}`}
+        initial={{ ['--reveal' as string]: '24%' }}
+        animate={{ ['--reveal' as string]: revealed ? '125%' : '24%' }}
+        onViewportEnter={() => setRevealed(true)}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+      >
         {/* The full circle's colour is a CONIC gradient, and it has to be a
             CSS one on an element behind the SVG, because SVG has no conic
             gradient of its own. It cannot be the linear gradient the half
@@ -357,7 +407,7 @@ export function AgencyWheel() {
             );
           })}
         </svg>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
