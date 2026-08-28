@@ -34,6 +34,48 @@ const FRAME_HOLD_MS = 1800;
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
+/** The face the strips are typed in, and the longest a load is worth
+ *  waiting for before starting anyway. */
+const STRIP_FONT = "36px 'Square Peg'";
+const FONT_WAIT_CAP_MS = 1200;
+
+/**
+ * Resolve once Square Peg can actually be drawn with.
+ *
+ * Without this the strips begin typing in the browser's default cursive —
+ * Comic Sans, Apple Chancery, whatever the platform picks — and snap into
+ * the handwriting face mid-sentence. The stylesheet asks for display=swap,
+ * which is the right default everywhere else on this page, but it is
+ * exactly wrong here: this text is ANIMATED, so the swap lands in the
+ * middle of the animation and the letters already typed visibly change
+ * shape. Nothing else on the page shows the difference so plainly, because
+ * nothing else is being drawn a character at a time while the font arrives.
+ *
+ * It became visible after the move to rasira.foundation, and the domain is
+ * the reason: Chrome partitions its HTTP cache by top-level site, so the
+ * fonts that had been cached under the old origin were not reused under the
+ * new one and every visit started cold again.
+ *
+ * Capped, because a font that never arrives must not hold the intro
+ * hostage. Past the cap it types in the fallback, which is the behaviour we
+ * have today — the cap can only make things better, never worse.
+ */
+async function waitForStripFont(): Promise<void> {
+  if (!document.fonts?.check) return;
+  /* POLLING check(), not awaiting load(). load() resolves immediately when
+     no @font-face rule matches the family yet — and on this page that is
+     the normal state at intro time, because the font stylesheet is fetched
+     asynchronously (the media="print" swap in index.html) so the rule may
+     not exist when this runs. Awaiting load() would therefore return at
+     once and defeat the whole guard. check() answers the question actually
+     being asked — can this be drawn with right now — and stays false until
+     both the stylesheet and the file have arrived. */
+  const deadline = performance.now() + FONT_WAIT_CAP_MS;
+  while (!document.fonts.check(STRIP_FONT) && performance.now() < deadline) {
+    await sleep(50);
+  }
+}
+
 interface RenderedLine {
   text: string;
   showCursor: boolean;
@@ -63,6 +105,12 @@ export function HeroPaperStrips({ onCycleComplete }: HeroPaperStripsProps) {
     let hasSignaledComplete = false;
 
     async function playSequence() {
+      /* Before the first character, not before each frame. The splash is
+         still on screen at this point and its own hold overlaps the wait,
+         so in the common case this costs no visible time at all. */
+      await waitForStripFont();
+      if (cancelled) return;
+
       while (!cancelled) {
         const frame = FRAMES[localFrameIndex];
         setFrameIndex(localFrameIndex);
