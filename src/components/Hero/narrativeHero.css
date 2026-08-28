@@ -63,9 +63,12 @@
    makes the content edge land on the container edge. */
 .hero-copy {
   max-width: calc(var(--container-max) + 48px);
-  /* 20px, down from 50 — the block sits 30px higher on desktop. The phone
-     override below sets its own negative margin and is unaffected. */
-  margin: 20px auto 0;
+  /* -10px, down from 50 in two 30px steps. Negative is fine here: the
+     block's only neighbour above is the site header inside the same
+     atmosphere band, and there is a large gradient gap between them, so
+     pulling up 10px closes none of it. The phone override below sets its
+     own negative margin and is unaffected by this. */
+  margin: -10px auto 0;
   text-align: left;
   padding: 3.5vh 24px 4vh;
 }
