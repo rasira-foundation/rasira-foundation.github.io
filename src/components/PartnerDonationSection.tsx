@@ -1,4 +1,5 @@
 import { BlurRevealElement } from './shared/BlurRevealElement';
+import { track } from '../lib/analytics';
 import springLogo from '../assets/photos/spring-bw.png';
 import { partnerSection, donationSection } from '../data/siteContent';
 import './partnerDonationSection.css';
@@ -40,7 +41,18 @@ export function PartnerDonationSection() {
               <p className="donation-card-heading">{donationSection.lead}</p>
               <p className="donation-card-body">{donationSection.body}</p>
             </div>
-            <a className="donation-cta" href={donationSection.ctaMailto}>
+            <a
+              className="donation-cta"
+              href={donationSection.ctaMailto}
+              onClick={() =>
+                track('cta_click', {
+                  cta_id: 'support_fieldwork',
+                  cta_label: donationSection.ctaLabel,
+                  destination: 'email',
+                  section_name: 'partner_and_support',
+                })
+              }
+            >
               {donationSection.ctaLabel}
             </a>
           </div>
@@ -53,7 +65,18 @@ export function PartnerDonationSection() {
           <div>
             <div className="partner-card-topbar">
               <span>{partner.role}</span>
-              <a href={partner.url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={partner.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  track('outbound_click', {
+                    link_url: partner.url,
+                    link_label: partner.urlLabel,
+                    section_name: 'partner_and_support',
+                  })
+                }
+              >
                 {partner.urlLabel}
               </a>
             </div>

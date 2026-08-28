@@ -7,6 +7,7 @@ import { useDelayedFlag } from '../../hooks/useDelayedFlag';
 import { SectionHeading } from '../shared/SectionHeading';
 import { articleSection } from '../../data/siteContent';
 import './articleGrid.css';
+import { track } from '../../lib/analytics';
 
 const TABS: ArticleCategory[] = ['Highlight', 'Toolkit', 'Framework', 'Article'];
 const PER_ROW = 4;
@@ -113,7 +114,12 @@ export function ArticleGrid({ heroDone, depthScale, depthOpacity }: ArticleGridP
 
   const handleToggle = () => {
     collapsing.current = isExpanded;
-    setIsExpanded((v) => !v);
+    setIsExpanded((v) => {
+      /* Reported from inside the updater so the value logged is the one
+         actually committed, not a stale read of the previous render. */
+      track('article_list_toggle', { action: v ? 'collapse' : 'expand' });
+      return !v;
+    });
   };
 
   useEffect(() => {

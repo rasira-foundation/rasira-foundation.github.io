@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { agencySpectrum } from '../../data/siteContent';
 import { IN_VIEW, SPRING } from '../../lib/motion';
+import { track } from '../../lib/analytics';
 import './agencyWheel.css';
 
 /* ── GEOMETRY ──
@@ -311,12 +312,30 @@ export function AgencyWheel() {
                 tabIndex={0}
                 aria-label={`${lvl.title}: ${lvl.question}`}
                 aria-pressed={isActive}
+                /* Hover changes the blade but is NOT reported. Sweeping a
+                   cursor across the dial would fire a dozen events in a
+                   second and drown the deliberate picks in noise, while
+                   telling you nothing about intent. Only a click or a
+                   keyboard activation counts as someone choosing to read a
+                   level. */
                 onMouseEnter={() => setActiveId(lvl.id)}
                 onFocus={() => setActiveId(lvl.id)}
-                onClick={() => setActiveId(lvl.id)}
+                onClick={() => {
+                  track('framework_level_select', {
+                    level_title: lvl.title,
+                    level_question: lvl.question,
+                    method: 'click',
+                  });
+                  setActiveId(lvl.id);
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
+                    track('framework_level_select', {
+                      level_title: lvl.title,
+                      level_question: lvl.question,
+                      method: 'keyboard',
+                    });
                     setActiveId(lvl.id);
                   }
                 }}

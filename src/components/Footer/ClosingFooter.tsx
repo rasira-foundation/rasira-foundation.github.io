@@ -7,6 +7,7 @@ import { BlurRevealElement } from '../shared/BlurRevealElement';
 import twoLineLogo from '../../assets/rasira-2lines.svg';
 import './closingFooter.css';
 import { IN_VIEW, SPRING, SPRING_SECONDS } from '../../lib/motion';
+import { track } from '../../lib/analytics';
 
 interface ClosingFooterProps {
   /** The glow, clock, meta row, and giant wordmark only make sense as
@@ -73,7 +74,18 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
     return (
       <footer className="closing-footer">
         <div className="closing-footer-contact">
-          <a href={`mailto:${CONTACT_EMAIL}`} className="closing-footer-mail">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="closing-footer-mail"
+            onClick={() =>
+              track('cta_click', {
+                cta_id: 'footer_email',
+                cta_label: CONTACT_EMAIL,
+                destination: 'email',
+                section_name: 'footer',
+              })
+            }
+          >
             {CONTACT_EMAIL}
           </a>
           <span className="closing-footer-year">© {new Date().getFullYear()}</span>
@@ -171,7 +183,18 @@ export function ClosingFooter({ showClock = true }: ClosingFooterProps) {
             at all; it belongs down here in the sign-off. */}
         <div className="closing-footer-signoff">
           <span className="closing-footer-year closing-footer-year--homepage">© {new Date().getFullYear()}</span>
-          <a href={`mailto:${CONTACT_EMAIL}`} className="closing-footer-mail">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="closing-footer-mail"
+            onClick={() =>
+              track('cta_click', {
+                cta_id: 'footer_email',
+                cta_label: CONTACT_EMAIL,
+                destination: 'email',
+                section_name: 'footer',
+              })
+            }
+          >
             {CONTACT_EMAIL}
           </a>
         </div>
