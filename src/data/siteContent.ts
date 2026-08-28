@@ -53,7 +53,7 @@ export const frameworkBridgeText = 'Here is the system logic behind that work';
 export const systemFramework = {
   eyebrow: 'Public Framework',
   title: 'How We Think About the Work',
-  subtitle: 'Agency is observed, in how behaviour adapts.',
+  subtitle: 'Agency is observed in how behaviour adapts.',
   /* `columns`, `total` and `loopLabel` were removed with the four-stage
      diagram they described. The section is carried by the Agency Spectrum
      dial below instead — see the note in SystemFramework.tsx. */
