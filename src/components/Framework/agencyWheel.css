@@ -127,6 +127,19 @@
 
 .agency-wheel-dial {
   position: relative;
+}
+
+/* ── THE VEIL ──
+   The masked layer: the spectrum's colour and the core, and nothing else.
+   The label layer is a sibling ABOVE this, deliberately outside the mask, so
+   the words can arrive with the core while the colour is still hidden. This
+   used to be the dial itself, but a CSS mask applies to an element whole and
+   there is no way to exempt one child from it.
+
+   It fills the dial exactly, so every percentage below — the origin, the
+   reveal, the feather — resolves against the same box it always did. */
+.agency-wheel-veil {
+  position: relative;
   /* The scroll reveal. --reveal is driven by Framer (see AgencyWheel.tsx)
      and grows the visible circle from the core outward.
 
@@ -177,6 +190,31 @@
   margin: 0 auto;
   height: auto;
   overflow: visible;
+}
+
+/* ── LABEL LAYER ──
+   Laid over the veil's SVG rather than beside it. It inherits .agency-wheel-svg
+   — same viewBox, same 1000px cap, same `max-width: none` on mobile — so both
+   layers scale from identical inputs and cannot drift apart.
+
+   Centring is by left/translate rather than `margin: 0 auto`, which does
+   nothing for an absolutely positioned box. Height is 100% rather than auto
+   because the dial's height IS the veil SVG's height, so this matches it
+   exactly without relying on aspect-ratio resolution.
+
+   pointer-events pass through the layer itself and are re-enabled on the
+   blades, so the empty corners of this box never intercept anything. */
+.agency-wheel-labels {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  pointer-events: none;
+}
+
+.agency-wheel-labels .agency-blade {
+  pointer-events: auto;
 }
 
 /* The wedge that catches the pointer. Transparent rather than absent: a path
@@ -298,7 +336,10 @@
   .agency-wheel-dial {
     margin-inline: -24px;
     width: calc(100% + 48px);
-    /* The full circle's centre is the middle of its box, not its base. */
+  }
+
+  /* The full circle's centre is the middle of its box, not its base. */
+  .agency-wheel-veil {
     --reveal-origin: 50% 50%;
   }
 
@@ -390,9 +431,13 @@
   /* No wipe. Removing the mask entirely rather than shortening it: a fast
      radial reveal is still a radial reveal, and this one sweeps the full
      width of the figure. */
-  .agency-wheel-dial {
+  .agency-wheel-veil {
     -webkit-mask-image: none;
     mask-image: none;
+  }
+
+  .agency-wheel-labels {
+    opacity: 1 !important;
   }
 
   /* And no float. The core group's entrance is written inline by Framer, so

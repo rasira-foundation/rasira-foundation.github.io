@@ -331,9 +331,9 @@ export function AgencyWheel() {
           stub. Accepted on the same grounds the timed failsafe was dropped —
           in that scenario every reveal on this page is stuck at opacity 0 and
           the dial is not the visible problem. */}
+      <div ref={dialRef} className="agency-wheel-dial">
       <motion.div
-        ref={dialRef}
-        className="agency-wheel-dial"
+        className="agency-wheel-veil"
         initial={{ ['--reveal' as string]: '0%', ['--reveal-feather' as string]: '8%' }}
         animate={{
           ['--reveal' as string]: revealed ? ['0%', '32%', '32%', '160%'] : '0%',
@@ -375,12 +375,7 @@ export function AgencyWheel() {
             reversing the argument the palette is making. */}
         {isFull && <div className="agency-wheel-conic" aria-hidden="true" />}
 
-        <svg
-          className="agency-wheel-svg"
-          viewBox={`0 0 ${g.viewW} ${g.viewH}`}
-          role="group"
-          aria-label="Agency spectrum: four levels running from capability beliefs to standing"
-        >
+        <svg className="agency-wheel-svg" viewBox={`0 0 ${g.viewW} ${g.viewH}`} aria-hidden="true">
           <defs>
             {!isFull && (
               /* One continuous sky across the whole fan rather than four
@@ -484,70 +479,99 @@ export function AgencyWheel() {
             </text>
           </motion.g>
 
-          {/* Hit areas and labels last, so nothing painted above can steal
-              the pointer from them. */}
-          {agencySpectrum.levels.map((lvl, i) => {
-            const a0 = g.start - i * span;
-            const a1 = g.start - (i + 1) * span;
-            const mid = (a0 + a1) / 2;
-            /* Below the horizon the label has to be drawn along a reversed
-               rail or it comes out upside down. */
-            const flip = Math.sin((mid * Math.PI) / 180) < 0;
-            const isActive = lvl.id === activeId;
-            return (
-              <g
-                key={lvl.id}
-                className={`agency-blade${isActive ? ' is-active' : ''}`}
-                role="button"
-                tabIndex={0}
-                aria-label={`${lvl.title}: ${lvl.question}`}
-                aria-pressed={isActive}
-                /* Hover changes the blade but is NOT reported. Sweeping a
-                   cursor across the dial would fire a dozen events in a
-                   second and drown the deliberate picks in noise, while
-                   telling you nothing about intent. Only a click or a
-                   keyboard activation counts as someone choosing to read a
-                   level. */
-                onMouseEnter={() => setActiveId(lvl.id)}
-                onFocus={() => setActiveId(lvl.id)}
-                onClick={() => {
-                  track('framework_level_select', {
-                    level_title: lvl.title,
-                    level_question: lvl.question,
-                    method: 'click',
-                  });
-                  setActiveId(lvl.id);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
+        </svg>
+      </motion.div>
+
+      {/* ── THE LABEL LAYER ──
+          A SECOND svg, deliberately, sitting outside the mask.
+
+          The labels have to arrive with the core, before any colour does, and
+          a CSS mask cannot spare individual SVG children — masked is masked.
+          The only way to exempt them is to take them out of the masked
+          element, which means a second coordinate space laid exactly over the
+          first. Same viewBox, same width rules, absolutely positioned over
+          the veil; the two stay locked together at any size because they
+          scale from identical inputs.
+
+          The hit areas come with them rather than staying behind. A masked-out
+          region does not reliably hit-test, so leaving them under the veil
+          would have made the blades dead to the pointer for the whole reveal.
+
+          Fading in on beat one's own 0.5s: the words and the wordmark are one
+          arrival, and the colour is the answer to it. */}
+      <motion.svg
+        className="agency-wheel-svg agency-wheel-labels"
+        viewBox={`0 0 ${g.viewW} ${g.viewH}`}
+        role="group"
+        aria-label="Agency spectrum: four levels running from capability beliefs to standing"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: revealed ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: EASE_OUT }}
+      >
+            {/* Hit areas and labels last, so nothing painted above can steal
+                the pointer from them. */}
+            {agencySpectrum.levels.map((lvl, i) => {
+              const a0 = g.start - i * span;
+              const a1 = g.start - (i + 1) * span;
+              const mid = (a0 + a1) / 2;
+              /* Below the horizon the label has to be drawn along a reversed
+                 rail or it comes out upside down. */
+              const flip = Math.sin((mid * Math.PI) / 180) < 0;
+              const isActive = lvl.id === activeId;
+              return (
+                <g
+                  key={lvl.id}
+                  className={`agency-blade${isActive ? ' is-active' : ''}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${lvl.title}: ${lvl.question}`}
+                  aria-pressed={isActive}
+                  /* Hover changes the blade but is NOT reported. Sweeping a
+                     cursor across the dial would fire a dozen events in a
+                     second and drown the deliberate picks in noise, while
+                     telling you nothing about intent. Only a click or a
+                     keyboard activation counts as someone choosing to read a
+                     level. */
+                  onMouseEnter={() => setActiveId(lvl.id)}
+                  onFocus={() => setActiveId(lvl.id)}
+                  onClick={() => {
                     track('framework_level_select', {
                       level_title: lvl.title,
                       level_question: lvl.question,
-                      method: 'keyboard',
+                      method: 'click',
                     });
                     setActiveId(lvl.id);
-                  }
-                }}
-              >
-                <path className="agency-hit" d={wedge(g, a0, a1)} />
-                <path id={`agency-level-${lvl.id}`} d={labelArc(g, a0, a1, g.levelR, flip, 20)} fill="none" />
-                <path id={`agency-title-${lvl.id}`} d={labelArc(g, a0, a1, g.titleR, flip, 14)} fill="none" />
-                <text className="agency-blade-level">
-                  <textPath href={`#agency-level-${lvl.id}`} startOffset="50%" textAnchor="middle">
-                    {lvl.question}
-                  </textPath>
-                </text>
-                <text className="agency-blade-title">
-                  <textPath href={`#agency-title-${lvl.id}`} startOffset="50%" textAnchor="middle">
-                    {lvl.title}
-                  </textPath>
-                </text>
-              </g>
-            );
-          })}
-        </svg>
-      </motion.div>
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      track('framework_level_select', {
+                        level_title: lvl.title,
+                        level_question: lvl.question,
+                        method: 'keyboard',
+                      });
+                      setActiveId(lvl.id);
+                    }
+                  }}
+                >
+                  <path className="agency-hit" d={wedge(g, a0, a1)} />
+                  <path id={`agency-level-${lvl.id}`} d={labelArc(g, a0, a1, g.levelR, flip, 20)} fill="none" />
+                  <path id={`agency-title-${lvl.id}`} d={labelArc(g, a0, a1, g.titleR, flip, 14)} fill="none" />
+                  <text className="agency-blade-level">
+                    <textPath href={`#agency-level-${lvl.id}`} startOffset="50%" textAnchor="middle">
+                      {lvl.question}
+                    </textPath>
+                  </text>
+                  <text className="agency-blade-title">
+                    <textPath href={`#agency-title-${lvl.id}`} startOffset="50%" textAnchor="middle">
+                      {lvl.title}
+                    </textPath>
+                  </text>
+                </g>
+              );
+            })}
+      </motion.svg>
+      </div>
     </motion.div>
   );
 }
